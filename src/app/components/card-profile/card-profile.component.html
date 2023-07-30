@@ -1,0 +1,56 @@
+<div class="card nitro-card" [ngStyle]="{'--color1': themesColor[0], '--color2': themesColor[1]}">
+  <div class="card-header">
+    <div [ngStyle]="{'background-image': 'url(http://camilo404.azurewebsites.net/api/banner/' + userId + ')'}" class="banner-img"></div>
+  </div>
+  <div class="card-body">
+    <div class="profile-header">
+      <a href="https://discord.com/users/{{userId}}" target="_blank">
+        <div class="profile-logo">
+          <img src="http://camilo404.azurewebsites.net/api/avatar/{{userId}}" />
+        </div>
+      </a>
+      <div class="badges-container">
+        <div class="badge-item" *ngFor="let badge of userData?.badges">
+          <a href="{{badge.link || ''}}" target="_blank" class="badge-link">
+            <img src="https://camilo404.azurewebsites.net/api/badge/{{badge.icon}}.png" alt="{{badge.id}}" />
+            <div class="tooltip tooltip-up">{{badge.description}}</div>
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="profile-body">
+      <div class="global-name">
+        <p>{{userData?.user?.global_name || userData?.user?.username}}</p>
+      </div>
+      <div class="username">
+        <p>{{userData?.user?.username}}</p>
+      </div>
+      <div class="pronouns">
+        <p>{{userData?.user_profile?.pronouns || ''}}</p>
+      </div>
+      <hr />
+      <div class="basic-infos">
+        <div class="category-title">About Me</div>
+        <markdown class="markdown" [data]="userBioFormatted" [inline]="false"></markdown>
+      </div>
+      <div class="note" *ngIf="userData?.connected_accounts!.length > 0">
+        <div class="category-title">Connected accounts</div>
+        <!-- <div class="connected-account" *ngFor="let account of userData?.connected_accounts">
+          <img src="../../../assets/images/connections/{{account.type}}.svg" alt="{{account.type}}" />
+
+          <p>{{account.name}}</p>
+        </div> -->
+
+        <div class="badges-connected-accounts">
+          <div class="badge-connected-account" *ngFor="let account of userData?.connected_accounts">
+            <img src="../../../assets/images/connections/{{account.type}}.svg" alt="{{account.type}}" />
+            <div class="tooltip tooltip-down">{{account.name}}</div>
+          </div>
+        </div>
+      </div>
+      <div class="message">
+        <input type="text" placeholder="Send a message to @wnea" [(ngModel)]="message" (keyup.enter)="sendMessage()"/>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,126 @@
+.glowing-icons a {
+	cursor: url('../../../assets/images/cursor/link.png'), default;
+	position: relative;
+	background: #202020;
+	text-decoration: none;
+	border-radius: 50%;
+	color: #808080;
+	transition: 0.5s;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 50px;
+	height: 50px;
+}
+
+.glowing-icons i {
+	font-size: 1.5rem;
+}
+
+.glowing-icons a::before {
+	content: "";
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	border-radius: 50%;
+	background: #ff3737;
+	transition: 0.5s;
+	transform: scale(0.9);
+	z-index: -1;
+}
+
+.glowing-icons a:hover::before {
+	transform: scale(1.1);
+	box-shadow: 0 0 15px #ff3737;
+}
+
+.glowing-icons a:hover {
+	color: #ff3737;
+}
+
+@media screen and (max-width: 768px) {
+
+	.rxps {
+		position: relative;
+		display: inline-block;
+		list-style-type: none;
+		margin: 0rem 0.5rem 1rem 0.5rem;
+	}
+
+	.glowing-icons a {
+		width: 55px;
+		height: 55px;
+	}
+
+	.glowing-icons i {
+		font-size: 1.5rem;
+	}
+}
+
+.video-container video {
+	position: absolute;
+  overflow: hidden;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	object-fit: cover;
+	height: 100%;
+	width: 100%;
+}
+
+.container-info {
+	height: 100vh;
+	width: 100vw;
+  overflow-y: auto;
+}
+
+.iconVolume {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+	font-size: 25px !important;
+	cursor: url('../../../assets/images/cursor/link.png'), default;
+}
+
+#video_cover {
+	position: absolute;
+  overflow: hidden;
+	width: 100%;
+	height: 100%;
+	z-index: -100;
+	background: url('../../../assets/images/video_cover.gif') no-repeat;
+	background-size: cover;
+	background-position: center;
+}
+
+#myVideo {
+	position: absolute;
+  overflow: hidden;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	z-index: -100;
+	object-fit: cover;
+	height: 100%;
+	width: 100%;
+}
+
+.video-overlay {
+	position: fixed;
+  overflow: hidden;
+	top: 0;
+	left: 0;
+	height: 100vh;
+	width: 100vw;
+	background-color: rgba(0, 0, 0, 0.75);
+  z-index: -10;
+}
+
+@media screen and (max-width: 768px) {
+	.video-container video {
+		width: 100vw;
+		height: auto;
+	}
+}

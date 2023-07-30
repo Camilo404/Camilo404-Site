@@ -1,0 +1,55 @@
+<div class="video-container">
+  <div id="video_cover"></div>
+  <video id='myVideo' autoplay muted loop #bgVideo>
+    <source src="../../../assets/videos/bgVideoImSorry.mp4" type="video/mp4">
+  </video>
+
+  <div class="video-overlay"></div>
+</div>
+
+<div class="container-info grid gap-5 py-10">
+  <div class="grid content-center justify-items-center text-white">
+    <app-clock></app-clock>
+
+    <p class="text-white font-semibold my-4 text-[18px] md:text-[25px]">
+      Web Designer & Developer
+    </p>
+
+    <section class="glowing-icons">
+      <ul class="flex flex-wrap gap-2">
+        <li>
+          <a href="https://discordapp.com/users/602977635873718282" target="_blank">
+            <i class="fa-brands fa-discord"></i>
+          </a>
+        </li>
+        <li>
+          <a href="https://github.com/Camilo404" target="_blank">
+            <i class="fa-brands fa-github"></i>
+          </a>
+        </li>
+        <li>
+          <a href="https://www.youtube.com/channel/UChzlaSE1adSPVGYBBOQ1ibg" target="_blank">
+            <i class="fa-brands fa-youtube"></i>
+          </a>
+        </li>
+        <li>
+          <a href="https://www.instagram.com/camiloxtz/" target="_blank" >
+            <i class="fa-brands fa-instagram"></i>
+          </a>
+        </li>
+        <li>
+          <a href="https://steamcommunity.com/profiles/76561198832154348/" target="_blank">
+            <i class="fa-brands fa-steam"></i>
+          </a>
+        </li>
+      </ul>
+    </section>
+
+  </div>
+
+  <i class='iconVolume text-white bx bxs-volume-mute bx-tada bx-flip-vertical' #iconVolume (click)="toggleMute()"></i>
+
+  <app-card-profile></app-card-profile>
+</div>
+
+
