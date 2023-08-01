@@ -2,13 +2,13 @@
   <div class="atropos-scale">
     <div class="atropos-rotate">
       <div class="atropos-inner">
-        <div class="my-[0.45rem]">
+        <div class="my-[0.45rem]" data-atropos-opacity="0.9;1">
           <div class="card nitro-card" [ngStyle]="{'--color1': themesColor[0], '--color2': themesColor[1]}">
             <div class="card-header">
               <div [ngStyle]="{'background-image': 'url(https://camilo404.azurewebsites.net/api/banner/' + userId + ')'}" class="banner-img"></div>
             </div>
             <div class="card-body">
-              <div class="profile-header">
+              <div class="profile-header" data-atropos-offset="2.5">
                 <a href="https://discord.com/users/{{userId}}" target="_blank">
                   <div class="profile-logo">
                     <img src="https://camilo404.azurewebsites.net/api/avatar/{{userId}}" />
@@ -23,7 +23,7 @@
                   </div>
                 </div>
               </div>
-              <div class="profile-body">
+              <div class="profile-body" data-atropos-offset="2.5">
                 <div class="global-name">
                   <p>{{userData?.user?.global_name || userData?.user?.username}}</p>
                 </div>
