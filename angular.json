@@ -30,11 +30,13 @@
               "src/assets"
             ],
             "styles": [
-              "src/styles.scss"
+              "src/styles.scss",
+              "node_modules/atropos/atropos.min.css"
             ],
             "scripts": [
               "node_modules/marked/marked.min.js",
-              "node_modules/emoji-toolkit/lib/js/joypixels.min.js"
+              "node_modules/atropos/atropos.min.js",
+              "src/assets/scripts/atropos.js"
             ]
           },
           "configurations": {
@@ -96,11 +98,13 @@
               "src/assets"
             ],
             "styles": [
-              "src/styles.scss"
+              "src/styles.scss",
+              "node_modules/atropos/atropos.min.css"
             ],
             "scripts": [
               "node_modules/marked/marked.min.js",
-              "node_modules/emoji-toolkit/lib/js/joypixels.min.js"
+              "node_modules/atropos/atropos.min.js",
+              "src/assets/scripts/atropos.js"
             ]
           }
         }

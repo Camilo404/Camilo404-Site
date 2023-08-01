@@ -9,7 +9,9 @@ export class ClockComponent implements OnInit {
 
   strTime: string = '';
 
-  constructor() { }
+  constructor() {
+
+  }
 
   ngOnInit() {
     this.updateTime(); // Llamar para actualizar el tiempo inicial
