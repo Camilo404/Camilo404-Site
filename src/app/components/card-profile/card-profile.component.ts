@@ -1,13 +1,19 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { DiscordApiService } from 'src/app/services/discord-api.service';
 import { Profile } from 'src/app/models/discord-profile.model';
+
+declare global {
+  interface Window {
+    loadAtropos(): void;
+  }
+}
 
 @Component({
   selector: 'app-card-profile',
   templateUrl: './card-profile.component.html',
   styleUrls: ['./card-profile.component.scss']
 })
-export class CardProfileComponent implements OnInit {
+export class CardProfileComponent implements OnInit, AfterViewInit {
 
   userId: string = '602977635873718282';
   userData?: Profile;
@@ -20,6 +26,10 @@ export class CardProfileComponent implements OnInit {
 
   ngOnInit(): void {
     this.getDiscordUserData();
+  }
+
+  ngAfterViewInit(): void {
+    window.loadAtropos();
   }
 
   public getDiscordUserData(): void {

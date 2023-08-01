@@ -14,8 +14,8 @@ export class ClockComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.updateTime(); // Llamar para actualizar el tiempo inicial
-    setInterval(() => this.updateTime(), 1000); // Actualizar el tiempo cada segundo
+    this.updateTime();
+    setInterval(() => this.updateTime(), 1000);
   }
 
   updateTime() {
