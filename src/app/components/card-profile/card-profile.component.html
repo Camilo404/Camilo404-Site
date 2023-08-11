@@ -1,8 +1,8 @@
-<div class="atropos atropos-card" *ngIf="userDataStatus">
+<div class="atropos atropos-card">
   <div class="atropos-scale">
     <div class="atropos-rotate">
       <div class="atropos-inner">
-        <div class="my-[0.45rem]" data-atropos-opacity="0.9;1">
+        <div class="my-[0.45rem]" data-atropos-opacity="0.9;1" *ngIf="userDataStatus">
           <div class="card nitro-card" [ngStyle]="{'--color1': themesColor[0], '--color2': themesColor[1]}">
             <div class="card-header">
               <div [ngStyle]="{'background-image': 'url(https://camilo404.azurewebsites.net/api/banner/' + userId + ')'}" class="banner-img"></div>

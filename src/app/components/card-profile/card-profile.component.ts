@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { DiscordApiService } from 'src/app/services/discord-api.service';
 import { Profile } from 'src/app/models/discord-profile.model';
 
@@ -13,7 +13,7 @@ declare global {
   templateUrl: './card-profile.component.html',
   styleUrls: ['./card-profile.component.scss']
 })
-export class CardProfileComponent implements OnInit, AfterViewInit {
+export class CardProfileComponent implements OnInit {
 
   userId: string = '602977635873718282';
   userDataStatus: boolean = false;
@@ -27,10 +27,6 @@ export class CardProfileComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this.getDiscordUserData();
-  }
-
-  ngAfterViewInit(): void {
-    window.loadAtropos();
   }
 
   public getDiscordUserData(): void {
@@ -56,6 +52,9 @@ export class CardProfileComponent implements OnInit, AfterViewInit {
         this.userDataStatus = false;
         console.log(error);
       }
+    }).add(() => {
+      console.log('Atropos loaded');
+      window.loadAtropos();
     });
   }
 
