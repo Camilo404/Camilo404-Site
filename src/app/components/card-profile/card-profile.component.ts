@@ -53,7 +53,6 @@ export class CardProfileComponent implements OnInit {
         console.log(error);
       }
     }).add(() => {
-      console.log('Atropos loaded');
       window.loadAtropos();
     });
   }
