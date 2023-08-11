@@ -16,6 +16,7 @@ declare global {
 export class CardProfileComponent implements OnInit, AfterViewInit {
 
   userId: string = '602977635873718282';
+  userDataStatus: boolean = false;
   userData?: Profile;
   userBioFormatted?: string = '';
   themesColor: Array<string> = []
@@ -35,6 +36,7 @@ export class CardProfileComponent implements OnInit, AfterViewInit {
   public getDiscordUserData(): void {
     this.discordApiServiceL.getDiscordUser(this.userId).subscribe({
       next: (data: Profile) => {
+        this.userDataStatus = true;
         this.userData = data;
 
         // Change all the /n to <br>
@@ -51,6 +53,7 @@ export class CardProfileComponent implements OnInit, AfterViewInit {
         }
       },
       error: (error) => {
+        this.userDataStatus = false;
         console.log(error);
       }
     });

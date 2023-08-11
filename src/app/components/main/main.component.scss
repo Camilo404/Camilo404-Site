@@ -78,7 +78,12 @@
 .container-info {
 	height: 100vh;
 	width: 100vw;
-  overflow-y: auto;
+  	overflow-y: auto;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-direction: column;
+	gap: 2rem;
 }
 
 .iconVolume {
