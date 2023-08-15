@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { DiscordApiService } from 'src/app/services/discord-api.service';
 import { Profile } from 'src/app/models/discord-profile.model';
 
@@ -13,9 +13,10 @@ declare global {
   templateUrl: './card-profile.component.html',
   styleUrls: ['./card-profile.component.scss']
 })
-export class CardProfileComponent implements OnInit, AfterViewInit {
+export class CardProfileComponent implements OnInit {
 
   userId: string = '602977635873718282';
+  userDataStatus: boolean = false;
   userData?: Profile;
   userBioFormatted?: string = '';
   themesColor: Array<string> = []
@@ -28,13 +29,10 @@ export class CardProfileComponent implements OnInit, AfterViewInit {
     this.getDiscordUserData();
   }
 
-  ngAfterViewInit(): void {
-    window.loadAtropos();
-  }
-
   public getDiscordUserData(): void {
     this.discordApiServiceL.getDiscordUser(this.userId).subscribe({
       next: (data: Profile) => {
+        this.userDataStatus = true;
         this.userData = data;
 
         // Change all the /n to <br>
@@ -51,8 +49,11 @@ export class CardProfileComponent implements OnInit, AfterViewInit {
         }
       },
       error: (error) => {
+        this.userDataStatus = false;
         console.log(error);
       }
+    }).add(() => {
+      window.loadAtropos();
     });
   }
 
