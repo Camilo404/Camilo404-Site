@@ -78,12 +78,17 @@
 .container-info {
 	height: 100vh;
 	width: 100vw;
-  	overflow-y: auto;
+  overflow-y: auto;
 	display: flex;
 	justify-content: center;
 	align-items: center;
 	flex-direction: column;
 	gap: 2rem;
+
+  @media screen and (max-height: 816px) {
+    justify-content: flex-start;
+    padding: 4rem 0rem 4rem 0rem;
+  }
 }
 
 .iconVolume {
