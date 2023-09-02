@@ -15,22 +15,22 @@ declare global {
 })
 export class CardProfileComponent implements OnInit {
 
-  userId: string = '602977635873718282';
-  userDataStatus: boolean = false;
+  userId = '602977635873718282';
+  userDataStatus = false;
   userData?: Profile;
-  userBioFormatted?: string = '';
-  themesColor: Array<string> = []
+  userBioFormatted?: string;
+  themesColor: string[] = [];
 
-  message: string = '';
+  message = '';
 
-  constructor(private discordApiServiceL: DiscordApiService) { }
+  constructor(private discordApiService: DiscordApiService) { }
 
   ngOnInit(): void {
     this.getDiscordUserData();
   }
 
   public getDiscordUserData(): void {
-    this.discordApiServiceL.getDiscordUser(this.userId).subscribe({
+    this.discordApiService.getDiscordUser(this.userId).subscribe({
       next: (data: Profile) => {
         this.userDataStatus = true;
         this.userData = data;
@@ -38,8 +38,8 @@ export class CardProfileComponent implements OnInit {
         // Change all the /n to <br>
         this.userBioFormatted = this.userData.user_profile?.bio?.replace(/\n/g, '<br>');
 
-        let themeColors = this.userData.user_profile?.theme_colors || [];
-        if (themeColors.length == 0) {
+        const themeColors = this.userData.user_profile?.theme_colors || [];
+        if (themeColors.length === 0) {
           this.themesColor = ['#5C5C5C', '#5C5C5C'];
         } else {
           // Convert the decimal color to hex
@@ -58,7 +58,7 @@ export class CardProfileComponent implements OnInit {
   }
 
   public sendMessage(): void {
-    window.open('https://discord.com/users/' + this.userId, '_blank');
+    window.open(`https://discord.com/users/${this.userId}`, '_blank');
 
     this.message = '';
   }
