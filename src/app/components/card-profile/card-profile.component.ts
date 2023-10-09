@@ -32,8 +32,6 @@ export class CardProfileComponent implements OnInit {
   public getDiscordUserData(): void {
     this.discordApiService.getDiscordUser(this.userId).subscribe({
       next: (data: Profile) => {
-        console.log(data);
-
         this.userDataStatus = true;
         this.userData = data;
 
