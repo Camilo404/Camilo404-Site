@@ -34,11 +34,11 @@
                   <p>{{userData?.user_profile?.pronouns || ''}}</p>
                 </div>
                 <hr />
-                <div class="basic-infos">
+                <div class="basic-infos" *ngIf="userData?.user_profile?.bio!.length > 0">
                   <div class="category-title">About Me</div>
                   <markdown class="markdown" [data]="userBioFormatted" [inline]="false"></markdown>
                 </div>
-                <div class="note" *ngIf="userData?.connected_accounts!.length > 0">
+                <div class="connected-accounts" *ngIf="userData?.connected_accounts!.length > 0">
                   <div class="category-title">Connected accounts</div>
                   <div class="badges-connected-accounts">
                     <div class="badge-connected-account" *ngFor="let account of userData?.connected_accounts">
