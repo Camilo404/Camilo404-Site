@@ -15,7 +15,7 @@ declare global {
 })
 export class CardProfileComponent implements OnInit {
 
-  userId = '602977635873718282';
+  userId = '201796217292718080';
   userDataStatus = false;
   userData?: Profile;
   userBioFormatted?: string;
