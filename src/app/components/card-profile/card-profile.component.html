@@ -48,7 +48,7 @@
                   </div>
                 </div>
                 <div class="message">
-                  <input type="text" placeholder="Send a message to @wnea" [(ngModel)]="message" (keyup.enter)="sendMessage()"/>
+                  <input type="text" placeholder="Send a message to @{{userData?.user?.username}}" [(ngModel)]="message" (keyup.enter)="sendMessage()"/>
                 </div>
               </div>
             </div>
