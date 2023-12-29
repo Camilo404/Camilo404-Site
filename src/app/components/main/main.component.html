@@ -42,7 +42,11 @@
 
   </div>
 
-  <i class='iconVolume text-white bx bxs-volume-mute bx-tada bx-flip-vertical' #iconVolume (click)="toggleMute()"></i>
+  <div id="sound-slider__container">
+    <i class='iconVolume text-white bx bxs-volume-mute bx-tada bx-flip-vertical' #iconVolume (click)="toggleMute()"></i>
+    <input type="range" #volumeInput value="0" min="0" max="100" id="sound-slider" (input)="changeVolume($event)">
+    <p id="volume">{{volume}}</p>
+  </div>
 
   <app-card-profile></app-card-profile>
 </div>
