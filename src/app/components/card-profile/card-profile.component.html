@@ -12,6 +12,15 @@
                 <a href="https://discord.com/users/{{userId}}" target="_blank">
                   <div class="profile-logo">
                     <img src="https://camilo404.azurewebsites.net/api/avatar/{{userId}}" />
+                    <div class="presence-state" [ngClass]="{
+                      'online': lanyardData?.d?.discord_status === 'online',
+                      'idle': lanyardData?.d?.discord_status === 'idle',
+                      'dnd': lanyardData?.d?.discord_status === 'dnd',
+                      'offline': lanyardData?.d?.discord_status === 'offline',
+                      'streaming': lanyardData?.d?.discord_status === 'streaming',
+                      'invisible': lanyardData?.d?.discord_status === 'invisible',
+                      'unknown': lanyardData?.d?.discord_status === 'unknown',
+                    }"></div>
                   </div>
                 </a>
                 <div class="badges-container">
@@ -38,11 +47,33 @@
                   <div class="category-title">About Me</div>
                   <markdown class="markdown" [data]="userBioFormatted" [inline]="false"></markdown>
                 </div>
+                <div class="activities" *ngIf="lanyardActivities.length > 0">
+                  <div class="category-title">{{lanyardActivities.length > 1 ? 'Activities' : 'Activity'}}</div>
+                  <div *ngFor="let activity of lanyardActivities">
+                    <div class="flex items-center gap-4 my-4">
+                      <div class="activity-icon">
+                        <div *ngIf="activity.name !== 'Spotify'">
+                          <img class="large-img" *ngIf="activity.assets?.large_image" src="https://cdn.discordapp.com/app-assets/{{activity.application_id}}/{{activity.assets?.large_image}}.png" alt="{{activity.type}}" />
+                          <img class="small-img" *ngIf="activity.assets?.small_image" src="https://cdn.discordapp.com/app-assets/{{activity.application_id}}/{{activity.assets?.small_image}}.png" alt="{{activity.type}}" />
+                        </div>
+                        <div *ngIf="activity.name === 'Spotify'">
+                          <img class="large-img" *ngIf="activity.assets?.large_image" [src]="'https://i.scdn.co/image/' + getActivityImageId(activity.assets?.large_image || '')" alt="{{activity.type}}" />
+                          <img class="small-img" *ngIf="activity.assets?.small_image" [src]="'https://i.scdn.co/image/' + getActivityImageId(activity.assets?.small_image || '')" alt="{{activity.type}}" />
+                        </div>
+                      </div>
+                      <div class="activity-info">
+                        <p class="font-bold">{{activity.name}}</p>
+                        <p>{{activity.details}}</p>
+                        <p>{{activity.state}}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
                 <div class="connected-accounts" *ngIf="userData?.connected_accounts!.length > 0">
                   <div class="category-title">Connected accounts</div>
                   <div class="badges-connected-accounts">
                     <div class="badge-connected-account" *ngFor="let account of userData?.connected_accounts">
-                      <img src="../../../assets/images/connections/{{account.type}}.svg" alt="{{account.type}}" />
+                      <img src="../../../assets/images/connections/{{account.type}}.svg" alt="{{account.type}}" width="24px" height="24px" />
                       <div class="tooltip tooltip-down">{{account.name}}</div>
                     </div>
                   </div>

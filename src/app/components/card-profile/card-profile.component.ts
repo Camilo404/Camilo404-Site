@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { DiscordApiService } from 'src/app/services/discord-api.service';
 import { Profile } from 'src/app/models/discord-profile.model';
+import { LanyardService } from 'src/app/services/lanyard.service';
+import { Lanyard, Activity } from 'src/app/models/lanyard-profile.model';
 
 declare global {
   interface Window {
@@ -22,11 +24,15 @@ export class CardProfileComponent implements OnInit {
   themesColor: string[] = [];
 
   message = '';
+  lanyardData!: Lanyard | null;
+  lanyardActivities: Activity[] = [];
 
-  constructor(private discordApiService: DiscordApiService) { }
+  constructor(private discordApiService: DiscordApiService, private lanyardService: LanyardService) { }
 
   ngOnInit(): void {
     this.getDiscordUserData();
+
+    this.getLanyardData();
   }
 
   public getDiscordUserData(): void {
@@ -55,6 +61,33 @@ export class CardProfileComponent implements OnInit {
     }).add(() => {
       window.loadAtropos();
     });
+  }
+
+  public getLanyardData(): void {
+    this.lanyardService.setupWebSocket();
+
+    this.lanyardService.getLanyardData().subscribe({
+      next: (data) => {
+        console.log(data);
+        this.lanyardData = data;
+        console.log(this.lanyardData.d?.discord_status);
+
+        this.lanyardActivities = this.lanyardData.d?.activities || [];
+        console.log(this.lanyardActivities);
+      },
+      error: (error) => {
+        console.log(error);
+      }
+    });
+  }
+
+  getActivityImageId(imageUrl: string): string {
+    if (imageUrl && imageUrl.startsWith('spotify:')) {
+      const parts = imageUrl.split(':');
+      return parts[1];
+    } else {
+      return imageUrl;
+    }
   }
 
   public sendMessage(): void {
