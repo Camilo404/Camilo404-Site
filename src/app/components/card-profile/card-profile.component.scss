@@ -104,6 +104,17 @@
     width: calc(100% - 30px);
     top: -50px;
 
+    a {
+      position: relative;
+
+      .avatar-decoration {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+      }
+    }
+
     .profile-logo {
       position: relative;
       border: 6px solid #292b2f;

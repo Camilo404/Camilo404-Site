@@ -3,6 +3,7 @@ import { DiscordApiService } from 'src/app/services/discord-api.service';
 import { Profile } from 'src/app/models/discord-profile.model';
 import { LanyardService } from 'src/app/services/lanyard.service';
 import { Lanyard, Activity } from 'src/app/models/lanyard-profile.model';
+import { environment } from 'src/environments/environment';
 
 declare global {
   interface Window {
@@ -17,7 +18,7 @@ declare global {
 })
 export class CardProfileComponent implements OnInit {
 
-  userId = '201796217292718080';
+  userId = environment.discordId;
   userDataStatus = false;
   userData?: Profile;
   userBioFormatted?: string;
@@ -40,6 +41,7 @@ export class CardProfileComponent implements OnInit {
       next: (data: Profile) => {
         this.userDataStatus = true;
         this.userData = data;
+        console.log(this.userData);
 
         // Change all the /n to <br>
         this.userBioFormatted = this.userData.user_profile?.bio?.replace(/\n/g, '<br>');

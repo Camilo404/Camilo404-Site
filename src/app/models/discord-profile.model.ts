@@ -9,7 +9,6 @@ export interface Profile {
   badges?: Badge[];
   guild_badges?: any[];
   mutual_guilds?: MutualGuild[];
-  legacy_username?: string;
 }
 
 export interface Badge {
@@ -24,19 +23,11 @@ export interface ConnectedAccount {
   id?: string;
   name?: string;
   verified?: boolean;
-  metadata?: Metadata;
-}
-
-export interface Metadata {
-  created_at?: Date;
-  game_count?: string;
-  item_count_dota2?: string;
-  item_count_tf2?: string;
 }
 
 export interface MutualGuild {
   id?: string;
-  nick?: null | string;
+  nick?: null;
 }
 
 export interface User {
@@ -44,6 +35,7 @@ export interface User {
   username?: string;
   global_name?: string;
   avatar?: string;
+  avatar_decoration_data?: AvatarDecorationData;
   discriminator?: string;
   public_flags?: number;
   flags?: number;
@@ -51,15 +43,24 @@ export interface User {
   banner_color?: null;
   accent_color?: null;
   bio?: string;
-  avatar_decoration?: null;
+}
+
+export interface AvatarDecorationData {
+  asset?: string;
+  sku_id?: string;
 }
 
 export interface UserProfile {
   bio?: string;
   accent_color?: null;
   pronouns?: string;
+  profile_effect?: ProfileEffect;
   banner?: string;
   theme_colors?: number[];
   popout_animation_particle_type?: null;
   emoji?: null;
+}
+
+export interface ProfileEffect {
+  id?: string;
 }

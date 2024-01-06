@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, Subject } from 'rxjs';
 import { Lanyard } from '../models/lanyard-profile.model';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +15,7 @@ export class LanyardService {
   private dataInitial = {
     op: 2,
     d: {
-      subscribe_to_id: '201796217292718080'
+      subscribe_to_id: environment.discordId
     }
   };
 
