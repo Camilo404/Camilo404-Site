@@ -68,12 +68,9 @@ export class CardProfileComponent implements OnInit {
 
     this.lanyardService.getLanyardData().subscribe({
       next: (data) => {
-        console.log(data);
         this.lanyardData = data;
-        console.log(this.lanyardData.d?.discord_status);
 
         this.lanyardActivities = this.lanyardData.d?.activities || [];
-        console.log(this.lanyardActivities);
       },
       error: (error) => {
         console.log(error);
