@@ -160,6 +160,7 @@
         height: 20px;
         border-radius: 50%;
         border: 2px solid #292b2f;
+        z-index: 1;
 
         &.online {
           background: #43b581;
@@ -473,9 +474,7 @@
 }
 
 .nitro-card .card-body .profile-header .profile-logo {
-  position: relative;
   border-color: transparent;
-  z-index: 0;
 }
 
 .nitro-card .card-body .profile-header .profile-logo:after {

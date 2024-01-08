@@ -41,7 +41,6 @@ export class CardProfileComponent implements OnInit {
       next: (data: Profile) => {
         this.userDataStatus = true;
         this.userData = data;
-        console.log(this.userData);
 
         // Change all the /n to <br>
         this.userBioFormatted = this.userData.user_profile?.bio?.replace(/\n/g, '<br>');
@@ -93,5 +92,9 @@ export class CardProfileComponent implements OnInit {
     window.open(`https://discord.com/users/${this.userId}`, '_blank');
 
     this.message = '';
+  }
+
+  handleImageError(event: any) {
+    event.target.src = '../../../assets/images/no-image-found.jpg';
   }
 }

@@ -10,7 +10,7 @@
             <div class="card-body">
               <div class="profile-header" data-atropos-offset="2.5">
                 <a href="https://discord.com/users/{{userId}}" target="_blank">
-                  <img class="avatar-decoration" *ngIf="userData?.user?.avatar_decoration_data?.asset" src="https://cdn.discordapp.com/avatar-decoration-presets/{{userData?.user?.avatar_decoration_data?.asset}}.png" alt="">
+                  <img class="avatar-decoration" *ngIf="userData?.user?.avatar_decoration_data?.asset" src="https://cdn.discordapp.com/avatar-decoration-presets/{{userData?.user?.avatar_decoration_data?.asset}}.png" alt="Avatar decoration">
                   <div class="profile-logo">
                     <img src="https://camilo404.azurewebsites.net/api/avatar/{{userId}}" />
                     <div class="presence-state" [ngClass]="{
@@ -54,12 +54,12 @@
                     <div class="flex items-center gap-4 my-4">
                       <div class="activity-icon">
                         <div *ngIf="activity.name !== 'Spotify'">
-                          <img class="large-img" *ngIf="activity.assets?.large_image" src="https://cdn.discordapp.com/app-assets/{{activity.application_id}}/{{activity.assets?.large_image}}.png" alt="{{activity.type}}" />
-                          <img class="small-img" *ngIf="activity.assets?.small_image" src="https://cdn.discordapp.com/app-assets/{{activity.application_id}}/{{activity.assets?.small_image}}.png" alt="{{activity.type}}" />
+                          <img class="large-img" src="https://cdn.discordapp.com/app-assets/{{activity.application_id}}/{{activity.assets?.large_image}}.png" (error)="handleImageError($event)" alt="{{activity.type}}" />
+                          <img class="small-img" *ngIf="activity.assets?.small_image" src="https://cdn.discordapp.com/app-assets/{{activity.application_id}}/{{activity.assets?.small_image}}.png" (error)="handleImageError($event)" alt="{{activity.type}}" />
                         </div>
                         <div *ngIf="activity.name === 'Spotify'">
-                          <img class="large-img" *ngIf="activity.assets?.large_image" [src]="'https://i.scdn.co/image/' + getActivityImageId(activity.assets?.large_image || '')" alt="{{activity.type}}" />
-                          <img class="small-img" *ngIf="activity.assets?.small_image" [src]="'https://i.scdn.co/image/' + getActivityImageId(activity.assets?.small_image || '')" alt="{{activity.type}}" />
+                          <img class="large-img" [src]="'https://i.scdn.co/image/' + getActivityImageId(activity.assets?.large_image || '')" (error)="handleImageError($event)" alt="{{activity.type}}" />
+                          <img class="small-img" *ngIf="activity.assets?.small_image" [src]="'https://i.scdn.co/image/' + getActivityImageId(activity.assets?.small_image || '')" (error)="handleImageError($event)" alt="{{activity.type}}" />
                         </div>
                       </div>
                       <div class="activity-info">
