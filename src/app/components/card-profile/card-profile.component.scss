@@ -146,6 +146,7 @@
         font-weight: 600;
         text-transform: uppercase;
         transition-duration: 0.15s;
+        z-index: 1;
       }
 
       &:hover::before {
