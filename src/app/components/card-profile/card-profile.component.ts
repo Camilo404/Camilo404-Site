@@ -70,8 +70,33 @@ export class CardProfileComponent implements OnInit {
     this.lanyardService.getLanyardData().subscribe({
       next: (data) => {
         this.lanyardData = data;
+        console.log(this.lanyardData);
 
         this.lanyardActivities = this.lanyardData.d?.activities || [];
+
+        // Format the timestamps of the activities
+        this.lanyardActivities.forEach((activity) => {
+          if (activity.timestamps) {
+            const startTime = new Date(activity.timestamps.start || 0);
+            const currentTime = new Date();
+            const timeDifference = currentTime.getTime() - startTime.getTime();
+
+            // Calcula las horas y minutos
+            const hours = Math.floor(timeDifference / (1000 * 60 * 60));
+            const minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
+
+            // Crea el mensaje de hace x horas y x minutos
+            let timeAgoMessage = '';
+            if (hours > 0) {
+              timeAgoMessage += `${hours} ${hours === 1 ? 'hour elapsed' : 'hours elapsed'}`;
+            }
+            if (minutes > 0) {
+              timeAgoMessage += ` ${minutes} ${minutes === 1 ? 'minute elapsed' : 'minutes elapsed'}`;
+            }
+
+            activity.timestamps.start = timeAgoMessage || '';
+          }
+        });
       },
       error: (error) => {
         console.log(error);

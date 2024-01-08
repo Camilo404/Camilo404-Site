@@ -38,7 +38,7 @@ export interface Assets {
 }
 
 export interface Timestamps {
-  start?: number;
+  start?: any;
 }
 
 export interface DiscordUser {
