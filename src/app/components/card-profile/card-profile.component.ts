@@ -80,17 +80,20 @@ export class CardProfileComponent implements OnInit {
             const currentTime = new Date();
             const timeDifference = currentTime.getTime() - startTime.getTime();
 
-            // Calcula las horas y minutos
             const hours = Math.floor(timeDifference / (1000 * 60 * 60));
             const minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
 
-            // Crea el mensaje de hace x horas y x minutos
             let timeAgoMessage = '';
             if (hours > 0) {
-              timeAgoMessage += `${hours} ${hours === 1 ? 'hour elapsed' : 'hours elapsed'}`;
+              timeAgoMessage += `${hours} ${hours === 1 ? 'hour' : 'hours'}`;
             }
+
             if (minutes > 0) {
-              timeAgoMessage += ` ${minutes} ${minutes === 1 ? 'minute elapsed' : 'minutes elapsed'}`;
+              if (timeAgoMessage !== '') {
+                timeAgoMessage += ` and ${minutes} ${minutes === 1 ? 'minute elapsed' : 'minutes elapsed'}`;
+              } else {
+                timeAgoMessage += `${minutes} ${minutes === 1 ? 'minute elapsed' : 'minutes elapsed'}`;
+              }
             }
 
             activity.timestamps.start = timeAgoMessage || '';
