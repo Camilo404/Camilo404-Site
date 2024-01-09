@@ -26,6 +26,7 @@ export interface Activity {
   timestamps?: Timestamps;
   application_id?: string;
   assets?: Assets;
+  sync_id?: string;
   created_at?: number;
   buttons?: string[];
 }
