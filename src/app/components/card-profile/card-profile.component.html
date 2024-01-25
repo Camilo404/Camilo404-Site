@@ -59,7 +59,7 @@
                           <img class="small-img" *ngIf="activity.assets?.small_image" src="https://cdn.discordapp.com/app-assets/{{activity.application_id}}/{{activity.assets?.small_image}}.png" (error)="handleImageError($event)" alt="{{activity.type}}" />
                         </div>
                         <div *ngIf="activity.name === 'Spotify'">
-                          <a href="https://open.spotify.com/track/{{activity.sync_id}}" target="_blank">
+                          <a href="https://open.spotify.com/track/{{activity.sync_id}}" target="_blank" class="link">
                             <img class="large-img" [src]="'https://i.scdn.co/image/' + getActivityImageId(activity.assets?.large_image || '')" (error)="handleImageError($event)" alt="{{activity.type}}" />
                             <img class="small-img" *ngIf="activity.assets?.small_image" [src]="'https://i.scdn.co/image/' + getActivityImageId(activity.assets?.small_image || '')" (error)="handleImageError($event)" alt="{{activity.type}}" />
                           </a>
@@ -67,7 +67,7 @@
                       </div>
                       <div class="activity-info">
                         <p class="font-bold">{{activity.name}}</p>
-                        <a *ngIf="activity.name === 'Spotify'" href="https://open.spotify.com/track/{{activity.sync_id}}" target="_blank">{{activity.details}}</a>
+                        <a *ngIf="activity.name === 'Spotify'" href="https://open.spotify.com/track/{{activity.sync_id}}" target="_blank" class="link">{{activity.details}}</a>
                         <p *ngIf="activity.name !== 'Spotify'">{{activity.details}}</p>
                         <p>{{activity.state}}</p>
                         <p>{{activity.timestamps?.start}}</p>
