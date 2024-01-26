@@ -20,22 +20,22 @@
     <section class="glowing-icons">
       <ul class="flex flex-wrap gap-2">
         <li>
-          <a href="https://github.com/Camilo404" target="_blank">
+          <a href="https://github.com/Camilo404" target="_blank" class="hovered">
             <i class="fa-brands fa-github"></i>
           </a>
         </li>
         <li>
-          <a href="https://www.youtube.com/channel/UChzlaSE1adSPVGYBBOQ1ibg" target="_blank">
+          <a href="https://www.youtube.com/channel/UChzlaSE1adSPVGYBBOQ1ibg" target="_blank" class="hovered">
             <i class="fa-brands fa-youtube"></i>
           </a>
         </li>
         <li>
-          <a href="https://www.instagram.com/camiloxtz/" target="_blank" >
+          <a href="https://www.instagram.com/camiloxtz/" target="_blank" class="hovered">
             <i class="fa-brands fa-instagram"></i>
           </a>
         </li>
         <li>
-          <a href="https://steamcommunity.com/profiles/76561198832154348/" target="_blank">
+          <a href="https://steamcommunity.com/profiles/76561198832154348/" target="_blank" class="hovered">
             <i class="fa-brands fa-steam"></i>
           </a>
         </li>
@@ -43,8 +43,8 @@
     </section>
 
     <div id="sound-slider__container" class="mt-5">
-      <i class='iconVolume text-white bx bxs-volume-mute bx-tada bx-flip-vertical' #iconVolume (click)="toggleMute()"></i>
-      <input type="range" #volumeInput value="0" min="0" max="100" id="sound-slider" (input)="changeVolume($event)">
+      <i class='iconVolume text-white hovered bx bxs-volume-mute bx-tada bx-flip-vertical' #iconVolume (click)="toggleMute()"></i>
+      <input type="range" #volumeInput value="0" min="0" max="100" id="sound-slider" (input)="changeVolume($event)" class="hovered">
       <p id="volume">{{volume}}</p>
     </div>
   </div>

@@ -15,7 +15,6 @@
     div {
       border: 1px solid #fff;
       border-radius: 50%;
-      animation: pulse 2.5s linear infinite;
       box-shadow: 0 0 50px 5px #ffffff6e;
     }
   }
@@ -27,5 +26,11 @@
 
   div {
     transition: transform 0.2s ease-out;
+  }
+}
+
+.hover {
+  div {
+    transform: scale(1.5);
   }
 }

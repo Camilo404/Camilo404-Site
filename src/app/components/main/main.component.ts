@@ -67,9 +67,9 @@ export class MainComponent implements OnInit, AfterViewInit {
           this.renderer.addClass(this.iconVolume.nativeElement, 'bx-flip-vertical');
         } else {
           let localVolume = localStorage.getItem('volume');
-
           this.volume = localVolume ? parseInt(localVolume) : 100;
           this.volumeInput.nativeElement.value = this.volume;
+          this.bgVideo.nativeElement.volume = this.volume / 100;
 
           this.renderer.removeClass(this.iconVolume.nativeElement, 'bxs-volume-mute');
           this.renderer.removeClass(this.iconVolume.nativeElement, 'bx-tada');
