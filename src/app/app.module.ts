@@ -10,13 +10,15 @@ import { MainComponent } from './components/main/main.component';
 import { HttpClientModule } from '@angular/common/http';
 import { MarkdownModule } from 'ngx-markdown';
 import { ClockComponent } from './components/clock/clock.component';
+import { CustomCursorComponent } from './components/custom-cursor/custom-cursor.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     CardProfileComponent,
     MainComponent,
-    ClockComponent
+    ClockComponent,
+    CustomCursorComponent
   ],
   imports: [
     BrowserModule,
