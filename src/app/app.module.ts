@@ -1,24 +1,24 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { CardProfileComponent } from './components/card-profile/card-profile.component';
 import { MainComponent } from './components/main/main.component';
-
-import { HttpClientModule } from '@angular/common/http';
-import { MarkdownModule } from 'ngx-markdown';
-import { ClockComponent } from './components/clock/clock.component';
 import { CustomCursorComponent } from './components/custom-cursor/custom-cursor.component';
+import { ClockComponent } from './components/clock/clock.component';
+import { CardProfileComponent } from './components/card-profile/card-profile.component';
+
+import { MarkdownModule } from 'ngx-markdown';
 
 @NgModule({
   declarations: [
     AppComponent,
-    CardProfileComponent,
     MainComponent,
+    CustomCursorComponent,
     ClockComponent,
-    CustomCursorComponent
+    CardProfileComponent
   ],
   imports: [
     BrowserModule,
