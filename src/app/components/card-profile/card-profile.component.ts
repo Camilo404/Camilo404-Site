@@ -112,7 +112,8 @@ export class CardProfileComponent implements OnInit {
       const parts = imageUrl.split(':');
       return parts[1];
     } else {
-      return imageUrl;
+      const parts = imageUrl.split('https/');
+      return `https://${parts[1]}`;
     }
   }
 
