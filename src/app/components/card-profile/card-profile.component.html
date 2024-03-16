@@ -55,13 +55,13 @@
                     <div class="flex items-center gap-4 my-4">
                       <div class="activity-icon">
                         <div *ngIf="activity.name !== 'Spotify'">
-                          <img class="large-img" src="{{getActivityImageId(activity.assets?.large_image || '')}}" (error)="handleImageError($event)" alt="{{activity.type}}" />
-                          <img class="small-img" *ngIf="activity.assets?.small_image" src="{{getActivityImageId(activity.assets?.small_image || '')}}" (error)="handleImageError($event)" alt="{{activity.type}}" />
+                          <img class="large-img" src="{{getActivityImageUrl(activity.assets?.large_image || '')}}" (error)="handleImageError($event)" alt="{{activity.type}}" />
+                          <img class="small-img" *ngIf="activity.assets?.small_image" src="{{getActivityImageUrl(activity.assets?.small_image || '')}}" (error)="handleImageError($event)" alt="{{activity.type}}" />
                         </div>
                         <div *ngIf="activity.name === 'Spotify'">
                           <a href="https://open.spotify.com/track/{{activity.sync_id}}" target="_blank" class="link">
-                            <img class="large-img" [src]="'https://i.scdn.co/image/' + getActivityImageId(activity.assets?.large_image || '')" (error)="handleImageError($event)" alt="{{activity.type}}" />
-                            <img class="small-img" *ngIf="activity.assets?.small_image" [src]="'https://i.scdn.co/image/' + getActivityImageId(activity.assets?.small_image || '')" (error)="handleImageError($event)" alt="{{activity.type}}" />
+                            <img class="large-img" [src]="getActivityImageUrl(activity.assets?.large_image || '')" (error)="handleImageError($event)" alt="{{activity.type}}" />
+                            <img class="small-img" *ngIf="activity.assets?.small_image" [src]="getActivityImageUrl(activity.assets?.small_image || '')" (error)="handleImageError($event)" alt="{{activity.type}}" />
                           </a>
                         </div>
                       </div>

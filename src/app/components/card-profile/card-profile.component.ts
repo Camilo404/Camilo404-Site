@@ -107,10 +107,10 @@ export class CardProfileComponent implements OnInit {
     });
   }
 
-  getActivityImageId(imageUrl: string): string {
+  getActivityImageUrl(imageUrl: string): string {
     if (imageUrl && imageUrl.startsWith('spotify:')) {
       const parts = imageUrl.split(':');
-      return parts[1];
+      return `https://i.scdn.co/image/${parts[1]}`;
     } else {
       const parts = imageUrl.split('https/');
       return `https://${parts[1]}`;
