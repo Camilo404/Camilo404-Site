@@ -77,6 +77,10 @@ export class CardProfileComponent implements OnInit {
         // Format the timestamps of the activities
         this.lanyardActivities.forEach((activity) => {
           if (activity.timestamps) {
+            if(!activity.timestamps.start) {
+              activity.timestamps.start = '';
+              return;
+            };
             const startTime = new Date(activity.timestamps.start || 0);
             const currentTime = new Date();
             const timeDifference = currentTime.getTime() - startTime.getTime();
@@ -107,12 +111,19 @@ export class CardProfileComponent implements OnInit {
     });
   }
 
-  getActivityImageId(imageUrl: string): string {
-    if (imageUrl && imageUrl.startsWith('spotify:')) {
-      const parts = imageUrl.split(':');
-      return parts[1];
+  getActivityImageUrl(activity: Activity, asset?: string): string {
+    if(activity.id === 'custom') {
+      if(activity.emoji?.id) {
+        return `https://cdn.discordapp.com/emojis/${activity.emoji.id}.${activity.emoji.animated ? 'gif' : 'png'}`;
+      } else return `https://camilo404.azurewebsites.net/api/avatar/${this.userId}`;
+    } else if (asset && asset.startsWith('spotify:')) {
+      const parts = asset.split(':');
+      return `https://i.scdn.co/image/${parts[1]}`;
+    } else if(asset && asset.search('https/') !== -1){
+      const parts = asset.split('https/');
+      return `https://${parts[1]}`;
     } else {
-      return imageUrl;
+      return `https://dcdn.dstn.to/app-icons/${activity.application_id}.png`
     }
   }
 
