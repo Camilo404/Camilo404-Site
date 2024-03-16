@@ -1,3 +1,3 @@
 export const environment = {
-  "discordId": "871329074046435338",
+  "discordId": "201796217292718080",
 };
