@@ -20,14 +20,14 @@
     "@angular/router": "^16.0.0",
     "atropos": "^2.0.2",
     "marked": "^4.3.0",
-    "ngx-markdown": "^16.0.0",
+    "ngx-markdown": "^17.2.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
-    "zone.js": "~0.13.0"
+    "zone.js": "^0.14.0"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^16.0.2",
-    "@angular/cli": "~16.0.2",
+    "@angular/cli": "^16.2.14",
     "@angular/compiler-cli": "^16.0.0",
     "@types/jasmine": "~4.3.0",
     "@types/marked": "^4.3.0",
