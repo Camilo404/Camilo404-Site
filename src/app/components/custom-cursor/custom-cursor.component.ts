@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit, ElementRef } from '@angular/core';
 
 @Component({
   selector: 'app-custom-cursor',
@@ -7,7 +7,7 @@ import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 })
 export class CustomCursorComponent implements OnInit, AfterViewInit {
 
-  @ViewChild('ring') ring: any;
+  @ViewChild('ring') ring!: ElementRef;
 
   constructor() { }
 

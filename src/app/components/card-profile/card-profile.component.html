@@ -15,7 +15,7 @@
                       <img class="avatar-decoration" src="https://cdn.discordapp.com/avatar-decoration-presets/{{userData?.user?.avatar_decoration_data?.asset}}.png" alt="Avatar decoration">
                     }
                     <div class="profile-logo">
-                      <img src="https://camilo404.azurewebsites.net/api/avatar/{{userId}}" />
+                      <img src="https://camilo404.azurewebsites.net/api/avatar/{{userId}}" alt="Avatar"/>
                       <div class="presence-state" [ngClass]="{
                         'online': lanyardData?.d?.discord_status === 'online',
                         'idle': lanyardData?.d?.discord_status === 'idle',

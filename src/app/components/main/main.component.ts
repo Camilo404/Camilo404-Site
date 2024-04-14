@@ -1,25 +1,21 @@
-import { Component, OnInit, ViewChild, Renderer2, AfterViewInit } from '@angular/core';
+import { Component, ViewChild, Renderer2, AfterViewInit, ElementRef } from '@angular/core';
 
 @Component({
   selector: 'app-main',
   templateUrl: './main.component.html',
   styleUrls: ['./main.component.scss']
 })
-export class MainComponent implements OnInit, AfterViewInit {
+export class MainComponent implements AfterViewInit {
 
   public isMuted: boolean = true;
 
-  @ViewChild('bgVideo') bgVideo: any;
-  @ViewChild('iconVolume') iconVolume: any;
-  @ViewChild('volumeInput') volumeInput: any;
+  @ViewChild('bgVideo') bgVideo!: ElementRef;
+  @ViewChild('iconVolume') iconVolume!: ElementRef;
+  @ViewChild('volumeInput') volumeInput!: ElementRef;
 
   public volume: number = 0;
 
   constructor(private renderer: Renderer2) { }
-
-  ngOnInit(): void {
-
-  }
 
   ngAfterViewInit(): void {
     this.bgVideo.nativeElement.muted = this.isMuted;
@@ -66,7 +62,7 @@ export class MainComponent implements OnInit, AfterViewInit {
           this.renderer.addClass(this.iconVolume.nativeElement, 'bx-tada');
           this.renderer.addClass(this.iconVolume.nativeElement, 'bx-flip-vertical');
         } else {
-          let localVolume = localStorage.getItem('volume');
+          const localVolume = localStorage.getItem('volume');
           this.volume = localVolume ? parseInt(localVolume) : 100;
           this.volumeInput.nativeElement.value = this.volume;
           this.bgVideo.nativeElement.volume = this.volume / 100;
