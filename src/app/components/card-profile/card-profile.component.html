@@ -2,95 +2,117 @@
   <div class="atropos-scale">
     <div class="atropos-rotate">
       <div class="atropos-inner">
-        <div class="my-[0.45rem]" data-atropos-opacity="0.9;1" *ngIf="userDataStatus">
-          <div class="card nitro-card" [ngStyle]="{'--color1': themesColor[0], '--color2': themesColor[1]}">
-            <div class="card-header">
-              <div [ngStyle]="{'background-image': 'url(https://camilo404.azurewebsites.net/api/banner/' + userId + ')'}" class="banner-img"></div>
-            </div>
-            <div class="card-body">
-              <div class="profile-header" data-atropos-offset="2.5">
-                <a href="https://discord.com/users/{{userId}}" target="_blank">
-                  <img class="avatar-decoration" *ngIf="userData?.user?.avatar_decoration_data?.asset" src="https://cdn.discordapp.com/avatar-decoration-presets/{{userData?.user?.avatar_decoration_data?.asset}}.png" alt="Avatar decoration">
-                  <div class="profile-logo">
-                    <img src="https://camilo404.azurewebsites.net/api/avatar/{{userId}}" />
-                    <div class="presence-state" [ngClass]="{
-                      'online': lanyardData?.d?.discord_status === 'online',
-                      'idle': lanyardData?.d?.discord_status === 'idle',
-                      'dnd': lanyardData?.d?.discord_status === 'dnd',
-                      'offline': lanyardData?.d?.discord_status === 'offline',
-                      'streaming': lanyardData?.d?.discord_status === 'streaming',
-                      'invisible': lanyardData?.d?.discord_status === 'invisible',
-                      'unknown': lanyardData?.d?.discord_status === 'unknown',
-                      'default': !lanyardData?.d?.discord_status
-                    }"></div>
-                  </div>
-                </a>
-                <div class="badges-container">
-                  <div class="badge-item" *ngFor="let badge of userData?.badges">
-                    <a href="{{badge.link || ''}}" target="_blank" class="badge-link">
-                      <img src="https://camilo404.azurewebsites.net/api/badge/{{badge.icon}}.png" alt="{{badge.id}}" />
-                      <div class="tooltip tooltip-up">{{badge.description}}</div>
-                    </a>
-                  </div>
-                </div>
+        @if (userDataStatus) {
+          <div class="my-[0.45rem]" data-atropos-opacity="0.9;1">
+            <div class="card nitro-card" [ngStyle]="{'--color1': themesColor[0], '--color2': themesColor[1]}">
+              <div class="card-header">
+                <div [ngStyle]="{'background-image': 'url(https://camilo404.azurewebsites.net/api/banner/' + userId + ')'}" class="banner-img"></div>
               </div>
-              <div class="profile-body" data-atropos-offset="2.5">
-                <div class="global-name">
-                  <p>{{userData?.user?.global_name || userData?.user?.username}}</p>
-                </div>
-                <div class="username">
-                  <p>{{userData?.user?.username}}</p>
-                </div>
-                <div class="pronouns">
-                  <p>{{userData?.user_profile?.pronouns || ''}}</p>
-                </div>
-                <hr />
-                <div class="basic-infos" *ngIf="userData?.user_profile?.bio!.length > 0">
-                  <div class="category-title">About Me</div>
-                  <markdown class="markdown" [data]="userBioFormatted" [inline]="false"></markdown>
-                </div>
-                <div class="activities" *ngIf="lanyardActivities.length > 0">
-                  <div class="category-title">{{lanyardActivities.length > 1 ? 'Activities' : 'Activity'}}</div>
-                  <div *ngFor="let activity of lanyardActivities">
-                    <div class="flex items-center gap-4 my-4">
-                      <div class="activity-icon">
-                        <div *ngIf="activity.name !== 'Spotify'">
-                          <img class="large-img" src="https://cdn.discordapp.com/app-assets/{{activity.application_id}}/{{activity.assets?.large_image}}.png" (error)="handleImageError($event)" alt="{{activity.type}}" />
-                          <img class="small-img" *ngIf="activity.assets?.small_image" src="https://cdn.discordapp.com/app-assets/{{activity.application_id}}/{{activity.assets?.small_image}}.png" (error)="handleImageError($event)" alt="{{activity.type}}" />
-                        </div>
-                        <div *ngIf="activity.name === 'Spotify'">
-                          <a href="https://open.spotify.com/track/{{activity.sync_id}}" target="_blank" class="link">
-                            <img class="large-img" [src]="'https://i.scdn.co/image/' + getActivityImageId(activity.assets?.large_image || '')" (error)="handleImageError($event)" alt="{{activity.type}}" />
-                            <img class="small-img" *ngIf="activity.assets?.small_image" [src]="'https://i.scdn.co/image/' + getActivityImageId(activity.assets?.small_image || '')" (error)="handleImageError($event)" alt="{{activity.type}}" />
-                          </a>
-                        </div>
-                      </div>
-                      <div class="activity-info">
-                        <p class="font-bold">{{activity.name}}</p>
-                        <a *ngIf="activity.name === 'Spotify'" href="https://open.spotify.com/track/{{activity.sync_id}}" target="_blank" class="link">{{activity.details}}</a>
-                        <p *ngIf="activity.name !== 'Spotify'">{{activity.details}}</p>
-                        <p>{{activity.state}}</p>
-                        <p>{{activity.timestamps?.start}}</p>
-                      </div>
+              <div class="card-body">
+                <div class="profile-header" data-atropos-offset="2.5">
+                  <a href="https://discord.com/users/{{userId}}" target="_blank">
+                    @if (userData?.user?.avatar_decoration_data?.asset) {
+                      <img class="avatar-decoration" src="https://cdn.discordapp.com/avatar-decoration-presets/{{userData?.user?.avatar_decoration_data?.asset}}.png" alt="Avatar decoration">
+                    }
+                    <div class="profile-logo">
+                      <img src="https://camilo404.azurewebsites.net/api/avatar/{{userId}}" alt="Avatar"/>
+                      <div class="presence-state" [ngClass]="{
+                        'online': lanyardData?.d?.discord_status === 'online',
+                        'idle': lanyardData?.d?.discord_status === 'idle',
+                        'dnd': lanyardData?.d?.discord_status === 'dnd',
+                        'offline': lanyardData?.d?.discord_status === 'offline',
+                        'streaming': lanyardData?.d?.discord_status === 'streaming',
+                        'invisible': lanyardData?.d?.discord_status === 'invisible',
+                        'unknown': lanyardData?.d?.discord_status === 'unknown',
+                        'default': !lanyardData?.d?.discord_status
+                      }"></div>
                     </div>
+                  </a>
+                  <div class="badges-container">
+                    @for (badge of userData?.badges; track $index) {
+                      <div class="badge-item">
+                        <a href="{{badge.link || ''}}" target="_blank" class="badge-link">
+                          <img src="https://camilo404.azurewebsites.net/api/badge/{{badge.icon}}.png" alt="{{badge.id}}" />
+                          <div class="tooltip tooltip-up">{{badge.description}}</div>
+                        </a>
+                      </div>
+                    }
                   </div>
                 </div>
-                <div class="connected-accounts" *ngIf="userData?.connected_accounts!.length > 0">
-                  <div class="category-title">Connected accounts</div>
-                  <div class="badges-connected-accounts">
-                    <div class="badge-connected-account" *ngFor="let account of userData?.connected_accounts">
-                      <img src="../../../assets/images/connections/{{account.type}}.svg" alt="{{account.type}}" width="24px" height="24px" />
-                      <div class="tooltip tooltip-down">{{account.name}}</div>
-                    </div>
+                <div class="profile-body" data-atropos-offset="2.5">
+                  <div class="global-name">
+                    <p>{{userData?.user?.global_name || userData?.user?.username}}</p>
                   </div>
-                </div>
-                <div class="message">
-                  <input type="text" placeholder="Send a message to @{{userData?.user?.username}}" [(ngModel)]="message" (keyup.enter)="sendMessage()"/>
+                  <div class="username">
+                    <p>{{userData?.user?.username}}</p>
+                  </div>
+                  <div class="pronouns">
+                    <p>{{userData?.user_profile?.pronouns || ''}}</p>
+                  </div>
+                  <hr />
+                  @if (userData?.user_profile?.bio!.length > 0) {
+                    <div class="basic-infos">
+                      <div class="category-title">About Me</div>
+                      <markdown class="markdown" [data]="userBioFormatted" [inline]="false"></markdown>
+                    </div>
+                  }
+                  @if (lanyardActivities.length > 0) {
+                    <div class="activities">
+                      <div class="category-title">{{lanyardActivities.length > 1 ? 'Activities' : 'Activity'}}</div>
+                      @for (activity of lanyardActivities; track $index) {
+                        <div class="flex items-center gap-4 my-4">
+                          <div class="activity-icon">
+                            @if (activity.name === 'Spotify') {
+                              <a href="https://open.spotify.com/track/{{activity.sync_id}}" target="_blank" class="link">
+                                <img class="large-img" [src]="'https://i.scdn.co/image/' + getActivityImageId(activity.assets?.large_image || '')" (error)="handleImageError($event)" alt="{{activity.type}}" />
+                                @if (activity.assets?.small_image) {
+                                  <img class="small-img" [src]="'https://i.scdn.co/image/' + getActivityImageId(activity.assets?.small_image || '')" (error)="handleImageError($event)" alt="{{activity.type}}" />
+                                }
+                              </a>
+                            } @else {
+                              <img class="large-img" src="https://cdn.discordapp.com/app-assets/{{activity.application_id}}/{{activity.assets?.large_image}}.png" (error)="handleImageError($event)" alt="{{activity.type}}" />
+                              @if (activity.assets?.small_image) {
+                                <img class="small-img" src="https://cdn.discordapp.com/app-assets/{{activity.application_id}}/{{activity.assets?.small_image}}.png" (error)="handleImageError($event)" alt="{{activity.type}}" />
+                              }
+                            }
+                          </div>
+                          <div class="activity-info">
+                            @if (activity.name === 'Spotify') {
+                              <p class="font-bold spotify-title">{{activity.name}}</p>
+                              <a href="https://open.spotify.com/track/{{activity.sync_id}}" target="_blank" class="spotify-link">{{activity.details}}</a>
+                            } @else {
+                              <p class="font-bold">{{activity.name}}</p>
+                              <p>{{activity.details}}</p>
+                            }
+                            <p>{{activity.state}}</p>
+                            <p>{{activity.timestamps?.start}}</p>
+                          </div>
+                        </div>
+                      }
+                    </div>
+                  }
+
+                  @if (userData?.connected_accounts!.length > 0) {
+                    <div class="connected-accounts">
+                      <div class="category-title">Connected accounts</div>
+                      <div class="badges-connected-accounts">
+                        @for (account of userData?.connected_accounts; track $index) {
+                          <div class="badge-connected-account">
+                            <img src="../../../assets/images/connections/{{account.type}}.svg" alt="{{account.type}}" width="24px" height="24px" />
+                            <div class="tooltip tooltip-down">{{account.name}}</div>
+                          </div>
+                        }
+                      </div>
+                    </div>
+                  }
+                  <div class="message">
+                    <input type="text" placeholder="Send a message to @{{userData?.user?.username}}" [(ngModel)]="message" (keyup.enter)="sendMessage()"/>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
+        }
       </div>
     </div>
   </div>

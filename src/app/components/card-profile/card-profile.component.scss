@@ -377,7 +377,19 @@ a {
         font-size: 0.9rem;
         text-wrap: nowrap;
         overflow: overlay;
-        text-overflow: ellipsis;
+
+        .spotify-title {
+          color: #1ed760;
+        }
+
+        .spotify-link {
+          color: #2b98ff;
+          text-decoration: underline;
+
+          &:hover {
+            color: #257dcf;
+          }
+        }
 
         &::-webkit-scrollbar-track
         {

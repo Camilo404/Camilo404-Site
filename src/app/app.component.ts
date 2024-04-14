@@ -1,11 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   title = 'C a m i l o 4 0 4';
   animSeq = ["/", "$", "\\", "|", "$"];
   animIndex = 0;
@@ -21,7 +21,7 @@ export class AppComponent {
       e.preventDefault();
     }, false);
     document.addEventListener("keydown", function (e) {
-      if (e.ctrlKey && (e.keyCode === 85 || e.keyCode === 73 || e.keyCode === 67 || e.keyCode === 86 || e.keyCode === 83 || e.keyCode === 123)) {
+      if (e.ctrlKey && (e.code === 'KeyU' || e.code === 'KeyI' || e.code === 'KeyC' || e.code === 'KeyV' || e.code === 'KeyS' || e.code === 'F12')) {
         e.preventDefault();
       }
     }, false);

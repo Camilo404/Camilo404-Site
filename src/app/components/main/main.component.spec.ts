@@ -1,6 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { HttpClientModule } from '@angular/common/http';
-import { Renderer2 } from '@angular/core';
 
 import { MainComponent } from './main.component';
 
@@ -12,7 +11,6 @@ import { CardProfileComponent } from '../card-profile/card-profile.component';
 describe('MainComponent', () => {
   let component: MainComponent;
   let fixture: ComponentFixture<MainComponent>;
-  let renderer: Renderer2;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -22,8 +20,7 @@ describe('MainComponent', () => {
         ClockComponent,
         CardProfileComponent
       ],
-      imports: [HttpClientModule],
-      providers: [Renderer2]
+      imports: [HttpClientModule]
     });
     fixture = TestBed.createComponent(MainComponent);
     component = fixture.componentInstance;
@@ -49,20 +46,4 @@ describe('MainComponent', () => {
     expect(component.isMuted).toEqual(false);
     expect(component.bgVideo.nativeElement.volume).toEqual(0.5); // 50/100
   });
-
-//   it('should toggle mute and update UI properly', () => {
-//     spyOnProperty(component.bgVideo.nativeElement, 'muted', 'set');
-//     spyOn(renderer, 'removeClass');
-//     spyOn(renderer, 'addClass');
-//     spyOn(localStorage, 'getItem').and.returnValue('50');
-//     component.toggleMute();
-//     expect(component.isMuted).toEqual(false);
-//     expect(component.volume).toEqual(50);
-//     expect(component.bgVideo.nativeElement.muted).toEqual(false);
-//     expect(localStorage.getItem).toHaveBeenCalled();
-//     expect(renderer.removeClass).toHaveBeenCalled(); // Verificar si se llamó al método removeClass
-//     expect(renderer.addClass).toHaveBeenCalled(); // Verificar si se llamó al método addClass
-//     // Agregar más expectativas según sea necesario para las actualizaciones de la interfaz de usuario
-// });
-
 });
