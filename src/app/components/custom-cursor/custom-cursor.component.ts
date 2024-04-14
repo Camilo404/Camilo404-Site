@@ -15,9 +15,12 @@ export class CustomCursorComponent implements OnInit, AfterViewInit {
     document.addEventListener('mousemove', (e) => {
       this.ring.nativeElement.style.transform = `translate(calc(${e.clientX}px - 1rem), calc(${e.clientY}px - 1rem))`;
     });
+
   }
 
   ngAfterViewInit(): void {
+    this.ring.nativeElement.style.display = 'none';
+
     document.addEventListener('mouseout', (e) => {
       if (!e.relatedTarget) {
         this.ring.nativeElement.style.display = 'none';
