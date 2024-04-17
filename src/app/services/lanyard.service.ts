@@ -9,7 +9,7 @@ import { environment } from 'src/environments/environment';
 })
 export class LanyardService {
 
-  private webSocketUrl = 'wss://api.lanyard.rest/socket';
+  private webSocketUrl = environment.webSocketUrl;
   private socket?: WebSocket;
 
   private dataInitial = {

@@ -19,6 +19,7 @@ declare global {
 export class CardProfileComponent implements OnInit {
 
   userId = environment.discordId;
+  apiUrl = environment.apiUrl;
   userDataStatus = false;
   userData?: Profile;
   userBioFormatted?: string;
