@@ -28,6 +28,7 @@ export class CardProfileComponent implements OnInit {
   message = '';
   lanyardData!: Lanyard | null;
   lanyardActivities: Activity[] = [];
+  statusColor: string = '#43b581'
 
   constructor(private discordApiService: DiscordApiService, private lanyardService: LanyardService) { }
 
@@ -71,7 +72,6 @@ export class CardProfileComponent implements OnInit {
     this.lanyardService.getLanyardData().subscribe({
       next: (data) => {
         this.lanyardData = data;
-        console.log(this.lanyardData);
 
         this.lanyardActivities = this.lanyardData.d?.activities || [];
 
@@ -101,6 +101,34 @@ export class CardProfileComponent implements OnInit {
             activity.timestamps.start = timeAgoMessage || '';
           }
         });
+
+        // Get the status color to apply to the platform svg
+        switch (this.lanyardData.d?.discord_status) {
+          case 'online':
+            this.statusColor = '#43b581';
+            break;
+          case 'idle':
+            this.statusColor = '#faa61a';
+            break;
+          case 'dnd':
+            this.statusColor = '#f04747';
+            break;
+          case 'offline':
+            this.statusColor = '#747f8d';
+            break;
+          case 'streaming':
+            this.statusColor = '#593695';
+            break;
+          case 'invisible':
+            this.statusColor = '#747f8d';
+            break;
+          case 'unknown':
+            this.statusColor = '#747f8d';
+            break;
+          default:
+            this.statusColor = '#747f8d';
+            break;
+        }
       },
       error: (error) => {
         console.log(error);
