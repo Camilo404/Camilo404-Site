@@ -1,0 +1,35 @@
+.bgColor {
+    background-image: linear-gradient(to bottom, #434343 0%, black 100%);
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+    position: absolute;
+    z-index: 0;
+}
+
+.container-info {
+    height: 100vh;
+    width: 100vw;
+    overflow-y: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 2rem;
+    position: relative;
+    z-index: 1;
+
+    @media screen and (max-height: 816px) {
+        justify-content: flex-start;
+        padding: 4rem 0rem 4rem 0rem;
+    }
+}
+
+.snowflake {
+    position: fixed;
+    top: 0;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.8;
+    color: #ffffff;
+}

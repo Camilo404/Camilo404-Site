@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { DiscordApiService } from 'src/app/services/discord-api.service';
 import { Profile } from 'src/app/models/discord-profile.model';
 import { LanyardService } from 'src/app/services/lanyard.service';
@@ -18,6 +18,7 @@ declare global {
 })
 export class CardProfileComponent implements OnInit {
 
+  @Input() ProfileId: string = environment.discordId;
   userId = environment.discordId;
   apiUrl = environment.apiUrl;
   userDataStatus = false;
@@ -39,7 +40,7 @@ export class CardProfileComponent implements OnInit {
   }
 
   public getDiscordUserData(): void {
-    this.discordApiService.getDiscordUser(this.userId).subscribe({
+    this.discordApiService.getDiscordUser(this.ProfileId).subscribe({
       next: (data: Profile) => {
         this.userDataStatus = true;
         this.userData = data;
@@ -67,6 +68,7 @@ export class CardProfileComponent implements OnInit {
   }
 
   public getLanyardData(): void {
+    this.lanyardService.setInitialData(this.ProfileId);
     this.lanyardService.setupWebSocket();
 
     this.lanyardService.getLanyardData().subscribe({
