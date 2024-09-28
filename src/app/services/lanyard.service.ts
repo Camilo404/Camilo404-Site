@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { Observable, Subject } from 'rxjs';
 import { Lanyard } from '../models/lanyard-profile.model';
 import { environment } from 'src/environments/environment';
@@ -24,7 +23,11 @@ export class LanyardService {
 
   private lanyardData = new Subject<Lanyard>();
 
-  constructor(private http: HttpClient) { }
+  constructor() { }
+
+  public setInitialData(profileId: string): void {
+    this.dataInitial.d.subscribe_to_id = profileId;
+  }
 
   public setupWebSocket(): void {
     this.socket = new WebSocket(this.webSocketUrl);

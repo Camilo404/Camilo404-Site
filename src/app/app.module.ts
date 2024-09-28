@@ -11,6 +11,7 @@ import { ClockComponent } from './components/clock/clock.component';
 import { CardProfileComponent } from './components/card-profile/card-profile.component';
 
 import { MarkdownModule } from 'ngx-markdown';
+import { ProfileViewerComponent } from './components/profile-viewer/profile-viewer.component';
 
 @NgModule({
   declarations: [
@@ -18,7 +19,8 @@ import { MarkdownModule } from 'ngx-markdown';
     MainComponent,
     CustomCursorComponent,
     ClockComponent,
-    CardProfileComponent
+    CardProfileComponent,
+    ProfileViewerComponent
   ],
   imports: [
     BrowserModule,

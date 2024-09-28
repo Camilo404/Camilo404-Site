@@ -6,16 +6,16 @@
           <div class="my-[0.45rem]" data-atropos-opacity="0.9;1">
             <div class="card nitro-card" [ngStyle]="{'--color1': themesColor[0], '--color2': themesColor[1]}">
               <div class="card-header">
-                <div [ngStyle]="{'background-image': 'url(' + apiUrl + 'banner/' + userId + ')'}" class="banner-img"></div>
+                <div [ngStyle]="{'background-image': 'url(' + apiUrl + 'banner/' + ProfileId + ')'}" class="banner-img"></div>
               </div>
               <div class="card-body">
                 <div class="profile-header" data-atropos-offset="2.5">
-                  <a href="https://discord.com/users/{{userId}}" target="_blank">
+                  <a href="https://discord.com/users/{{ProfileId}}" target="_blank">
                     @if (userData?.user?.avatar_decoration_data?.asset) {
                       <img class="avatar-decoration" src="https://cdn.discordapp.com/avatar-decoration-presets/{{userData?.user?.avatar_decoration_data?.asset}}.png" alt="Avatar decoration">
                     }
                     <div class="profile-logo">
-                      <img src="{{apiUrl+ 'avatar/' +userId}}" alt="Avatar"/>
+                      <img src="{{apiUrl+ 'avatar/' +ProfileId}}" alt="Avatar"/>
                       <div class="presence-state" [ngClass]="{
                         'online': lanyardData?.d?.discord_status === 'online',
                         'idle': lanyardData?.d?.discord_status === 'idle',
