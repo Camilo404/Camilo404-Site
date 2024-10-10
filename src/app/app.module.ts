@@ -12,12 +12,14 @@ import { CardProfileComponent } from './components/card-profile/card-profile.com
 
 import { MarkdownModule } from 'ngx-markdown';
 import { ProfileViewerComponent } from './components/profile-viewer/profile-viewer.component';
+import { NekoComponent } from './components/neko/neko.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     MainComponent,
     CustomCursorComponent,
+    NekoComponent,
     ClockComponent,
     CardProfileComponent,
     ProfileViewerComponent
