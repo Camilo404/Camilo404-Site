@@ -39,7 +39,6 @@
               "node_modules/atropos/atropos.min.css"
             ],
             "scripts": [
-              "node_modules/marked/marked.min.js",
               "node_modules/atropos/atropos.min.js",
               "src/assets/scripts/atropos.js"
             ]
@@ -114,7 +113,6 @@
               "node_modules/atropos/atropos.min.css"
             ],
             "scripts": [
-              "node_modules/marked/marked.min.js",
               "node_modules/atropos/atropos.min.js",
               "src/assets/scripts/atropos.js"
             ]

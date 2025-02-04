@@ -64,7 +64,7 @@
                   @if (userData?.user_profile?.bio!.length > 0) {
                     <div class="basic-infos">
                       <div class="category-title">About Me</div>
-                      <markdown class="markdown" [data]="userBioFormatted" [inline]="false"></markdown>
+                      <div class="markdown" [innerHTML]="userBioFormatted"></div>
                     </div>
                   }
                   @if (lanyardActivities.length > 0) {

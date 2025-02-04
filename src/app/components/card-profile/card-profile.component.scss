@@ -419,12 +419,6 @@ a {
   }
 }
 
-.markdown {
-  color: #dddddd;
-  font-size: 0.9rem;
-  line-height: 1.5;
-}
-
 .badges-connected-accounts {
   display: flex;
   flex-wrap: wrap;
@@ -455,33 +449,6 @@ a {
   margin-bottom: 14px;
   margin-top: 12px;
   color: #bdbebf;
-}
-
-.card-body .profile-body .basic-infos p {
-  color: #bdbebf;
-  font-size: 0.9rem;
-}
-
-.card-body .profile-body .basic-infos p a {
-  color: #02a5e6;
-  text-decoration: none;
-}
-
-.card-body .profile-body .basic-infos p a:hover {
-  text-decoration: underline;
-}
-
-.card-body .profile-body .basic-infos p b {
-  color: #ddd;
-}
-
-.card-body .profile-body .roles {
-  margin-bottom: 14px;
-}
-
-.card-body .profile-body .roles .roles-list {
-  display: flex;
-  flex-wrap: wrap;
 }
 
 .card-body .profile-body .message input {

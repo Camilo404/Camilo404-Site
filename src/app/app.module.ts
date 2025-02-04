@@ -10,7 +10,6 @@ import { CustomCursorComponent } from './components/custom-cursor/custom-cursor.
 import { ClockComponent } from './components/clock/clock.component';
 import { CardProfileComponent } from './components/card-profile/card-profile.component';
 
-import { MarkdownModule } from 'ngx-markdown';
 import { ProfileViewerComponent } from './components/profile-viewer/profile-viewer.component';
 import { NekoComponent } from './components/neko/neko.component';
 
@@ -29,8 +28,7 @@ import { NekoComponent } from './components/neko/neko.component';
     FormsModule,
     ReactiveFormsModule,
     AppRoutingModule,
-    HttpClientModule,
-    MarkdownModule.forRoot()
+    HttpClientModule
   ],
   providers: [],
   bootstrap: [AppComponent]

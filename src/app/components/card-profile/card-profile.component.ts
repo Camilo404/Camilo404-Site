@@ -4,6 +4,7 @@ import { Profile } from 'src/app/models/discord-profile.model';
 import { LanyardService } from 'src/app/services/lanyard.service';
 import { Lanyard, Activity } from 'src/app/models/lanyard-profile.model';
 import { environment } from 'src/environments/environment';
+import { toHTML } from 'discord-markdown-fix';
 
 declare global {
   interface Window {
@@ -45,8 +46,8 @@ export class CardProfileComponent implements OnInit {
         this.userDataStatus = true;
         this.userData = data;
 
-        // Change all the /n to <br>
-        this.userBioFormatted = this.userData.user_profile?.bio?.replace(/\n/g, '<br>');
+        // Format the user bio to HTML
+        this.userBioFormatted = toHTML(this.userData.user_profile?.bio || '');
 
         const themeColors = this.userData.user_profile?.theme_colors || [];
         if (themeColors.length === 0) {
