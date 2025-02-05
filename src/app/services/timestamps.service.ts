@@ -26,13 +26,13 @@ export class TimestampsService implements OnDestroy {
   }
 
   private formatTime(totalSeconds: number): string {
+    const pad = (n: number) => n.toString().padStart(2, '0');
     const hours = Math.floor(totalSeconds / 3600);
     const minutes = Math.floor((totalSeconds % 3600) / 60);
     const seconds = totalSeconds % 60;
-
-    return [hours, minutes, seconds]
-      .map(v => v.toString().padStart(2, '0'))
-      .filter((_, i) => i > 0 || hours > 0)
-      .join(':');
+  
+    return hours > 0 
+      ? `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`
+      : `${minutes}:${pad(seconds)}`;
   }
 }
