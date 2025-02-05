@@ -3,6 +3,7 @@ import { DiscordApiService } from 'src/app/services/discord-api.service';
 import { Profile } from 'src/app/models/discord-profile.model';
 import { LanyardService } from 'src/app/services/lanyard.service';
 import { Lanyard, Activity } from 'src/app/models/lanyard-profile.model';
+import { TimestampsService } from 'src/app/services/timestamps.service';
 import { environment } from 'src/environments/environment';
 import { toHTML } from 'discord-markdown-fix';
 
@@ -32,7 +33,7 @@ export class CardProfileComponent implements OnInit {
   lanyardActivities: Activity[] = [];
   statusColor: string = '#43b581'
 
-  constructor(private discordApiService: DiscordApiService, private lanyardService: LanyardService) { }
+  constructor(private discordApiService: DiscordApiService, private lanyardService: LanyardService, private TimestampsService: TimestampsService) { }
 
   ngOnInit(): void {
     this.getDiscordUserData();
@@ -78,30 +79,13 @@ export class CardProfileComponent implements OnInit {
 
         this.lanyardActivities = this.lanyardData.d?.activities || [];
 
-        // Format the timestamps of the activities
         this.lanyardActivities.forEach((activity) => {
           if (activity.timestamps) {
-            const startTime = new Date(activity.timestamps.start || 0);
-            const currentTime = new Date();
-            const timeDifference = currentTime.getTime() - startTime.getTime();
-
-            const hours = Math.floor(timeDifference / (1000 * 60 * 60));
-            const minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
-
-            let timeAgoMessage = '';
-            if (hours > 0) {
-              timeAgoMessage += `${hours} ${hours === 1 ? 'hour' : 'hours'}`;
-            }
-
-            if (minutes > 0) {
-              if (timeAgoMessage !== '') {
-                timeAgoMessage += ` and ${minutes} ${minutes === 1 ? 'minute elapsed' : 'minutes elapsed'}`;
-              } else {
-                timeAgoMessage += `${minutes} ${minutes === 1 ? 'minute elapsed' : 'minutes elapsed'}`;
+            this.TimestampsService.getElapsedTime(activity.timestamps.start).subscribe({
+              next: (timeElapsed) => {
+                activity.timestamps!.start = timeElapsed;
               }
-            }
-
-            activity.timestamps.start = timeAgoMessage || '';
+            });
           }
         });
 
