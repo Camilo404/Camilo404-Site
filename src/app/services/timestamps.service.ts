@@ -32,7 +32,7 @@ export class TimestampsService implements OnDestroy {
     const seconds = totalSeconds % 60;
   
     return hours > 0 
-      ? `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`
+      ? `${hours}:${pad(minutes)}:${pad(seconds)}`
       : `${minutes}:${pad(seconds)}`;
   }
 }

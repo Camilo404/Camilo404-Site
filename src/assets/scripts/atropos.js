@@ -4,8 +4,8 @@ function loadAtropos() {
     duration: 400,
     activeOffset: 70,
     shadow: true,
-    shadowScale: 1,
-    highlight: true,
+    shadowScale: 0.5,
+    highlight: false,
     // onEnter() {
     //   console.log('Enter');
     // },
