@@ -1,6 +1,5 @@
 import { Injectable, OnDestroy } from '@angular/core';
-import { Observable, Subject, timer, takeUntil } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable, Subject, timer, takeUntil, map } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -23,6 +22,23 @@ export class TimestampsService implements OnDestroy {
 
   private calculateElapsedTime(start: number): number {
     return Math.floor((Date.now() - start) / 1000);
+  }
+
+  getTotalDuration(startTimestamp: number, endTimestamp: number): string {
+    const totalSeconds = Math.floor((endTimestamp - startTimestamp) / 1000);
+    return this.formatTime(totalSeconds);
+  }
+
+  getProgressPercentage(startTimestamp: number, endTimestamp: number): Observable<number> {
+    return timer(0, 1000).pipe(
+      takeUntil(this.destroy$),
+      map(() => {
+        const totalDuration = endTimestamp - startTimestamp;
+        const elapsed = Date.now() - startTimestamp;
+        const percentage = (elapsed / totalDuration) * 100;
+        return Math.min(100, Math.max(0, percentage));
+      })
+    );
   }
 
   private formatTime(totalSeconds: number): string {

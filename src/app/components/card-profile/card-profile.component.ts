@@ -6,6 +6,7 @@ import { Lanyard, Activity } from 'src/app/models/lanyard-profile.model';
 import { TimestampsService } from 'src/app/services/timestamps.service';
 import { environment } from 'src/environments/environment';
 import { toHTML } from 'discord-markdown-fix';
+import { Subscription } from 'rxjs';
 
 declare global {
   interface Window {
@@ -32,6 +33,9 @@ export class CardProfileComponent implements OnInit {
   lanyardData!: Lanyard | null;
   lanyardActivities: Activity[] = [];
   statusColor: string = '#43b581'
+  percentage = 0;
+
+  subscriptions$: Subscription[] = []
 
   constructor(private discordApiService: DiscordApiService, private lanyardService: LanyardService, private TimestampsService: TimestampsService) { }
 
@@ -79,13 +83,36 @@ export class CardProfileComponent implements OnInit {
 
         this.lanyardActivities = this.lanyardData.d?.activities || [];
 
+        // Unsubscribe from previous subscriptions to avoid memory leaks and multiple subscriptions running at the same time
+        if(this.subscriptions$.length > 0) {
+          this.subscriptions$.forEach(sub => sub.unsubscribe());
+        }
+
+        // Get the progress percentage and elapsed time for the Spotify activity and other activities
         this.lanyardActivities.forEach((activity) => {
-          if (activity.timestamps) {
-            this.TimestampsService.getElapsedTime(activity.timestamps.start).subscribe({
+          if (activity.timestamps && activity.name === 'Spotify') {
+            this.subscriptions$.push(this.TimestampsService.getProgressPercentage(activity.timestamps.start, activity.timestamps.end).subscribe({
+              next: (percentage) => {
+                console.log(percentage);
+                this.percentage = percentage;
+              }
+            }));
+
+            this.subscriptions$.push(this.TimestampsService.getElapsedTime(activity.timestamps.start).subscribe({
               next: (timeElapsed) => {
                 activity.timestamps!.start = timeElapsed;
               }
-            });
+            }));
+
+            activity.timestamps!.end = this.TimestampsService.getTotalDuration(activity.timestamps.start, activity.timestamps.end);
+          }
+          
+          if (activity.timestamps && activity.name !== 'Spotify') {
+            this.subscriptions$.push(this.TimestampsService.getElapsedTime(activity.timestamps.start).subscribe({
+              next: (timeElapsed) => {
+                activity.timestamps!.start = timeElapsed;
+              }
+            }));
           }
         });
 

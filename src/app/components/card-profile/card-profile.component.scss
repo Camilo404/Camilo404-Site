@@ -380,9 +380,19 @@ a {
       }
 
       .activity-info {
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        align-self: center;
+        width: 65%;
         font-size: 0.75rem;
-        text-wrap: nowrap;
-        overflow: overlay;
+
+        .overlay {
+          white-space: nowrap;
+          text-overflow: ellipsis;
+          overflow: hidden;
+          position: relative;
+        }
 
         .title-activity {
           font-size: 0.9rem;
@@ -407,6 +417,26 @@ a {
           &:hover {
             color: #257dcf;
           }
+        }
+
+        .spotify_bar {
+          flex: 1;
+          height: 2px;
+          border-radius: 2px;
+          background-color: #6c6e75
+        }
+        
+        .spotify_progress_bar {
+          height: inherit;
+          border-radius: inherit;
+          min-width: 4px;
+          background-color: #fcfcfc;
+        }
+        
+        .spotify-time-text {
+          font-size: 0.8rem;
+          line-height: 1.3333333333333333;
+          font-weight: 400;
         }
 
         &::-webkit-scrollbar-track
