@@ -6,7 +6,6 @@ import { HttpClientModule } from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { MainComponent } from './components/main/main.component';
-import { CustomCursorComponent } from './components/custom-cursor/custom-cursor.component';
 import { ClockComponent } from './components/clock/clock.component';
 import { CardProfileComponent } from './components/card-profile/card-profile.component';
 
@@ -17,7 +16,6 @@ import { NekoComponent } from './components/neko/neko.component';
   declarations: [
     AppComponent,
     MainComponent,
-    CustomCursorComponent,
     NekoComponent,
     ClockComponent,
     CardProfileComponent,
