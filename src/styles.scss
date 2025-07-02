@@ -2,7 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+// Font is now preloaded in index.html for better performance
+// @import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
 
 * {
   margin: 0;
@@ -13,7 +14,25 @@
 body {
   font-family: 'Roboto', sans-serif;
   background-color: #1e1e1e;
-  cursor: url('./assets/images/cursor/pointer.png'), default;
+  cursor: url('./assets/images/cursor/pointer.png'), auto;
+  
+  // Performance optimizations
+  font-display: swap;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+// Optimize image rendering
+img {
+  max-width: 100%;
+  height: auto;
+  image-rendering: optimizeQuality;
+}
+
+// Optimize animations for better performance
+* {
+  will-change: auto;
 }
 
 .markdown {
@@ -50,7 +69,6 @@ body {
 .markdown blockquote:first-of-type {
   margin-top: 3px;
 }
-
 
 .markdown a {
   color: #42adf5;
