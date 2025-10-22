@@ -45,6 +45,7 @@ export class Card3DEffectService {
   }
 
   private addEventListeners(element: HTMLElement, config: Card3DConfig): void {
+    // Mouse events
     this.renderer.listen(element, 'mouseenter', () => {
       this.onMouseEnter(element, config);
     });
@@ -55,6 +56,19 @@ export class Card3DEffectService {
 
     this.renderer.listen(element, 'mouseleave', () => {
       this.onMouseLeave(element, config);
+    });
+
+    // Touch events for mobile devices
+    this.renderer.listen(element, 'touchstart', (event: TouchEvent) => {
+      this.onTouchStart(element, event, config);
+    });
+
+    this.renderer.listen(element, 'touchmove', (event: TouchEvent) => {
+      this.onTouchMove(element, event, config);
+    });
+
+    this.renderer.listen(element, 'touchend', () => {
+      this.onTouchEnd(element, config);
     });
   }
 
@@ -88,6 +102,51 @@ export class Card3DEffectService {
   }
 
   private onMouseLeave(element: HTMLElement, config: Card3DConfig): void {
+    this.renderer.setStyle(element, 'transition', 'transform 0.4s cubic-bezier(0.23, 1, 0.32, 1)');
+    this.renderer.setStyle(element, 'transform', `perspective(${config.perspective}px) rotateX(0deg) rotateY(0deg) scale(1)`);
+
+    this.resetChildrenEffects(element);
+  }
+
+  // Touch event handlers for mobile devices
+  private onTouchStart(element: HTMLElement, event: TouchEvent, config: Card3DConfig): void {
+    // Prevent default to avoid scrolling issues
+    event.preventDefault();
+    this.renderer.setStyle(element, 'transition', 'transform 0.2s ease-out');
+    this.renderer.setStyle(element, 'perspective', `${config.perspective}px`);
+  }
+
+  private onTouchMove(element: HTMLElement, event: TouchEvent, config: Card3DConfig): void {
+    // Prevent default to avoid scrolling issues
+    event.preventDefault();
+    
+    // Get the first touch point
+    const touch = event.touches[0];
+    if (!touch) return;
+
+    const rect = element.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+
+    const touchX = touch.clientX - centerX;
+    const touchY = touch.clientY - centerY;
+
+    const rotateY = (touchX / (rect.width / 2)) * config.maxRotation;
+    const rotateX = -(touchY / (rect.height / 2)) * config.maxRotation;
+
+    // Apply the transformation
+    const transform = `
+      perspective(${config.perspective}px)
+      rotateX(${rotateX}deg)
+      rotateY(${rotateY}deg)
+      scale(${config.scale})
+    `;
+
+    this.renderer.setStyle(element, 'transform', transform);
+    this.applyChildrenEffects(element, rotateX, rotateY);
+  }
+
+  private onTouchEnd(element: HTMLElement, config: Card3DConfig): void {
     this.renderer.setStyle(element, 'transition', 'transform 0.4s cubic-bezier(0.23, 1, 0.32, 1)');
     this.renderer.setStyle(element, 'transform', `perspective(${config.perspective}px) rotateX(0deg) rotateY(0deg) scale(1)`);
 
