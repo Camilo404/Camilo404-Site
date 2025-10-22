@@ -13,7 +13,6 @@ A modern, interactive personal website built with Angular that showcases your pr
   - Custom cursor
   - Oneko (cat) animation that follows cursor movement
   - Animated clock
-  - Atropos 3D card hover effect
 - **Responsive Design** - Optimized for both desktop and mobile devices
 
 ## 📋 Prerequisites
@@ -67,7 +66,6 @@ src/
 │   └── app.component.*         # Root component
 ├── assets/
 │   ├── images/                 # Site images
-│   ├── scripts/                # JavaScript files (Atropos)
 │   └── videos/                 # Background videos
 └── environments/               # Environment configuration
 ```
@@ -125,14 +123,13 @@ The Discord card displays your:
 - **Oneko (Cat Animation)**: A small pixelated cat that follows your cursor around the screen
 - **Animated Clock**: A stylized clock with glitch effects
 - **Snowfall Effect**: Animated snowflakes on the profile page
-- **3D Card Effect**: Atropos.js integration for 3D hovering effect on cards
+- **3D Card Effect**: Custom 3D hover effect for cards using CSS transforms
 
 ## 🛠️ Technologies Used
 
 - Angular 17
 - TypeScript
 - Tailwind CSS
-- Atropos.js (for 3D card effects)
 - Lanyard API (for Discord status)
 - RxJS
 
@@ -143,5 +140,4 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 ## 🤝 Acknowledgements
 
 - [Discord Markdown Parser](https://github.com/SrGobi/discord-markdown-fix) - For rendering Discord Markdown
-- [Atropos](https://atroposjs.com/) - For the 3D card hover effect
 - [Lanyard API](https://github.com/Phineas/lanyard) - For real-time Discord status

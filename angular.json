@@ -38,13 +38,9 @@
               }
             ],
             "styles": [
-              "src/styles.scss",
-              "node_modules/atropos/atropos.min.css"
+              "src/styles.scss"
             ],
-            "scripts": [
-              "node_modules/atropos/atropos.min.js",
-              "src/assets/scripts/atropos.js"
-            ]
+            "scripts": []
           },
           "configurations": {
             "production": {
@@ -138,13 +134,9 @@
               "src/assets"
             ],
             "styles": [
-              "src/styles.scss",
-              "node_modules/atropos/atropos.min.css"
+              "src/styles.scss"
             ],
-            "scripts": [
-              "node_modules/atropos/atropos.min.js",
-              "src/assets/scripts/atropos.js"
-            ]
+            "scripts": []
           }
         },
         "lint": {

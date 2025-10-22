@@ -1,19 +1,14 @@
-import { Component, Input, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
 import { DiscordApiService } from 'src/app/services/discord-api.service';
 import { Profile } from 'src/app/models/discord-profile.model';
 import { LanyardService } from 'src/app/services/lanyard.service';
 import { Lanyard, Activity } from 'src/app/models/lanyard-profile.model';
 import { TimestampsService } from 'src/app/services/timestamps.service';
+import { Card3DEffectService } from 'src/app/services/card-3d-effect.service';
 import { environment } from 'src/environments/environment';
 import { toHTML } from 'discord-markdown-fix';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-
-declare global {
-  interface Window {
-    loadAtropos(): void;
-  }
-}
 
 @Component({
   selector: 'app-card-profile',
@@ -21,9 +16,10 @@ declare global {
   styleUrls: ['./card-profile.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CardProfileComponent implements OnInit, OnDestroy {
+export class CardProfileComponent implements OnInit, OnDestroy, AfterViewInit {
 
   @Input() ProfileId: string = environment.discordId;
+  @ViewChild('cardElement', { static: false }) cardElement!: ElementRef;
   userId = environment.discordId;
   apiUrl = environment.apiUrl;
   userDataStatus = false;
@@ -34,6 +30,7 @@ export class CardProfileComponent implements OnInit, OnDestroy {
   message = '';
   lanyardData!: Lanyard | null;
   lanyardActivities: Activity[] = [];
+  custom_status: Activity | null = null;
   statusColor: string = '#43b581'
   percentage = 0;
 
@@ -44,7 +41,8 @@ export class CardProfileComponent implements OnInit, OnDestroy {
     private discordApiService: DiscordApiService, 
     private lanyardService: LanyardService, 
     private timestampsService: TimestampsService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private card3DService: Card3DEffectService
   ) { }
 
   ngOnInit(): void {
@@ -52,8 +50,23 @@ export class CardProfileComponent implements OnInit, OnDestroy {
     this.getLanyardData();
   }
 
+  ngAfterViewInit(): void {
+    if (this.cardElement) {
+      this.card3DService.initCard3DEffect(this.cardElement, {
+        maxRotation: 12,
+        scale: 1.03,
+        perspective: 1200,
+        shadowIntensity: 0.25,
+        transition: 'transform 0.4s cubic-bezier(0.23, 1, 0.32, 1)'
+      });
+    }
+  }
+
   ngOnDestroy(): void {
-    // Complete the destroy subject to unsubscribe from all observables
+    if (this.cardElement) {
+      this.card3DService.destroyCard3DEffect(this.cardElement);
+    }
+    
     this.destroy$.next();
     this.destroy$.complete();
   }
@@ -86,12 +99,6 @@ export class CardProfileComponent implements OnInit, OnDestroy {
           this.userDataStatus = false;
           console.error('Error fetching Discord user data:', error);
           this.cdr.markForCheck();
-        },
-        complete: () => {
-          // Only call atropos after component is fully initialized
-          if (typeof window !== 'undefined' && window.loadAtropos) {
-            window.loadAtropos();
-          }
         }
       });
   }
@@ -105,9 +112,10 @@ export class CardProfileComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (data) => {
           this.lanyardData = data;
+          this.custom_status = this.lanyardData.d?.activities?.find(activity => activity.name === 'Custom Status') || null;
           this.lanyardActivities = this.lanyardData.d?.activities || [];
+          this.lanyardActivities = this.lanyardActivities.filter(activity => activity.id !== 'custom');
 
-          // Process activities with optimized subscription handling
           this.processActivities();
           this.updateStatusColor();
           
