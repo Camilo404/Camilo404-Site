@@ -5,9 +5,12 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
+    "build:prod": "ng build --configuration production",
+    "build:analyze": "ng build --configuration production --stats-json && npx webpack-bundle-analyzer dist/camilo404-site/stats.json",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "lint": "ng lint"
+    "lint": "ng lint",
+    "serve:prod": "ng build --configuration production && npx http-server dist/camilo404-site -p 4200"
   },
   "private": true,
   "dependencies": {
@@ -19,7 +22,6 @@
     "@angular/platform-browser": "^17.3.4",
     "@angular/platform-browser-dynamic": "^17.3.4",
     "@angular/router": "^17.3.4",
-    "atropos": "^2.0.2",
     "discord-markdown-fix": "^2.5.7",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
@@ -39,6 +41,7 @@
     "@typescript-eslint/parser": "7.2.0",
     "autoprefixer": "^10.4.14",
     "eslint": "^8.57.0",
+    "http-server": "^14.1.1",
     "jasmine-core": "~4.6.0",
     "karma": "~6.4.0",
     "karma-chrome-launcher": "~3.2.0",
@@ -47,6 +50,7 @@
     "karma-jasmine-html-reporter": "~2.0.0",
     "postcss": "^8.4.31",
     "tailwindcss": "^3.3.3",
-    "typescript": "~5.4.5"
+    "typescript": "~5.4.5",
+    "webpack-bundle-analyzer": "^4.10.2"
   }
 }
