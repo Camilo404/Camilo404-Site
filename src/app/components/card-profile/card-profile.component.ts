@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, OnChanges, SimpleChanges, ChangeDetectionStrategy, ChangeDetectorRef, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
 import { DiscordApiService } from 'src/app/services/discord-api.service';
 import { Profile, ProfileEffectConfig, ProfileEffectLayer } from 'src/app/models/discord-profile.model';
 import { LanyardService } from 'src/app/services/lanyard.service';
@@ -18,7 +18,7 @@ import { takeUntil } from 'rxjs/operators';
   standalone: false,
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CardProfileComponent implements OnInit, OnDestroy, AfterViewInit {
+export class CardProfileComponent implements OnInit, OnChanges, OnDestroy, AfterViewInit {
 
   @Input() ProfileId: string = environment.discordId;
   @Output() themeColorsChange = new EventEmitter<string[]>();
@@ -86,6 +86,20 @@ export class CardProfileComponent implements OnInit, OnDestroy, AfterViewInit {
     this.getLanyardData();
   }
 
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['ProfileId'] && !changes['ProfileId'].firstChange) {
+      const newId = changes['ProfileId'].currentValue;
+      const oldId = changes['ProfileId'].previousValue;
+      
+      if (newId !== oldId) {
+        this.resetProfileData();
+
+        this.getDiscordUserData();
+        this.getLanyardData();
+      }
+    }
+  }
+
   ngAfterViewInit(): void {
     if (this.cardElement) {
       this.card3DService.initCard3DEffect(this.cardElement, {
@@ -105,6 +119,24 @@ export class CardProfileComponent implements OnInit, OnDestroy, AfterViewInit {
     
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  private resetProfileData(): void {
+    this.userDataStatus = false;
+    this.userData = undefined;
+    this.userBioFormatted = undefined;
+    this.themesColor = [];
+    this.lanyardData = null;
+    this.lanyardActivities = [];
+    this.custom_status = null;
+    this.percentage = 0;
+    this.profileEffectConfig = null;
+    this.activeEffectLayers = [];
+    
+    this.themeColorsChange.emit([]);
+    this.nameplateAssetChange.emit(null);
+    
+    this.cdr.markForCheck();
   }
 
   public getDiscordUserData(): void {
@@ -321,7 +353,8 @@ export class CardProfileComponent implements OnInit, OnDestroy, AfterViewInit {
     this.message = '';
   }
 
-  handleImageError(event: any) {
-    event.target.src = '../../../assets/images/no-image-found.jpg';
+  handleImageError(event: Event) {
+    const target = event.target as HTMLImageElement;
+    target.src = '../../../assets/images/no-image-found.jpg';
   }
 }

@@ -1,6 +1,8 @@
 import { Component, OnInit, Output, Renderer2, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { environment } from 'src/environments/environment';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-profile-viewer',
@@ -12,9 +14,9 @@ export class ProfileViewerComponent implements OnInit, OnDestroy {
 
   @Output() profileId!: string;
   
-  // Search modal state
   public isModalOpen: boolean = false;
   
+  private destroy$ = new Subject<void>();
   private particleInterval: ReturnType<typeof setInterval> | undefined;
   private particleTypes = ['✨', '⭐', '💫', '✦', '◆', '●', '★', '◉'];
   private colors = ['#a78bfa', '#c084fc', '#e879f9', '#60a5fa', '#818cf8', '#f472b6', '#fb7185', '#fbbf24'];
@@ -35,7 +37,16 @@ export class ProfileViewerComponent implements OnInit, OnDestroy {
   ) { }
   
   ngOnInit(): void {
-    this.profileId = this.route.snapshot.paramMap.get('id') || environment.discordId;
+    this.route.paramMap.pipe(
+      takeUntil(this.destroy$)
+    ).subscribe(params => {
+      const newId = params.get('id') || environment.discordId;
+      
+      if (this.profileId !== newId) {
+        this.profileId = newId;
+        this.cdr.detectChanges();
+      }
+    });
 
     this.addKeyframes();
     this.createInitialParticles();
@@ -43,6 +54,9 @@ export class ProfileViewerComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+    
     if (this.particleInterval) {
       clearInterval(this.particleInterval);
     }
