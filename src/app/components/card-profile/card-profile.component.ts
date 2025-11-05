@@ -1,10 +1,11 @@
-import { Component, Input, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
 import { DiscordApiService } from 'src/app/services/discord-api.service';
-import { Profile } from 'src/app/models/discord-profile.model';
+import { Profile, ProfileEffectConfig, ProfileEffectLayer } from 'src/app/models/discord-profile.model';
 import { LanyardService } from 'src/app/services/lanyard.service';
 import { Lanyard, Activity } from 'src/app/models/lanyard-profile.model';
 import { TimestampsService } from 'src/app/services/timestamps.service';
 import { Card3DEffectService } from 'src/app/services/card-3d-effect.service';
+import { ProfileEffectsService } from 'src/app/services/profile-effects.service';
 import { environment } from 'src/environments/environment';
 import { toHTML } from 'discord-markdown-fix';
 import { Subject } from 'rxjs';
@@ -14,11 +15,14 @@ import { takeUntil } from 'rxjs/operators';
   selector: 'app-card-profile',
   templateUrl: './card-profile.component.html',
   styleUrls: ['./card-profile.component.scss'],
+  standalone: false,
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CardProfileComponent implements OnInit, OnDestroy, AfterViewInit {
 
   @Input() ProfileId: string = environment.discordId;
+  @Output() themeColorsChange = new EventEmitter<string[]>();
+  @Output() nameplateAssetChange = new EventEmitter<string | null>();
   @ViewChild('cardElement', { static: false }) cardElement!: ElementRef;
   userId = environment.discordId;
   apiUrl = environment.apiUrl;
@@ -29,12 +33,43 @@ export class CardProfileComponent implements OnInit, OnDestroy, AfterViewInit {
 
   message = '';
   lanyardData!: Lanyard | null;
+
+  // Clan/Primary Guild getters
+  get clanTag(): string | null {
+    return this.userData?.user?.clan?.tag || this.userData?.user?.primary_guild?.tag || null;
+  }
+
+  get clanBadge(): string | null {
+    return this.userData?.user?.clan?.badge || this.userData?.user?.primary_guild?.badge || null;
+  }
+
+  get clanGuildId(): string | null {
+    return this.userData?.user?.clan?.identity_guild_id || this.userData?.user?.primary_guild?.identity_guild_id || null;
+  }
+
+  get clanBadgeUrl(): string | null {
+    if (!this.clanBadge || !this.clanGuildId) return null;
+    return `https://cdn.discordapp.com/clan-badges/${this.clanGuildId}/${this.clanBadge}.png?size=32`;
+  }
+
+  // Profile Effect properties
+  profileEffectConfig: ProfileEffectConfig | null = null;
+  activeEffectLayers: ProfileEffectLayer[] = [];
+
+  get hasProfileEffect(): boolean {
+    return !!this.profileEffectConfig && !!this.activeEffectLayers.length;
+  }
+
+  get profileEffectId(): string | null {
+    return this.userData?.user_profile?.profile_effect?.id || null;
+  }
+
+
   lanyardActivities: Activity[] = [];
   custom_status: Activity | null = null;
   statusColor: string = '#43b581'
   percentage = 0;
 
-  // Use takeUntil pattern for better subscription management
   private destroy$ = new Subject<void>();
 
   constructor(
@@ -42,7 +77,8 @@ export class CardProfileComponent implements OnInit, OnDestroy, AfterViewInit {
     private lanyardService: LanyardService, 
     private timestampsService: TimestampsService,
     private cdr: ChangeDetectorRef,
-    private card3DService: Card3DEffectService
+    private card3DService: Card3DEffectService,
+    private profileEffectsService: ProfileEffectsService
   ) { }
 
   ngOnInit(): void {
@@ -92,6 +128,18 @@ export class CardProfileComponent implements OnInit, OnDestroy, AfterViewInit {
             });
           }
           
+          // Emit theme colors to parent component
+          this.themeColorsChange.emit(this.themesColor);
+          
+          // Emit nameplate asset to parent component
+          const nameplateAsset = this.userData.user?.collectibles?.nameplate?.asset || null;
+          this.nameplateAssetChange.emit(nameplateAsset);
+
+          // Initialize profile effect animation
+          if (this.profileEffectId) {
+            this.loadProfileEffect(this.profileEffectId);
+          }
+          
           // Trigger change detection
           this.cdr.markForCheck();
         },
@@ -101,6 +149,71 @@ export class CardProfileComponent implements OnInit, OnDestroy, AfterViewInit {
           this.cdr.markForCheck();
         }
       });
+  }
+
+  private loadProfileEffect(effectId: string): void {
+    this.profileEffectsService.getEffectById(effectId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (effectConfig) => {
+          if (effectConfig && effectConfig.effects) {
+            this.profileEffectConfig = effectConfig;
+            this.initializeProfileEffectLayers(effectConfig.effects);
+          }
+        },
+        error: (error) => {
+          console.error('Error loading profile effect:', error);
+        }
+      });
+  }
+
+  private initializeProfileEffectLayers(layers: ProfileEffectLayer[]): void {
+    const sortedLayers = [...layers].sort((a, b) => (a.start || 0) - (b.start || 0));
+    
+    this.activeEffectLayers = sortedLayers.filter(layer => (layer.start || 0) === 0);
+    this.cdr.markForCheck();
+
+    sortedLayers.forEach(layer => {
+      const startTime = layer.start || 0;
+
+      if (startTime === 0) {
+        this.handleLayerLifecycle(layer, 0);
+      } else {
+        setTimeout(() => {
+          this.activeEffectLayers.push(layer);
+          this.cdr.markForCheck();
+          this.handleLayerLifecycle(layer, 0);
+        }, startTime);
+      }
+    });
+  }
+
+  private handleLayerLifecycle(layer: ProfileEffectLayer, delay: number): void {
+    const duration = layer.duration || 0;
+    const loopDelay = layer.loopDelay || 0;
+
+    if (!layer.loop) {
+      if (duration > 0) {
+        setTimeout(() => {
+          this.activeEffectLayers = this.activeEffectLayers.filter(l => l !== layer);
+          this.cdr.markForCheck();
+        }, delay + duration);
+      }
+    } else if (loopDelay > 0) {
+      const cycleLayer = () => {
+        setTimeout(() => {
+          this.activeEffectLayers = this.activeEffectLayers.filter(l => l !== layer);
+          this.cdr.markForCheck();
+
+          setTimeout(() => {
+            this.activeEffectLayers.push(layer);
+            this.cdr.markForCheck();
+            cycleLayer();
+          }, loopDelay);
+        }, duration);
+      };
+      cycleLayer();
+    }
   }
 
   public getLanyardData(): void {
@@ -119,7 +232,6 @@ export class CardProfileComponent implements OnInit, OnDestroy, AfterViewInit {
           this.processActivities();
           this.updateStatusColor();
           
-          // Trigger change detection
           this.cdr.markForCheck();
         },
         error: (error) => {
@@ -130,7 +242,6 @@ export class CardProfileComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private processActivities(): void {
-    // Get the progress percentage and elapsed time for activities
     this.lanyardActivities.forEach((activity) => {
       if (activity.timestamps && activity.name === 'Spotify') {
         this.timestampsService.getProgressPercentage(activity.timestamps.start, activity.timestamps.end)
@@ -168,7 +279,6 @@ export class CardProfileComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private updateStatusColor(): void {
-    // Get the status color to apply to the platform svg
     switch (this.lanyardData?.d?.discord_status) {
       case 'online':
         this.statusColor = '#43b581';

@@ -11,6 +11,7 @@ import { CardProfileComponent } from './components/card-profile/card-profile.com
 
 import { ProfileViewerComponent } from './components/profile-viewer/profile-viewer.component';
 import { NekoComponent } from './components/neko/neko.component';
+import { SearchModalComponent } from './components/search-modal/search-modal.component';
 
 @NgModule({
   declarations: [
@@ -26,7 +27,8 @@ import { NekoComponent } from './components/neko/neko.component';
     FormsModule,
     ReactiveFormsModule,
     AppRoutingModule,
-    HttpClientModule
+    HttpClientModule,
+    SearchModalComponent
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -1,11 +1,126 @@
-<div class="bgColor"></div>
-
-<div class="container-info">
-    <div class="grid content-center justify-items-center gap-10 text-white">
-        <app-clock></app-clock>
-        
-        <app-card-profile [ProfileId]="profileId"></app-card-profile>
-    </div>
+<!-- Animated gradient background with mesh -->
+<div class="fixed inset-0 dynamic-gradient overflow-hidden">
+  <!-- Animated mesh gradient pattern -->
+  <div class="absolute inset-0 mesh-pattern opacity-20"></div>
+  
+  <!-- Animated gradient orbs -->
+  <div class="absolute top-0 -left-4 w-96 h-96 rounded-full mix-blend-screen filter blur-3xl opacity-30 animate-blob-float dynamic-orb-1"></div>
+  <div class="absolute top-0 -right-4 w-96 h-96 rounded-full mix-blend-screen filter blur-3xl opacity-25 animate-blob-float animation-delay-2000 dynamic-orb-2"></div>
+  <div class="absolute -bottom-8 left-20 w-96 h-96 rounded-full mix-blend-screen filter blur-3xl opacity-20 animate-blob-float animation-delay-4000 dynamic-orb-3"></div>
+  <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 rounded-full mix-blend-screen filter blur-3xl opacity-15 animate-pulse-slow dynamic-orb-4"></div>
+  
+  <!-- Particles container -->
+  <div class="particles-container"></div>
+  
+  <!-- Scanline effect -->
+  <div class="scanline"></div>
 </div>
 
-<script src="../../../assets/scripts/particles.js"></script>
+<!-- Main content -->
+<div class="relative z-10 min-h-screen w-full overflow-y-auto flex flex-col items-center justify-center py-8 px-4 gap-8">
+  <div class="glass-container animate-fade-in-down">
+    <div class="flex flex-col items-center gap-4 text-center">
+      <div class="icon-wrapper">
+        <i class="fas fa-user-astronaut text-5xl header-icon-color"></i>
+      </div>
+      <div>
+        <h1 class="text-4xl font-bold dynamic-title-gradient mb-2">
+          Discord Profile Viewer
+        </h1>
+        <div class="flex items-center justify-center gap-3">
+          <div class="status-badge">
+            <i class="fas fa-circle text-xs status-icon"></i>
+            <span class="text-xs font-medium">Real-time Updates</span>
+          </div>
+          <div class="tech-badge">
+            <i class="fas fa-bolt text-xs mr-1.5"></i>
+            <span class="text-xs font-medium">WebSocket Connected</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="glass-container-minimal animate-fade-in animation-delay-200 clock-video-container">
+    <video 
+      #nameplateVideo
+      class="clock-background-video" 
+      autoplay 
+      loop 
+      muted 
+      playsinline
+      preload="auto"
+      [class.hidden]="!nameplateVideoUrl"
+      [src]="nameplateVideoUrl || ''"
+      (loadeddata)="onVideoLoaded($event)"
+      (canplay)="onVideoCanPlay($event)"
+      (error)="onVideoError($event)">
+    </video>
+    <div class="clock-content">
+      <app-clock></app-clock>
+    </div>
+  </div>
+  
+  <!-- Profile card -->
+  <div class="profile-card-wrapper animate-fade-in-up animation-delay-400">
+    <div class="card-glow-effect"></div>
+    <app-card-profile 
+      [ProfileId]="profileId" 
+      (themeColorsChange)="onThemeColorsChange($event)"
+      (nameplateAssetChange)="onNameplateAssetChange($event)">
+    </app-card-profile>
+  </div>
+
+  <!-- Stats/Info cards -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4 w-full max-w-3xl animate-fade-in animation-delay-600">
+    <div class="stat-card">
+      <div class="stat-icon">
+        <i class="fas fa-rocket"></i>
+      </div>
+      <div class="stat-content">
+        <div class="stat-label">Status</div>
+        <div class="stat-value">Connected</div>
+      </div>
+    </div>
+    
+    <div class="stat-card">
+      <div class="stat-icon">
+        <i class="fas fa-sync-alt animate-spin-slow"></i>
+      </div>
+      <div class="stat-content">
+        <div class="stat-label">Updates</div>
+        <div class="stat-value">Live Sync</div>
+      </div>
+    </div>
+    
+    <div class="stat-card">
+      <div class="stat-icon">
+        <i class="fas fa-shield-alt"></i>
+      </div>
+      <div class="stat-content">
+        <div class="stat-label">Security</div>
+        <div class="stat-value">Protected</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Floating info badge -->
+  <div class="floating-badge animate-fade-in animation-delay-800">
+    <i class="fas fa-fingerprint mr-2"></i>
+    <span class="text-xs font-medium">Dynamic Theme · Adaptive Colors</span>
+  </div>
+</div>
+
+<!-- Floating Search Button -->
+<button class="floating-search-btn" (click)="openSearchModal()" title="Search Another Profile">
+  <i class="fas fa-search search-icon"></i>
+  <span class="btn-text">Search Profile</span>
+  <div class="btn-glow"></div>
+</button>
+
+<!-- Search Modal -->
+<app-search-modal 
+  [isOpen]="isModalOpen" 
+  (close)="closeSearchModal()" 
+  (search)="onSearchProfile($event)">
+</app-search-modal>

@@ -1,0 +1,68 @@
+<div class="modal-overlay" [class.modal-open]="isOpen" (click)="closeModal()" (keyup.escape)="closeModal()" role="dialog" [attr.aria-hidden]="!isOpen" aria-modal="true">
+  <div class="modal-container" [class.modal-show]="isOpen" (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()" tabindex="-1">
+    <!-- Modal Header -->
+    <div class="modal-header">
+      <div class="flex items-center gap-3">
+        <div class="modal-icon-wrapper">
+          <i class="fas fa-search"></i>
+        </div>
+        <div>
+          <h2 class="modal-title">Search Discord Profile</h2>
+          <p class="modal-subtitle">Enter a Discord User ID to view their profile</p>
+        </div>
+      </div>
+      <button class="modal-close-btn" (click)="closeModal()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <!-- Modal Body -->
+    <div class="modal-body">
+      <div class="search-input-wrapper">
+        <input 
+          type="text" 
+          class="search-input"
+          [(ngModel)]="searchUserId"
+          (keydown)="handleKeyPress($event)"
+          placeholder="Enter Discord User ID (e.g., 1234567890123456789)"
+          maxlength="19"
+          autocomplete="off"
+        />
+        <i class="fas fa-hashtag input-icon"></i>
+      </div>
+
+      <!-- Error Message -->
+      <div class="error-message" *ngIf="searchError">
+        <i class="fas fa-exclamation-circle"></i>
+        <span>{{ searchError }}</span>
+      </div>
+
+      <!-- Info Card -->
+      <div class="info-card">
+        <div class="info-icon">
+          <i class="fas fa-info-circle"></i>
+        </div>
+        <div class="info-content">
+          <p class="info-title">How to find your Discord ID:</p>
+          <ol class="info-list">
+            <li>Enable Developer Mode in Discord Settings</li>
+            <li>Right-click on a user profile</li>
+            <li>Click "Copy User ID"</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Footer -->
+    <div class="modal-footer">
+      <button class="btn-secondary" (click)="closeModal()">
+        <i class="fas fa-times mr-2"></i>
+        Cancel
+      </button>
+      <button class="btn-primary" (click)="searchProfile()">
+        <i class="fas fa-search mr-2"></i>
+        Search Profile
+      </button>
+    </div>
+  </div>
+</div>

@@ -1,6 +1,7 @@
 .clock {
 	display: block;
-	width: 720px;
+	width: 100%;
+	max-width: 720px;
 	text-align: center;
 	top: 0;
 	right: 0;
@@ -58,7 +59,7 @@
 	top: 0;
 	color: #fff;
 	overflow: hidden;
-	width: 720px;
+	width: 100%;
 	clip: rect(0, 900px, 0, 0);
 }
 

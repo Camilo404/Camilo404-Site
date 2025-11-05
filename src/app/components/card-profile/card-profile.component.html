@@ -2,6 +2,19 @@
   @if (userDataStatus) {
   <div class="my-[0.45rem] animate-scale-in" data-opacity="0.9;1">
     <div class="card nitro-card" [ngStyle]="{'--color1': themesColor[0], '--color2': themesColor[1]}">
+      <!-- Profile Effect Overlay - Multiple Layers -->
+      @if (hasProfileEffect) {
+        <div class="profile-effect-container">
+          @for (layer of activeEffectLayers; track layer.src) {
+            <img 
+              [src]="layer.src" 
+              [alt]="profileEffectConfig?.title || 'Profile Effect'"
+              class="profile-effect-layer"
+              [style.z-index]="layer.zIndex || 100">
+          }
+        </div>
+      }
+      
       <div class="card-header animate-fade-in">
         <div [ngStyle]="{'background-image': 'url(' + apiUrl + 'banner/' + ProfileId + ')'}" class="banner-img"></div>
       </div>
@@ -38,7 +51,15 @@
         </div>
         <div class="profile-body animate-fade-in delay-3" data-offset="2.5">
           <div class="global-name flex justify-between items-center animate-slide-in delay-4">
-            <p>{{userData?.user?.global_name || userData?.user?.username}}</p>
+            <div class="flex items-center gap-2">
+              <p>{{userData?.user?.global_name || userData?.user?.username}}</p>
+              @if (clanTag && clanBadgeUrl) {
+              <div class="clan-tag-container animate-scale-in delay-4">
+                <img [src]="clanBadgeUrl" alt="Clan badge" class="clan-badge-img" (error)="handleImageError($event)" />
+                <span class="clan-tag-text">{{clanTag}}</span>
+              </div>
+              }
+            </div>
             <div class="flex flex-wrap gap-2 items-center">
               @if (lanyardData?.d?.active_on_discord_desktop) {
               <svg class="animate-scale-in delay-4" aria-label="Desktop" height="20" width="20" viewBox="0 0 24 24"

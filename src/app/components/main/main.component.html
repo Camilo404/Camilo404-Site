@@ -11,44 +11,97 @@
 
 <div class="container-info">
   <div class="grid content-center justify-items-center text-white">
-    <app-clock></app-clock>
+    <!-- Clock with nameplate video container -->
+    <div class="clock-video-container">
+      <video 
+        #nameplateVideo
+        class="clock-background-video" 
+        autoplay 
+        loop 
+        muted 
+        playsinline
+        preload="auto"
+        [class.hidden]="!nameplateVideoUrl"
+        [src]="nameplateVideoUrl || ''"
+        (loadeddata)="onVideoLoaded($event)"
+        (canplay)="onVideoCanPlay($event)"
+        (error)="onVideoError($event)">
+      </video>
+      <div class="clock-content">
+        <app-clock></app-clock>
+      </div>
+    </div>
 
-    <p class="text-white font-semibold my-4 text-[18px] md:text-[25px]">
-      Web Designer & Developer
-    </p>
-
-    <section class="glowing-icons">
-      <ul class="flex flex-wrap gap-2">
-        <li>
-          <a href="https://github.com/Camilo404" target="_blank" class="hovered">
-            <i class="fa-brands fa-github"></i>
-          </a>
-        </li>
-        <li>
-          <a href="https://www.youtube.com/channel/UChzlaSE1adSPVGYBBOQ1ibg" target="_blank" class="hovered">
-            <i class="fa-brands fa-youtube"></i>
-          </a>
-        </li>
-        <li>
-          <a href="https://www.instagram.com/camiloxtz/" target="_blank" class="hovered">
-            <i class="fa-brands fa-instagram"></i>
-          </a>
-        </li>
-        <li>
-          <a href="https://steamcommunity.com/profiles/76561198832154348/" target="_blank" class="hovered">
-            <i class="fa-brands fa-steam"></i>
-          </a>
-        </li>
-      </ul>
-    </section>
-
-    <div id="sound-slider__container" class="mt-5">
-      <i class='iconVolume text-white hovered bx bxs-volume-mute bx-tada bx-flip-vertical' #iconVolume (click)="toggleMute()"></i>
-      <input type="range" #volumeInput value="0" min="0" max="100" id="sound-slider" (input)="changeVolume($event)" class="hovered">
-      <p id="volume">{{volume}}</p>
+    <div class="title-badge">
+      <div class="badge-icon">
+        <i class="fas fa-code"></i>
+      </div>
+      <span class="badge-text">Web Designer & Developer</span>
     </div>
   </div>
 
-  <app-card-profile></app-card-profile>
+  <app-card-profile (nameplateAssetChange)="onNameplateAssetChange($event)"></app-card-profile>
+
+  <!-- Info Container -->
+  <div class="bottom-controls-container">
+    <!-- Social Icons -->
+    <div class="social-icons-compact">
+      <a href="https://github.com/Camilo404" target="_blank" class="social-icon" title="GitHub">
+        <i class="fa-brands fa-github"></i>
+      </a>
+      <a href="https://www.youtube.com/channel/UChzlaSE1adSPVGYBBOQ1ibg" target="_blank" class="social-icon" title="YouTube">
+        <i class="fa-brands fa-youtube"></i>
+      </a>
+      <a href="https://www.instagram.com/camiloxtz/" target="_blank" class="social-icon" title="Instagram">
+        <i class="fa-brands fa-instagram"></i>
+      </a>
+      <a href="https://steamcommunity.com/profiles/76561198832154348/" target="_blank" class="social-icon" title="Steam">
+        <i class="fa-brands fa-steam"></i>
+      </a>
+    </div>
+
+    <!-- Volume Control -->
+    <div class="volume-control-compact">
+      <button 
+        class="volume-icon-btn" 
+        (click)="toggleMute()" 
+        (keyup.enter)="toggleMute()" 
+        (keyup.space)="toggleMute()" 
+        tabindex="0" 
+        role="button" 
+        [attr.aria-label]="isMuted ? 'Unmute' : 'Mute'">
+        <i class='bx' 
+           [class.bxs-volume-mute]="isMuted" 
+           [class.bxs-volume-full]="!isMuted"
+           [class.bx-tada]="isMuted"
+           [class.bx-flip-vertical]="isMuted"></i>
+      </button>
+      <div class="volume-slider-wrapper">
+        <input 
+          type="range" 
+          #volumeInput 
+          value="0" 
+          min="0" 
+          max="100" 
+          class="volume-slider" 
+          (input)="changeVolume($event)" 
+          aria-label="Volume control">
+        <div class="volume-percentage">{{volume}}%</div>
+      </div>
+    </div>
+  </div>
 </div>
+
+<!-- Search Button -->
+<button class="floating-search-btn" (click)="openSearchModal()" title="Search Discord Profile">
+  <i class="fas fa-search search-icon"></i>
+  <span class="btn-text">Search Profile</span>
+  <div class="btn-glow"></div>
+</button>
+
+<app-search-modal 
+  [isOpen]="isModalOpen" 
+  (close)="closeSearchModal()" 
+  (search)="onSearchProfile($event)">
+</app-search-modal>
 
