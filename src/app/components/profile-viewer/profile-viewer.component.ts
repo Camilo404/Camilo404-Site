@@ -15,6 +15,7 @@ export class ProfileViewerComponent implements OnInit, OnDestroy {
   @Output() profileId!: string;
   
   public isModalOpen: boolean = false;
+  public isMobile: boolean = false;
   
   private destroy$ = new Subject<void>();
   private particleInterval: ReturnType<typeof setInterval> | undefined;
@@ -37,6 +38,8 @@ export class ProfileViewerComponent implements OnInit, OnDestroy {
   ) { }
   
   ngOnInit(): void {
+    this.isMobile = this.detectMobile();
+    
     this.route.paramMap.pipe(
       takeUntil(this.destroy$)
     ).subscribe(params => {
@@ -49,8 +52,22 @@ export class ProfileViewerComponent implements OnInit, OnDestroy {
     });
 
     this.addKeyframes();
-    this.createInitialParticles();
-    this.particleInterval = setInterval(() => this.createParticle(), 150);
+    
+    if (this.isMobile) {
+      this.createInitialParticles(5);
+      this.particleInterval = setInterval(() => this.createParticle(), 500);
+    } else {
+      this.createInitialParticles(15);
+      this.particleInterval = setInterval(() => this.createParticle(), 150);
+    }
+  }
+  
+  private detectMobile(): boolean {
+    const isMobileWidth = window.innerWidth <= 768;
+    const isMobileUA = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+    
+    return isMobileWidth || isMobileUA || isTouchDevice;
   }
 
   ngOnDestroy(): void {
@@ -274,8 +291,8 @@ export class ProfileViewerComponent implements OnInit, OnDestroy {
     document.documentElement.style.setProperty('--gradient-color-3', this.gradientColor3);
   }
 
-  createInitialParticles(): void {
-    for (let i = 0; i < 15; i++) {
+  createInitialParticles(count: number = 15): void {
+    for (let i = 0; i < count; i++) {
       setTimeout(() => this.createParticle(), i * 100);
     }
   }
@@ -295,16 +312,23 @@ export class ProfileViewerComponent implements OnInit, OnDestroy {
     const rotationDuration = Math.random() * 5 + 5 + 's';
     const opacity = Math.random() * 0.4 + 0.3;
     const color = this.colors[Math.floor(Math.random() * this.colors.length)];
-    const blur = Math.random() * 1;
+    
+    const blur = this.isMobile ? 0 : Math.random() * 1;
 
     this.renderer.setStyle(particle, 'fontSize', fontSize);
     this.renderer.setStyle(particle, 'left', leftPosition);
     this.renderer.setStyle(particle, 'opacity', opacity);
     this.renderer.setStyle(particle, 'color', color);
-    this.renderer.setStyle(particle, 'filter', `blur(${blur}px)`);
-    this.renderer.setStyle(particle, 'animation', 
-      `particleFall ${fallDuration} linear, particleSway ${sideWaysDuration} ease-in-out infinite, particleRotate ${rotationDuration} linear infinite`
-    );
+    
+    if (blur > 0) {
+      this.renderer.setStyle(particle, 'filter', `blur(${blur}px)`);
+    }
+    
+    const animations = this.isMobile 
+      ? `particleFall ${fallDuration} linear, particleSway ${sideWaysDuration} ease-in-out infinite`
+      : `particleFall ${fallDuration} linear, particleSway ${sideWaysDuration} ease-in-out infinite, particleRotate ${rotationDuration} linear infinite`;
+    
+    this.renderer.setStyle(particle, 'animation', animations);
 
     const container = document.querySelector('.particles-container');
     if (container) {

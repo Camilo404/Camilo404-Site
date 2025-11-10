@@ -11,6 +11,10 @@
               radial-gradient(ellipse at bottom, var(--gradient-color-3), transparent),
               linear-gradient(135deg, var(--gradient-color-1) 0%, var(--gradient-color-2) 50%, var(--gradient-color-3) 100%);
   transition: background 1s ease-in-out;
+  
+  &.mobile-optimized {
+    background: linear-gradient(135deg, var(--gradient-color-1) 0%, var(--gradient-color-2) 50%, var(--gradient-color-3) 100%);
+  }
 }
 
 // Mesh pattern overlay
@@ -28,6 +32,10 @@
 @keyframes meshMove {
   0% { background-position: 0 0, 0 30px, 30px -30px, -30px 0px; }
   100% { background-position: 60px 60px, 60px 90px, 90px 30px, 30px 60px; }
+}
+
+.mobile-disabled {
+  display: none !important;
 }
 
 // Scanline effect for retro-futuristic look
@@ -102,6 +110,12 @@
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
   width: 600px;
   max-width: 100%;
+}
+
+.glass-mobile {
+  backdrop-filter: blur(5px) !important;
+  -webkit-backdrop-filter: blur(5px) !important;
+  background: rgba(255, 255, 255, 0.08) !important;
 }
 
 .clock-video-container {
@@ -350,6 +364,11 @@
   font-size: 16px;
   text-shadow: 0 0 10px currentColor;
   will-change: transform, opacity;
+  
+  @media screen and (max-width: 768px) {
+    font-size: 12px;
+    text-shadow: 0 0 5px currentColor;
+  }
 }
 
 .animate-fade-in-down {
@@ -384,6 +403,21 @@
   }
   75% {
     transform: translate(60px, 60px) scale(1.05) rotate(3deg);
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .animate-blob-float {
+    animation: blobFloatMobile 10s ease-in-out infinite !important;
+  }
+  
+  @keyframes blobFloatMobile {
+    0%, 100% {
+      transform: translate(0, 0) scale(1);
+    }
+    50% {
+      transform: translate(15px, 15px) scale(1.05);
+    }
   }
 }
 
