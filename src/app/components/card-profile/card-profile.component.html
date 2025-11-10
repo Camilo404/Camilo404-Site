@@ -4,17 +4,14 @@
     <div class="card nitro-card" [ngStyle]="{'--color1': themesColor[0], '--color2': themesColor[1]}">
       <!-- Profile Effect Overlay - Multiple Layers -->
       @if (hasProfileEffect) {
-        <div class="profile-effect-container">
-          @for (layer of activeEffectLayers; track layer.src) {
-            <img 
-              [src]="layer.src" 
-              [alt]="profileEffectConfig?.title || 'Profile Effect'"
-              class="profile-effect-layer"
-              [style.z-index]="layer.zIndex || 100">
-          }
-        </div>
+      <div class="profile-effect-container">
+        @for (layer of activeEffectLayers; track layer.src) {
+        <img [src]="layer.src" [alt]="profileEffectConfig?.title || 'Profile Effect'" class="profile-effect-layer"
+          [style.z-index]="layer.zIndex || 100">
+        }
+      </div>
       }
-      
+
       <div class="card-header animate-fade-in">
         <div [ngStyle]="{'background-image': 'url(' + apiUrl + 'banner/' + ProfileId + ')'}" class="banner-img"></div>
       </div>
@@ -41,13 +38,29 @@
             </div>
           </a>
           <!-- Custom Status -->
-          <!-- <div class="custom-status">
-            <div class="custom-status-inner">
-              <div class="custom-status-text">
-                <p>{{'No custom status'}}</p>
+          @if (custom_status && custom_status.state) {
+            <div class="custom-status animate-scale-in delay-2">
+              <div class="custom-status-inner">
+                <div class="custom-status-content">
+
+                  <span class="custom-status-text">
+                    @if (custom_status.emoji) {
+                      @if (custom_status.emoji.id) {
+                        <img
+                          [src]="'https://cdn.discordapp.com/emojis/' + custom_status.emoji.id + (custom_status.emoji.animated ? '.gif' : '.png') + '?size=20&quality=lossless'"
+                          [alt]="custom_status.emoji.name || 'emoji'" class="custom-status-emoji"
+                          (error)="handleImageError($event)" />
+                        } @else if (custom_status.emoji.name) {
+                        <span class="custom-status-emoji">{{custom_status.emoji.name}}</span>
+                      }
+                    }
+                    
+                    {{custom_status.state}}
+                  </span>
+                </div>
               </div>
             </div>
-          </div> -->
+          }
         </div>
         <div class="profile-body animate-fade-in delay-3" data-offset="2.5">
           <div class="global-name flex justify-between items-center animate-slide-in delay-4">
@@ -94,12 +107,13 @@
 
             <div class="badges-container animate-fade-in delay-2">
               @for (badge of userData?.badges; track $index) {
-                <div class="badge-item">
-                  <a href="{{badge.link || ''}}" target="_blank" class="badge-link" [ngClass]="'delay-' + (3 + $index % 5)">
-                    <img src="{{apiUrl + 'badge/' +badge.icon}}.png" alt="{{badge.id}}" />
-                    <div class="tooltip tooltip-up">{{badge.description}}</div>
-                  </a>
-                </div>
+              <div class="badge-item">
+                <a href="{{badge.link || ''}}" target="_blank" class="badge-link"
+                  [ngClass]="'delay-' + (3 + $index % 5)">
+                  <img src="{{apiUrl + 'badge/' +badge.icon}}.png" alt="{{badge.id}}" />
+                  <div class="tooltip tooltip-up">{{badge.description}}</div>
+                </a>
+              </div>
               }
             </div>
           </div>

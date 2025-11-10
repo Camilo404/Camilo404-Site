@@ -29,6 +29,13 @@ export interface Activity {
   sync_id?: string;
   created_at?: number;
   buttons?: string[];
+  emoji?: ActivityEmoji;
+}
+
+export interface ActivityEmoji {
+  id?: string;
+  name?: string;
+  animated?: boolean;
 }
 
 export interface Assets {

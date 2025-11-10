@@ -258,6 +258,7 @@ export class CardProfileComponent implements OnInit, OnChanges, OnDestroy, After
         next: (data) => {
           this.lanyardData = data;
           this.custom_status = this.lanyardData.d?.activities?.find(activity => activity.name === 'Custom Status') || null;
+          console.log(this.custom_status);
           this.lanyardActivities = this.lanyardData.d?.activities || [];
           this.lanyardActivities = this.lanyardActivities.filter(activity => activity.id !== 'custom');
 
