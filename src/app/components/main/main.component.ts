@@ -1,4 +1,4 @@
-import { Component, ViewChild, AfterViewInit, ElementRef, ChangeDetectorRef } from '@angular/core';
+import { Component, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
 
 @Component({
@@ -7,16 +7,11 @@ import { Router } from '@angular/router';
   styleUrls: ['./main.component.scss'],
   standalone: false
 })
-export class MainComponent implements AfterViewInit {
+export class MainComponent {
 
-  public isMuted: boolean = true;
   public isModalOpen: boolean = false;
 
-  @ViewChild('bgVideo') bgVideo!: ElementRef;
-  @ViewChild('volumeInput') volumeInput!: ElementRef;
   @ViewChild('nameplateVideo') nameplateVideoRef?: ElementRef<HTMLVideoElement>;
-
-  public volume: number = 0;
 
   // Nameplate asset from profile
   nameplateAsset: string | null = null;
@@ -25,38 +20,6 @@ export class MainComponent implements AfterViewInit {
     private router: Router,
     private cdr: ChangeDetectorRef
   ) { }
-
-  ngAfterViewInit(): void {
-    this.bgVideo.nativeElement.muted = this.isMuted;
-  }
-
-  public changeVolume(volume: Event) {
-    const volumeInput = parseInt((volume.target as HTMLInputElement).value);
-    this.volume = volumeInput;
-
-    this.bgVideo.nativeElement.volume = volumeInput / 100;
-    localStorage.setItem('volume', volumeInput.toString());
-
-    this.isMuted = volumeInput === 0;
-    this.bgVideo.nativeElement.muted = this.isMuted;
-  }
-
-  public toggleMute(): void {
-    if (this.bgVideo) {
-      this.isMuted = !this.isMuted;
-      this.bgVideo.nativeElement.muted = this.isMuted;
-
-      if (this.isMuted) {
-        this.volume = 0;
-        this.volumeInput.nativeElement.value = 0;
-      } else {
-        const localVolume = localStorage.getItem('volume');
-        this.volume = localVolume ? parseInt(localVolume) : 100;
-        this.volumeInput.nativeElement.value = this.volume;
-        this.bgVideo.nativeElement.volume = this.volume / 100;
-      }
-    }
-  }
 
   public openSearchModal(): void {
     this.isModalOpen = true;

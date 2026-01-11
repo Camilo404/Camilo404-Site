@@ -1,12 +1,13 @@
 <app-neko></app-neko>
 
-<div class="video-container">
-  <div id="video_cover"></div>
-  <video id='myVideo' autoplay muted playsinline webkit-playsinline loop #bgVideo>
-    <source src="../../../assets/videos/bgVideo.mp4" type="video/mp4">
-  </video>
-
-  <div class="video-overlay"></div>
+<div style="position: fixed; inset: 0; z-index: -100;">
+  <app-ethereal-shadow
+    [sizing]="'fill'"
+    [color]="'rgba(128, 128, 128, 1)'"
+    [animation]="{ scale: 100, speed: 90 }"
+    [noise]="{ opacity: 1, scale: 1.2 }"
+    class="w-full h-full"
+  ></app-ethereal-shadow>
 </div>
 
 <div class="container-info">
@@ -58,36 +59,6 @@
       <a href="https://steamcommunity.com/profiles/76561198832154348/" target="_blank" class="social-icon" title="Steam">
         <i class="fa-brands fa-steam"></i>
       </a>
-    </div>
-
-    <!-- Volume Control -->
-    <div class="volume-control-compact">
-      <button 
-        class="volume-icon-btn" 
-        (click)="toggleMute()" 
-        (keyup.enter)="toggleMute()" 
-        (keyup.space)="toggleMute()" 
-        tabindex="0" 
-        role="button" 
-        [attr.aria-label]="isMuted ? 'Unmute' : 'Mute'">
-        <i class='bx' 
-           [class.bxs-volume-mute]="isMuted" 
-           [class.bxs-volume-full]="!isMuted"
-           [class.bx-tada]="isMuted"
-           [class.bx-flip-vertical]="isMuted"></i>
-      </button>
-      <div class="volume-slider-wrapper">
-        <input 
-          type="range" 
-          #volumeInput 
-          value="0" 
-          min="0" 
-          max="100" 
-          class="volume-slider" 
-          (input)="changeVolume($event)" 
-          aria-label="Volume control">
-        <div class="volume-percentage">{{volume}}%</div>
-      </div>
     </div>
   </div>
 </div>
