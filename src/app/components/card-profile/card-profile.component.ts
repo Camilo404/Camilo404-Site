@@ -74,8 +74,8 @@ export class CardProfileComponent implements OnInit, OnChanges, OnDestroy, After
   private activitiesSubscription: Subscription = new Subscription();
 
   constructor(
-    private discordApiService: DiscordApiService, 
-    private lanyardService: LanyardService, 
+    private discordApiService: DiscordApiService,
+    private lanyardService: LanyardService,
     private timestampsService: TimestampsService,
     private cdr: ChangeDetectorRef,
     private card3DService: Card3DEffectService,
@@ -91,7 +91,7 @@ export class CardProfileComponent implements OnInit, OnChanges, OnDestroy, After
     if (changes['ProfileId'] && !changes['ProfileId'].firstChange) {
       const newId = changes['ProfileId'].currentValue;
       const oldId = changes['ProfileId'].previousValue;
-      
+
       if (newId !== oldId) {
         this.resetProfileData();
 
@@ -117,7 +117,7 @@ export class CardProfileComponent implements OnInit, OnChanges, OnDestroy, After
     if (this.cardElement) {
       this.card3DService.destroyCard3DEffect(this.cardElement);
     }
-    
+
     this.activitiesSubscription.unsubscribe();
     this.destroy$.next();
     this.destroy$.complete();
@@ -134,10 +134,10 @@ export class CardProfileComponent implements OnInit, OnChanges, OnDestroy, After
     this.percentage = 0;
     this.profileEffectConfig = null;
     this.activeEffectLayers = [];
-    
+
     this.themeColorsChange.emit([]);
     this.nameplateAssetChange.emit(null);
-    
+
     this.cdr.markForCheck();
   }
 
@@ -150,7 +150,7 @@ export class CardProfileComponent implements OnInit, OnChanges, OnDestroy, After
           this.userData = data;
 
           // Format the user bio to HTML
-          this.userBioFormatted = toHTML(this.userData.user_profile?.bio || '');
+          this.userBioFormatted = this.parseBio(this.userData.user_profile?.bio || '');
 
           const themeColors = this.userData.user_profile?.theme_colors || [];
           if (themeColors.length === 0) {
@@ -161,10 +161,10 @@ export class CardProfileComponent implements OnInit, OnChanges, OnDestroy, After
               return '#' + color.toString(16).padStart(6, '0').toUpperCase();
             });
           }
-          
+
           // Emit theme colors to parent component
           this.themeColorsChange.emit(this.themesColor);
-          
+
           // Emit nameplate asset to parent component
           const nameplateAsset = this.userData.user?.collectibles?.nameplate?.asset || null;
           this.nameplateAssetChange.emit(nameplateAsset);
@@ -173,7 +173,7 @@ export class CardProfileComponent implements OnInit, OnChanges, OnDestroy, After
           if (this.profileEffectId) {
             this.loadProfileEffect(this.profileEffectId);
           }
-          
+
           // Trigger change detection
           this.cdr.markForCheck();
         },
@@ -203,7 +203,7 @@ export class CardProfileComponent implements OnInit, OnChanges, OnDestroy, After
 
   private initializeProfileEffectLayers(layers: ProfileEffectLayer[]): void {
     const sortedLayers = [...layers].sort((a, b) => (a.start || 0) - (b.start || 0));
-    
+
     this.activeEffectLayers = sortedLayers.filter(layer => (layer.start || 0) === 0);
     this.cdr.markForCheck();
 
@@ -266,7 +266,7 @@ export class CardProfileComponent implements OnInit, OnChanges, OnDestroy, After
 
           this.processActivities();
           this.updateStatusColor();
-          
+
           this.cdr.markForCheck();
         },
         error: (error) => {
@@ -304,7 +304,7 @@ export class CardProfileComponent implements OnInit, OnChanges, OnDestroy, After
 
         activity.timestamps!.end = this.timestampsService.getTotalDuration(activity.timestamps.start, activity.timestamps.end);
       }
-      
+
       if (activity.timestamps && activity.name !== 'Spotify') {
         const elapsedSub = this.timestampsService.getElapsedTime(activity.timestamps.start)
           .pipe(takeUntil(this.destroy$))
@@ -355,6 +355,24 @@ export class CardProfileComponent implements OnInit, OnChanges, OnDestroy, After
     } else {
       return imageUrl;
     }
+  }
+
+  private parseBio(bio: string): string {
+    if (!bio) return '';
+
+    // 1. Parse standard Markdown
+    let html = toHTML(bio);
+
+    // 2. Parse Custom Emojis
+    const emojiRegex = /(&lt;|<)(a?):([a-zA-Z0-9_]+):(\d+)(&gt;|>)/g;
+
+    html = html.replace(emojiRegex, (match, left, animated, name, id, right) => {
+      const isAnimated = animated === 'a';
+      const ext = isAnimated ? 'gif' : 'png';
+      return `<img src="https://cdn.discordapp.com/emojis/${id}.${ext}" alt=":${name}:" title=":${name}:" class="discord-emoji">`;
+    });
+
+    return html;
   }
 
   public sendMessage(): void {
