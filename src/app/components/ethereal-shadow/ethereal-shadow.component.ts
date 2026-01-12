@@ -154,7 +154,7 @@ export class EtherealShadowComponent implements OnInit, OnDestroy {
   ) {}
 
   get animationEnabled(): boolean {
-    return !!(this.animation && this.animation.scale > 0);
+    return !!(this.animation && this.animation.scale > 0) && !this.isMobile;
   }
 
   get displacementScale(): number {
@@ -172,10 +172,19 @@ export class EtherealShadowComponent implements OnInit, OnDestroy {
     return `${freq1},${freq2}`;
   }
 
+  private isMobile = false;
+
   ngOnInit(): void {
     if (isPlatformBrowser(this.platformId)) {
+      this.checkSystemPreferences();
       this.startAnimation();
     }
+  }
+
+  private checkSystemPreferences(): void {
+    // Detect mobile devices to save battery/performance
+    const userAgent = window.navigator.userAgent.toLowerCase();
+    this.isMobile = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent) || window.innerWidth < 768;
   }
 
   ngOnDestroy(): void {
@@ -187,17 +196,26 @@ export class EtherealShadowComponent implements OnInit, OnDestroy {
 
     this.ngZone.runOutsideAngular(() => {
       let startTime: number | null = null;
+      let lastFrameTime = 0;
+      const targetFps = 30; // Limit FPS to save resources
+      const frameInterval = 1000 / targetFps;
       const cycleDurationMs = (this.animationDuration / 25) * 1000;
 
       const animate = (timestamp: number) => {
         if (!startTime) startTime = timestamp;
-        const elapsed = timestamp - startTime;
+        
+        // Throttling FPS
+        const timeSinceLastFrame = timestamp - lastFrameTime;
+        if (timeSinceLastFrame >= frameInterval) {
+          lastFrameTime = timestamp - (timeSinceLastFrame % frameInterval);
+          
+          const elapsed = timestamp - startTime;
+          const progress = (elapsed % cycleDurationMs) / cycleDurationMs;
+          const value = progress * 360;
 
-        const progress = (elapsed % cycleDurationMs) / cycleDurationMs;
-        const value = progress * 360;
-
-        if (this.feColorMatrixRef?.nativeElement) {
-          this.feColorMatrixRef.nativeElement.setAttribute('values', value.toString());
+          if (this.feColorMatrixRef?.nativeElement) {
+            this.feColorMatrixRef.nativeElement.setAttribute('values', value.toString());
+          }
         }
 
         this.animationFrameId = requestAnimationFrame(animate);
