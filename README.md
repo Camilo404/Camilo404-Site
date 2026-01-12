@@ -1,54 +1,62 @@
 # Camilo404 Personal Website
 
-![Banner](https://media.discordapp.net/attachments/914640467516350475/1078335706616844388/3517019.gif?ex=67f29be2&is=67f14a62&hm=a3f785fd2dea4d9d792f231b8932b73eb4b5a39e3468ccb073698d1dc1cadf18&=&width=1032&height=469)
+A modern, immersive personal portfolio built with **Angular** that fuses **Glassmorphism**, **Anime aesthetics**, and **Real-time Data**. It showcases a dynamic Discord profile and interactive widgets.
 
-A modern, interactive personal website built with Angular that showcases your profile, social media links, real-time Discord status, and more.
+## 🌟 Key Features
 
-## 🌟 Features
+### 🔮 Core Experience
+- **Dynamic Discord Profile Card**: Real-time integration via Lanyard API showing status, activities, Spotify listening, and badges.
+- **Bento Grid Layout**: A modern, responsive grid architecture that organizes widgets elegantly.
+- **Glassmorphism UI**: Frosted glass effects with sophisticated blurring and transparency.
 
-- **Dynamic Discord Profile Card** - Shows your Discord profile information and real-time status via Lanyard API
-- **Background Video** - Customizable video background with control options
-- **Social Media Integration** - Easily add and display your social media profiles
-- **Interactive Elements** - Including:
-  - Custom cursor
-  - Oneko (cat) animation that follows cursor movement
-  - Animated clock
-- **Responsive Design** - Optimized for both desktop and mobile devices
+### 🧩 Interactive Widgets
+- **Shadow Terminal**: An aesthetic widget featuring a typewriter effect that cycles through iconic quotes (e.g., *The Eminence in Shadow*).
+- **Tech Stack Marquee**: An infinite scrolling loop displaying your technology stack (Angular, React, Python, etc.) with hover glow effects.
+- **Clock**: A stylized digital clock with visual effects.
+- **Social Connect**: A consolidated hub for all your social media links.
 
-## 📋 Prerequisites
+### 🎨 Visual & Fun Elements
+- **Ethereal Background**: Subtle, animated noise and shadow effects that give depth to the page.
+- **Cursor Interaction**:
+  - **Custom Cursor**: Replaces the default pointer for better immersion.
+  - **Oneko (Cat)**: A pixel-art cat that chases your cursor across the screen.
+- **Profile Search**: Built-in modal to search and view other Discord profiles.
 
-- Node.js 16.x or higher
-- Angular CLI 17.x
+## 📋 Tech Stack
+
+- **Framework**: Angular 17+
+- **Styling**: SCSS (Sass), Tailwind CSS
+- **APIs**: Lanyard (Discord Presence), Discord Assets
+- **Animations**: CSS Keyframes, TypeScript-driven logic
 
 ## 🚀 Installation
 
-1. Clone the repository
+1. **Clone the repository**
    ```bash
    git clone https://github.com/Camilo404/Camilo404-Site.git
    cd Camilo404-Site
    ```
 
-2. Install dependencies
+2. **Install dependencies**
    ```bash
    npm install
    ```
 
-3. Configure environment variables
-   - Open `src/environments/environment.ts` and update:
-     ```typescript
-     export const environment = {
-       "discordId": "YOUR_DISCORD_ID",
-       "apiUrl": "YOUR_API_URL",
-       "webSocketUrl": "wss://api.lanyard.rest/socket"
-     };
-     ```
+3. **Configure Environment**
+   Open `src/environments/environment.ts` and set your Discord ID:
+   ```typescript
+   export const environment = {
+     discordId: "YOUR_DISCORD_ID", // Your 18-digit Discord User ID
+     webSocketUrl: "wss://api.lanyard.rest/socket",
+     // ... other configs
+   };
+   ```
 
-4. Run the development server
+4. **Run Development Server**
    ```bash
    npm start
    ```
-
-5. Navigate to `http://localhost:4200/`
+   Navigate to `http://localhost:4200/`.
 
 ## 🏗️ Project Structure
 
@@ -56,88 +64,49 @@ A modern, interactive personal website built with Angular that showcases your pr
 src/
 ├── app/
 │   ├── components/
-│   │   ├── card-profile/       # Discord profile card component
-│   │   ├── clock/              # Animated clock component
-│   │   ├── main/               # Main page with video background
-│   │   ├── neko/               # Animated cat that follows cursor
-│   │   └── profile-viewer/     # Profile viewer page
-│   ├── models/                 # TypeScript interfaces
-│   ├── services/               # API services
-│   └── app.component.*         # Root component
-├── assets/
-│   ├── images/                 # Site images
-│   └── videos/                 # Background videos
-└── environments/               # Environment configuration
+│   │   ├── card-profile/       # Main Discord profile card
+│   │   ├── main/               # Bento Grid layout & Widgets
+│   │   ├── clock/              # Glitch clock widget
+│   │   ├── ethereal-shadow/    # Background effects
+│   │   ├── neko/               # Cursor cat animation
+│   │   ├── profile-viewer/     # Profile viewer page
+│   │   └── search-modal/       # User search functionality
+│   ├── services/
+│   │   ├── lanyard.service.ts  # WebSocket connection to Lanyard
+│   │   └── ...
+│   └── models/                 # Interfaces (Discord, Profile, etc.)
+└── assets/                     # Images, badges, videos
 ```
 
 ## 🔧 Customization
 
-### Changing the Discord Profile
-
-Update your Discord ID in the environment file to display your own profile information:
+### Updating the Tech Stack
+Navigate to `src/app/components/main/main.component.ts` and modify the `techStack` array:
 
 ```typescript
-// src/environments/environment.ts
-export const environment = {
-  "discordId": "YOUR_DISCORD_ID",
-  // ...
-};
+public techStack = [
+  { name: 'Angular', icon: 'fa-brands fa-angular', color: '#dd0031' },
+  { name: 'React', icon: 'fa-brands fa-react', color: '#61dafb' },
+  // Add your technologies here...
+];
 ```
 
-### Adding Social Media Links
+### Changing Quotes (Shadow Widget)
+In `main.component.ts`, update the `quotes` array to personalize the typewriter text:
 
-Modify the social media links in `main.component.html`:
-
-```html
-<section class="glowing-icons">
-  <ul class="flex flex-wrap gap-2">
-    <li>
-      <a href="YOUR_LINK" target="_blank" class="hovered">
-        <i class="fa-brands fa-ICON_NAME"></i>
-      </a>
-    </li>
-    <!-- Add more social media links -->
-  </ul>
-</section>
+```typescript
+private quotes: string[] = [
+  "Your custom quote here...",
+  "Another cool phrase."
+];
 ```
 
-### Changing Background Video
+## 📄 License
 
-Replace the video file in `src/assets/videos/` and update the reference in `main.component.html`.
+This project is licensed under the **MIT License**.
 
-## 📱 Features In Detail
+---
 
-### Discord Card
-
-The Discord card displays your:
-- Profile picture with Discord status
-- Username and global name
-- Profile badges
-- Bio with Markdown support
-- Current activity (including Spotify with progress bar)
-- Connected accounts
-
-### Interactive Elements
-
-- **Custom Cursor**: Replaces the standard cursor with a custom design
-- **Oneko (Cat Animation)**: A small pixelated cat that follows your cursor around the screen
-- **Animated Clock**: A stylized clock with glitch effects
-- **Snowfall Effect**: Animated snowflakes on the profile page
-- **3D Card Effect**: Custom 3D hover effect for cards using CSS transforms
-
-## 🛠️ Technologies Used
-
-- Angular 17
-- TypeScript
-- Tailwind CSS
-- Lanyard API (for Discord status)
-- RxJS
-
-## 📝 License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## 🤝 Acknowledgements
-
-- [Discord Markdown Parser](https://github.com/SrGobi/discord-markdown-fix) - For rendering Discord Markdown
-- [Lanyard API](https://github.com/Phineas/lanyard) - For real-time Discord status
+<div align="center">
+  <p>Built with 💜 by Camilo404</p>
+</div>

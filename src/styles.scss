@@ -2,8 +2,15 @@
 @tailwind components;
 @tailwind utilities;
 
-// Font is now preloaded in index.html for better performance
-// @import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+// ========================================
+// Global Typography & Variables
+// ========================================
+$font-primary: 'Roboto', sans-serif;
+$font-secondary: 'Playfair Display', serif;
+$font-decorative: 'Cinzel', serif;
+
+$text-color: #ffffff;
+$bg-color: #1e1e1e;
 
 * {
   margin: 0;
@@ -12,8 +19,9 @@
 }
 
 body {
-  font-family: 'Roboto', sans-serif;
-  background-color: #1e1e1e;
+  font-family: $font-primary;
+  background-color: $bg-color;
+  color: $text-color;
   cursor: url('./assets/images/cursor/pointer.png'), auto;
   
   // Performance optimizations
@@ -22,6 +30,13 @@ body {
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
 }
+
+// ========================================
+// Global Typography Classes
+// ========================================
+.font-primary { font-family: $font-primary; }
+.font-secondary { font-family: $font-secondary; }
+.font-decorative { font-family: $font-decorative; }
 
 // Optimize image rendering
 img {
@@ -39,6 +54,7 @@ img {
   color: #dddddd;
   font-size: 0.9rem;
   line-height: 1.5;
+  font-family: $font-primary;
 }
 
 .markdown code {
@@ -51,6 +67,7 @@ img {
   text-indent: 0;
   white-space: pre-wrap;
   border: 1px solid rgba(0, 0, 0, 0);
+  font-family: monospace;
 }
 
 .markdown blockquote {
@@ -75,7 +92,6 @@ img {
   text-decoration: none;
   transition: text-decoration 0.2s ease-in-out;
 }
-
 .markdown a:hover {
   text-decoration: underline;
 }
