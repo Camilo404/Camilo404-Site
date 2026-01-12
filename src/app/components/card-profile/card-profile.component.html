@@ -1,15 +1,16 @@
 <div class="card-3d-container" #cardElement>
   @if (userDataStatus) {
   <div class="aesthetic-card animate-scale-in" [ngStyle]="{'--accent-color': themesColor[0] || '#7289da'}">
-    
+
+
     <!-- Profile Effect Overlay -->
     @if (hasProfileEffect) {
-      <div class="profile-effect-container">
-        @for (layer of activeEffectLayers; track layer.src) {
-        <img [src]="layer.src" [alt]="profileEffectConfig?.title || 'Profile Effect'" class="profile-effect-layer"
-          [style.z-index]="layer.zIndex || 100">
-        }
-      </div>
+    <div class="profile-effect-container">
+      @for (layer of activeEffectLayers; track layer.src) {
+      <img [src]="layer.src" [alt]="profileEffectConfig?.title || 'Profile Effect'" class="profile-effect-layer"
+        [style.z-index]="layer.zIndex || 100">
+      }
+    </div>
     }
 
     <!-- Cover Image -->
@@ -23,7 +24,9 @@
         <div class="avatar-wrapper">
           <div class="avatar-container">
             @if (userData?.user?.avatar_decoration_data?.asset) {
-            <img [src]="'https://cdn.discordapp.com/avatar-decoration-presets/' + userData?.user?.avatar_decoration_data?.asset + '.png'" alt="Avatar Decoration" class="avatar-decoration">
+            <img
+              [src]="'https://cdn.discordapp.com/avatar-decoration-presets/' + userData?.user?.avatar_decoration_data?.asset + '.png'"
+              alt="Avatar Decoration" class="avatar-decoration">
             }
             <img class="avatar-img" [src]="apiUrl + 'avatar/' + ProfileId" alt="Avatar">
           </div>
@@ -39,45 +42,54 @@
           <div class="name-row">
             <h1 class="display-name">{{userData?.user?.global_name || userData?.user?.username}}</h1>
             @if (clanTag && clanBadgeUrl) {
-              <div class="clan-tag">
-                <img [src]="clanBadgeUrl" class="clan-badge" (error)="handleImageError($event)" alt="Clan Badge">
-                <span>{{clanTag}}</span>
-              </div>
+            <div class="clan-tag">
+              <img [src]="clanBadgeUrl" class="clan-badge" (error)="handleImageError($event)" alt="Clan Badge">
+              <span>{{clanTag}}</span>
+            </div>
             }
           </div>
           <div class="username-row">
             <span class="username">{{ '@' + userData?.user?.username }}</span>
             @if (userData?.user_profile?.pronouns) {
-              <span class="divider">•</span>
-              <span class="pronouns">{{userData?.user_profile?.pronouns}}</span>
+            <span class="divider">•</span>
+            <span class="pronouns">{{userData?.user_profile?.pronouns}}</span>
             }
 
-             <!-- Desktop/Mobile/Web indicators here -->
-             <div class="platform-indicators">
+            <!-- Desktop/Mobile/Web indicators here -->
+            <div class="platform-indicators">
               @if (lanyardData?.d?.active_on_discord_desktop) {
-                <i class="platform-icon desktop" title="Desktop">
-                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 2.5c-1.103 0-2 .897-2 2v11c0 1.104.897 2 2 2h7v2H7v2h10v-2h-4v-2h7c1.103 0 2-.896 2-2v-11c0-1.103-.897-2-2-2H4Zm16 2v9H4v-9h16Z"/></svg>
-                </i>
+              <i class="platform-icon desktop" title="Desktop">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                  <path
+                    d="M4 2.5c-1.103 0-2 .897-2 2v11c0 1.104.897 2 2 2h7v2H7v2h10v-2h-4v-2h7c1.103 0 2-.896 2-2v-11c0-1.103-.897-2-2-2H4Zm16 2v9H4v-9h16Z" />
+                </svg>
+              </i>
               }
               @if (lanyardData?.d?.active_on_discord_web) {
-                <i class="platform-icon web" title="Web">
-                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2Zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93Zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39Z"/></svg>
-                </i>
+              <i class="platform-icon web" title="Web">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                  <path
+                    d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2Zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93Zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39Z" />
+                </svg>
+              </i>
               }
               @if (lanyardData?.d?.active_on_discord_mobile) {
-                <i class="platform-icon mobile" title="Mobile">
-                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M15.5 1h-8A2.5 2.5 0 0 0 5 3.5v17A2.5 2.5 0 0 0 7.5 23h8a2.5 2.5 0 0 0 2.5-2.5v-17A2.5 2.5 0 0 0 15.5 1zm-4 21c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm4.5-4H7V4h9v14z"/></svg>
-                </i>
+              <i class="platform-icon mobile" title="Mobile">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                  <path
+                    d="M15.5 1h-8A2.5 2.5 0 0 0 5 3.5v17A2.5 2.5 0 0 0 7.5 23h8a2.5 2.5 0 0 0 2.5-2.5v-17A2.5 2.5 0 0 0 15.5 1zm-4 21c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm4.5-4H7V4h9v14z" />
+                </svg>
+              </i>
               }
-             </div>
+            </div>
           </div>
-          
+
           <!-- Badges -->
           <div class="badges-list">
             @for (badge of userData?.badges; track $index) {
-              <a [href]="badge.link || ''" target="_blank" class="badge-item" [title]="badge.description">
-                <img [src]="apiUrl + 'badge/' + badge.icon + '.png'" [alt]="badge.id">
-              </a>
+            <a [href]="badge.link || ''" target="_blank" class="badge-item" [title]="badge.description">
+              <img [src]="apiUrl + 'badge/' + badge.icon + '.png'" [alt]="badge.id">
+            </a>
             }
           </div>
         </div>
@@ -86,95 +98,114 @@
       <div class="scrollable-content">
         <!-- Custom Status -->
         @if (custom_status && custom_status.state) {
-          <div class="custom-status-card">
-            @if (custom_status.emoji) {
-              @if (custom_status.emoji.id) {
-                <img [src]="'https://cdn.discordapp.com/emojis/' + custom_status.emoji.id + (custom_status.emoji.animated ? '.gif' : '.png') + '?size=24&quality=lossless'"
-                  class="status-emoji" (error)="handleImageError($event)" alt="Status Emoji">
-              } @else if (custom_status.emoji.name) {
-                <span class="status-emoji-text">{{custom_status.emoji.name}}</span>
-              }
-            }
-            <span class="status-text">{{custom_status.state}}</span>
-          </div>
+        <div class="custom-status-card">
+          @if (custom_status.emoji) {
+          @if (custom_status.emoji.id) {
+          <img
+            [src]="'https://cdn.discordapp.com/emojis/' + custom_status.emoji.id + (custom_status.emoji.animated ? '.gif' : '.png') + '?size=24&quality=lossless'"
+            class="status-emoji" (error)="handleImageError($event)" alt="Status Emoji">
+          } @else if (custom_status.emoji.name) {
+          <span class="status-emoji-text">{{custom_status.emoji.name}}</span>
+          }
+          }
+          <span class="status-text">{{custom_status.state}}</span>
+        </div>
         }
 
         <!-- Bio -->
         @if (userData?.user_profile?.bio!.length > 0) {
-          <div class="section bio-section">
-            <h3 class="section-title">About Me</h3>
-            <div class="markdown-content" [innerHTML]="userBioFormatted"></div>
-          </div>
+        <section class="section bio-section">
+          <h3 class="section-title">About Me</h3>
+          <div class="markdown-content" [innerHTML]="userBioFormatted"></div>
+        </section>
         }
 
         <!-- Activities -->
         @if (lanyardActivities.length > 0) {
-          <div class="section activities-section">
-            <h3 class="section-title">Activity</h3>
-            <div class="activities-list">
-              @for (activity of lanyardActivities; track $index) {
-                <div class="activity-card" [class.spotify-card]="activity.name === 'Spotify'">
-                  <div class="activity-icon">
-                    @if (activity.name === 'Spotify') {
-                      <a href="https://open.spotify.com/track/{{activity.sync_id}}" target="_blank">
-                        <img [src]="'https://i.scdn.co/image/' + getActivityImageId(activity.assets?.large_image || '')" 
-                             class="large-asset" (error)="handleImageError($event)" alt="Spotify Cover">
-                        @if (activity.assets?.small_image) {
-                          <img [src]="'https://i.scdn.co/image/' + getActivityImageId(activity.assets?.small_image || '')" 
-                               class="small-asset" (error)="handleImageError($event)" alt="Spotify Small Icon">
-                        }
-                      </a>
-                    } @else {
-                      <img [src]="'https://cdn.discordapp.com/app-assets/' + activity.application_id + '/' + activity.assets?.large_image + '.png'"
-                           class="large-asset" (error)="handleImageError($event)" alt="Activity Large Image">
-                      @if (activity.assets?.small_image) {
-                        <img [src]="'https://cdn.discordapp.com/app-assets/' + activity.application_id + '/' + activity.assets?.small_image + '.png'"
-                             class="small-asset" (error)="handleImageError($event)" alt="Activity Small Image">
-                      }
-                    }
+        <section class="section activities-section">
+          <h3 class="section-title">Activity</h3>
+          <div class="activities-list">
+            @for (activity of lanyardActivities; track $index) {
+            <div class="activity-card" [class.spotify-card]="activity.name === 'Spotify'">
+              <div class="activity-icon">
+                @if (activity.name === 'Spotify') {
+                <a href="https://open.spotify.com/track/{{activity.sync_id}}" target="_blank">
+                  <img [src]="'https://i.scdn.co/image/' + getActivityImageId(activity.assets?.large_image || '')"
+                    class="large-asset" (error)="handleImageError($event)" alt="Spotify Cover">
+                  @if (activity.assets?.small_image) {
+                  <img [src]="'https://i.scdn.co/image/' + getActivityImageId(activity.assets?.small_image || '')"
+                    class="small-asset" (error)="handleImageError($event)" alt="Spotify Small Icon">
+                  }
+                </a>
+                } @else {
+                <img
+                  [src]="'https://cdn.discordapp.com/app-assets/' + activity.application_id + '/' + activity.assets?.large_image + '.png'"
+                  class="large-asset" (error)="handleImageError($event)" alt="Activity Large Image">
+                @if (activity.assets?.small_image) {
+                <img
+                  [src]="'https://cdn.discordapp.com/app-assets/' + activity.application_id + '/' + activity.assets?.small_image + '.png'"
+                  class="small-asset" (error)="handleImageError($event)" alt="Activity Small Image">
+                }
+                }
+              </div>
+              <div class="activity-details">
+                <span class="activity-name">{{activity.name}}</span>
+                <span class="activity-state">{{activity.details}}</span>
+                <span class="activity-desc">{{activity.state}}</span>
+
+                @if (activity.name === 'Spotify') {
+                <div class="spotify-progress">
+                  <span class="time">{{activity.timestamps?.start}}</span>
+                  <div class="progress-bar">
+                    <div class="progress-fill" [style.width.%]="percentage"></div>
                   </div>
-                  <div class="activity-details">
-                    <span class="activity-name">{{activity.name}}</span>
-                    <span class="activity-state">{{activity.details}}</span>
-                    <span class="activity-desc">{{activity.state}}</span>
-                    
-                    @if (activity.name === 'Spotify') {
-                      <div class="spotify-progress">
-                         <span class="time">{{activity.timestamps?.start}}</span>
-                         <div class="progress-bar">
-                           <div class="progress-fill" [style.width.%]="percentage"></div>
-                         </div>
-                         <span class="time">{{activity.timestamps?.end}}</span>
-                      </div>
-                    } @else if (activity.timestamps?.start) {
-                      <span class="activity-time">{{activity.timestamps?.start}} elapsed</span>
-                    }
-                  </div>
+                  <span class="time">{{activity.timestamps?.end}}</span>
                 </div>
-              }
+                } @else if (activity.timestamps?.start) {
+                <span class="activity-time">{{activity.timestamps?.start}} elapsed</span>
+                }
+              </div>
             </div>
+            }
           </div>
+        </section>
         }
 
         <!-- Connections -->
         @if (userData?.connected_accounts!.length > 0) {
-          <div class="section connections-section">
-            <h3 class="section-title">Connections</h3>
-            <div class="connections-grid">
-              @for (account of userData?.connected_accounts; track $index) {
-                <a class="connection-item" [href]="'#'" [title]="account.name + ' (' + account.type + ')'">
-                  <img src="assets/images/connections/{{account.type}}.svg" [alt]="account.type">
-                </a>
-              }
-            </div>
+        <section class="section connections-section">
+          <h3 class="section-title">Connections</h3>
+          <div class="connections-grid">
+            @for (account of userData?.connected_accounts; track $index) {
+            <a class="connection-item" [href]="'#'" [title]="account.name + ' (' + account.type + ')'">
+              <img src="assets/images/connections/{{account.type}}.svg" [alt]="account.type">
+            </a>
+            }
           </div>
+        </section>
         }
-        
+
         <!-- Message Input -->
         <div class="message-section">
-            <input type="text" placeholder="Send a message..." [(ngModel)]="message" (keyup.enter)="sendMessage()" class="aesthetic-input" />
+          <input type="text" placeholder="Send a message..." [(ngModel)]="message" (keyup.enter)="sendMessage()"
+            class="aesthetic-input" />
         </div>
       </div>
+    </div>
+  </div>
+  } @else {
+  <!-- Skeleton Loader -->
+  <div class="skeleton-card animate-scale-in">
+    <div class="skeleton-banner"></div>
+    <div class="skeleton-header">
+      <div class="skeleton-avatar"></div>
+    </div>
+    <div class="skeleton-body">
+      <div class="skeleton-line title"></div>
+      <div class="skeleton-line subtitle"></div>
+      <div class="skeleton-line text"></div>
+      <div class="skeleton-line text"></div>
+      <div class="skeleton-line text-short"></div>
     </div>
   </div>
   }

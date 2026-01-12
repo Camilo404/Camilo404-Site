@@ -5,6 +5,99 @@
   width: 100%;
 }
 
+// ------------------------------
+// Skeleton Screens
+// ------------------------------
+@keyframes shimmer {
+  0% {
+    background-position: -468px 0;
+  }
+
+  100% {
+    background-position: 468px 0;
+  }
+}
+
+.skeleton-card {
+  position: relative;
+  width: 400px;
+  min-height: 500px;
+  background: rgba(20, 20, 24, 0.75);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+
+  .skeleton-bg {
+    animation: shimmer 1s linear infinite;
+    background: linear-gradient(to right,
+        #2f2f2f 8%,
+        #3a3a3a 18%,
+        #2f2f2f 33%);
+    background-size: 800px 104px;
+  }
+
+  .skeleton-banner {
+    height: 160px;
+    width: 100%;
+    margin-bottom: 60px;
+    @extend .skeleton-bg;
+  }
+
+  .skeleton-header {
+    padding: 0 1.5rem;
+    position: relative;
+    top: -110px;
+    margin-bottom: -90px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+
+  .skeleton-avatar {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    border: 4px solid rgba(20, 20, 24, 1);
+    @extend .skeleton-bg;
+  }
+
+  .skeleton-body {
+    padding: 1.5rem;
+    padding-top: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .skeleton-line {
+    height: 16px;
+    border-radius: 4px;
+    @extend .skeleton-bg;
+
+    &.title {
+      height: 28px;
+      width: 60%;
+      margin-bottom: 0.5rem;
+    }
+
+    &.subtitle {
+      height: 16px;
+      width: 40%;
+    }
+
+    &.text {
+      width: 100%;
+    }
+
+    &.text-short {
+      width: 80%;
+    }
+  }
+}
+
 .aesthetic-card {
   position: relative;
   width: 400px;
@@ -14,7 +107,7 @@
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 24px;
   overflow: hidden;
-  box-shadow: 
+  box-shadow:
     0 20px 40px rgba(0, 0, 0, 0.4),
     0 0 0 1px rgba(255, 255, 255, 0.05) inset;
   color: #fff;
@@ -39,7 +132,7 @@
   inset: 0;
   pointer-events: none;
   z-index: 5;
-  
+
   .profile-effect-layer {
     position: absolute;
     inset: 0;
@@ -55,7 +148,7 @@
   background-size: cover;
   background-position: center;
   position: relative;
-  
+
   .cover-overlay {
     position: absolute;
     inset: 0;
@@ -142,31 +235,53 @@
   &.online {
     border-color: rgba(67, 181, 129, 0.3);
     color: #43b581;
-    .status-dot { background: #43b581; box-shadow: 0 0 8px rgba(67, 181, 129, 0.6); }
+
+    .status-dot {
+      background: #43b581;
+      box-shadow: 0 0 8px rgba(67, 181, 129, 0.6);
+    }
   }
-  
+
   &.idle {
     border-color: rgba(250, 166, 26, 0.3);
     color: #faa61a;
-    .status-dot { background: #faa61a; box-shadow: 0 0 8px rgba(250, 166, 26, 0.6); }
+
+    .status-dot {
+      background: #faa61a;
+      box-shadow: 0 0 8px rgba(250, 166, 26, 0.6);
+    }
   }
-  
+
   &.dnd {
     border-color: rgba(240, 71, 71, 0.3);
     color: #f04747;
-    .status-dot { background: #f04747; box-shadow: 0 0 8px rgba(240, 71, 71, 0.6); }
+
+    .status-dot {
+      background: #f04747;
+      box-shadow: 0 0 8px rgba(240, 71, 71, 0.6);
+    }
   }
-  
+
   &.streaming {
     border-color: rgba(89, 54, 149, 0.3);
     color: #593695;
-    .status-dot { background: #593695; box-shadow: 0 0 8px rgba(89, 54, 149, 0.6); }
+
+    .status-dot {
+      background: #593695;
+      box-shadow: 0 0 8px rgba(89, 54, 149, 0.6);
+    }
   }
-  
+
   &.offline {
     border-color: rgba(116, 127, 141, 0.3);
     color: #747f8d;
-    .status-dot { background: #747f8d; box-shadow: none; border: 2px solid #747f8d; background: transparent; }
+
+    .status-dot {
+      background: #747f8d;
+      box-shadow: none;
+      border: 2px solid #747f8d;
+      background: transparent;
+    }
   }
 }
 
@@ -178,7 +293,7 @@
   padding: 0;
   border: none;
   border-radius: 0;
-  
+
   .platform-icon {
     color: #b9bbbe;
     width: 16px;
@@ -188,17 +303,27 @@
     justify-content: center;
     opacity: 0.7;
     transition: opacity 0.2s;
-    
+
     svg {
       width: 18px;
       height: 18px;
     }
 
-    &:hover { opacity: 1; }
+    &:hover {
+      opacity: 1;
+    }
 
-    &.desktop { color: #d3f258; }
-    &.web { color: #00A8FC; }
-    &.mobile { color: #3BA55D; }
+    &.desktop {
+      color: #d3f258;
+    }
+
+    &.web {
+      color: #00A8FC;
+    }
+
+    &.mobile {
+      color: #3BA55D;
+    }
   }
 }
 
@@ -208,7 +333,7 @@
     align-items: center;
     gap: 8px;
     flex-wrap: wrap;
-    
+
     .display-name {
       font-size: 1.5rem;
       font-weight: 700;
@@ -216,7 +341,7 @@
       margin: 0;
       letter-spacing: -0.02em;
     }
-    
+
     .clan-tag {
       background: rgba(88, 101, 242, 0.15);
       border: 1px solid rgba(88, 101, 242, 0.3);
@@ -228,7 +353,7 @@
       font-size: 0.75rem;
       font-weight: 600;
       color: #DEE0FC;
-      
+
       .clan-badge {
         width: 14px;
         height: 14px;
@@ -242,8 +367,10 @@
     gap: 6px;
     color: #b9bbbe;
     font-size: 0.95rem;
-    
-    .divider { opacity: 0.5; }
+
+    .divider {
+      opacity: 0.5;
+    }
   }
 
   .badges-list {
@@ -251,17 +378,21 @@
     flex-wrap: wrap;
     gap: 6px;
     margin-top: 10px;
-    
+
     .badge-item {
       width: 22px;
       height: 22px;
       transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
-      
-      img { width: 100%; height: 100%; object-fit: contain; }
-      
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+      }
+
       &:hover {
         transform: scale(1.15);
-        filter: drop-shadow(0 0 4px rgba(255,255,255,0.3));
+        filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.3));
       }
     }
   }
@@ -285,9 +416,15 @@
   gap: 10px;
   font-size: 0.9rem;
   color: #dedede;
-  
-  .status-emoji { width: 20px; height: 20px; }
-  .status-text { font-weight: 500; }
+
+  .status-emoji {
+    width: 20px;
+    height: 20px;
+  }
+
+  .status-text {
+    font-weight: 500;
+  }
 }
 
 // Sections Generic
@@ -308,11 +445,14 @@
     font-size: 0.9rem;
     line-height: 1.6;
     color: #dcddde;
-    
+
     ::ng-deep a {
       color: #00aff4;
       text-decoration: none;
-      &:hover { text-decoration: underline; }
+
+      &:hover {
+        text-decoration: underline;
+      }
     }
   }
 }
@@ -332,7 +472,7 @@
   gap: 12px;
   align-items: center;
   transition: background 0.2s ease;
-  
+
   &:hover {
     background: rgba(0, 0, 0, 0.3);
   }
@@ -378,8 +518,9 @@
       font-size: 0.9rem;
       color: #fff;
     }
-    
-    .activity-state, .activity-desc {
+
+    .activity-state,
+    .activity-desc {
       font-size: 0.8rem;
       color: #b9bbbe;
       white-space: nowrap;
@@ -399,20 +540,20 @@
       display: flex;
       align-items: center;
       gap: 8px;
-      
+
       .time {
         font-size: 0.7rem;
         color: #b9bbbe;
         font-family: monospace;
       }
-      
+
       .progress-bar {
         flex: 1;
         height: 4px;
         background: rgba(255, 255, 255, 0.2);
         border-radius: 2px;
         overflow: hidden;
-        
+
         .progress-fill {
           height: 100%;
           background: #fff;
@@ -428,7 +569,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  
+
   .connection-item {
     background: rgba(255, 255, 255, 0.05);
     width: 36px;
@@ -438,19 +579,21 @@
     align-items: center;
     justify-content: center;
     transition: all 0.2s ease;
-    
+
     img {
       width: 20px;
       height: 20px;
       opacity: 0.8;
       transition: opacity 0.2s;
     }
-    
+
     &:hover {
       background: rgba(255, 255, 255, 0.1);
       transform: translateY(-2px);
-      
-      img { opacity: 1; }
+
+      img {
+        opacity: 1;
+      }
     }
   }
 }
@@ -458,7 +601,7 @@
 // Message Input
 .message-section {
   margin-top: 0.5rem;
-  
+
   .aesthetic-input {
     width: 100%;
     background: rgba(0, 0, 0, 0.3);
@@ -468,14 +611,14 @@
     border-radius: 12px;
     font-size: 0.9rem;
     transition: all 0.2s ease;
-    
+
     &:focus {
       outline: none;
       background: rgba(0, 0, 0, 0.5);
       border-color: var(--accent-color);
       box-shadow: 0 0 0 2px rgba(var(--accent-color), 0.2);
     }
-    
+
     &::placeholder {
       color: #72767d;
     }
@@ -484,8 +627,15 @@
 
 // Animations
 @keyframes scaleIn {
-  from { opacity: 0; transform: scale(0.9); }
-  to { opacity: 1; transform: scale(1); }
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 .animate-scale-in {
