@@ -2,19 +2,14 @@
 <app-neko></app-neko>
 
 <!-- Background Ethereal Shadow -->
-<div style="position: fixed; inset: 0; z-index: -100;">
-  <app-ethereal-shadow
-    [sizing]="'fill'"
-    [color]="'rgba(128, 128, 128, 1)'"
-    [animation]="{ scale: 100, speed: 90 }"
-    [noise]="{ opacity: 1, scale: 1.2 }"
-    class="w-full h-full"
-  ></app-ethereal-shadow>
+<div class="ethereal-background-container">
+  <app-ethereal-shadow [sizing]="'fill'" [color]="'rgba(128, 128, 128, 1)'" [animation]="{ scale: 100, speed: 90 }"
+    [noise]="{ opacity: 1, scale: 1.2 }" class="w-full h-full"></app-ethereal-shadow>
 </div>
 
-<div class="main-container">
+<main class="main-container">
   <div class="bento-grid">
-    
+
     <!-- Column Left: Profile -->
     <div class="bento-col-profile">
       <app-card-profile (nameplateAssetChange)="onNameplateAssetChange($event)"></app-card-profile>
@@ -22,96 +17,96 @@
 
     <!-- Column Right: Widgets -->
     <div class="bento-col-widgets">
-      
+
       <!-- Clock Widget -->
-      <div class="widget-card clock-card">
-        <video 
-          #nameplateVideo
-          class="clock-background-video" 
-          autoplay 
-          loop 
-          muted 
-          playsinline
-          preload="auto"
-          [class.hidden]="!nameplateVideoUrl"
-          [src]="nameplateVideoUrl || ''"
-          (loadeddata)="onVideoLoaded($event)"
-          (canplay)="onVideoCanPlay($event)"
-          (error)="onVideoError($event)">
-        </video>
-        <div class="clock-content">
-          <app-clock></app-clock>
-        </div>
+      <div class="anim-wrapper delay-1">
+        <article class="widget-card clock-card">
+          <video #nameplateVideo class="clock-background-video" autoplay loop muted playsinline preload="auto"
+            [class.hidden]="!nameplateVideoUrl" [src]="nameplateVideoUrl || ''" (loadeddata)="onVideoLoaded($event)"
+            (canplay)="onVideoCanPlay($event)" (error)="onVideoError($event)">
+          </video>
+          <div class="clock-content">
+            <app-clock></app-clock>
+          </div>
+        </article>
       </div>
 
       <!-- Shadow Widget -->
-      <div class="widget-card shadow-card">
-        <div class="shadow-bg"></div>
-        <div class="shadow-content">
-          <div class="shadow-role">
-            <i class="fas fa-terminal"></i>
-            <span>Web Designer & Developer</span>
+      <div class="anim-wrapper delay-2">
+        <article class="widget-card shadow-card">
+          <div class="shadow-bg"></div>
+          <div class="shadow-content">
+            <div class="shadow-role">
+              <i class="fas fa-terminal"></i>
+              <span>Web Designer & Developer</span>
+            </div>
+            <div class="shadow-quote">
+              <span>"{{ currentQuote }}<span class="typewriter-cursor">|</span>"</span>
+            </div>
           </div>
-          <div class="shadow-quote">
-            <span>"{{ currentQuote }}<span class="typewriter-cursor">|</span>"</span>
-          </div>
-        </div>
+        </article>
       </div>
 
       <!-- Social Connect Widget -->
-      <div class="widget-card social-card-container">
-        <div class="social-header">
-          <span class="line"></span>
-          <span class="social-title">Connect</span>
-          <span class="line"></span>
-        </div>
-        <div class="social-grid">
-          <a href="https://github.com/Camilo404" target="_blank" class="social-item" title="GitHub">
-            <div class="item-bg"></div>
-            <i class="fa-brands fa-github"></i>
-            <span class="item-name">GitHub</span>
-          </a>
-          <a href="https://www.youtube.com/channel/UChzlaSE1adSPVGYBBOQ1ibg" target="_blank" class="social-item" title="YouTube">
-            <div class="item-bg"></div>
-            <i class="fa-brands fa-youtube"></i>
-            <span class="item-name">YouTube</span>
-          </a>
-          <a href="https://www.instagram.com/camiloxtz/" target="_blank" class="social-item" title="Instagram">
-            <div class="item-bg"></div>
-            <i class="fa-brands fa-instagram"></i>
-            <span class="item-name">Instagram</span>
-          </a>
-          <a href="https://steamcommunity.com/profiles/76561198832154348/" target="_blank" class="social-item" title="Steam">
-            <div class="item-bg"></div>
-            <i class="fa-brands fa-steam"></i>
-            <span class="item-name">Steam</span>
-          </a>
-        </div>
+      <div class="anim-wrapper delay-3">
+        <nav class="widget-card social-card-container">
+          <div class="social-header">
+            <span class="line"></span>
+            <span class="social-title">Connect</span>
+            <span class="line"></span>
+          </div>
+          <div class="social-grid">
+            <a href="https://github.com/Camilo404" target="_blank" class="social-item" title="GitHub">
+              <div class="item-bg"></div>
+              <i class="fa-brands fa-github"></i>
+              <span class="item-name">GitHub</span>
+            </a>
+            <a href="https://www.youtube.com/channel/UChzlaSE1adSPVGYBBOQ1ibg" target="_blank" class="social-item"
+              title="YouTube">
+              <div class="item-bg"></div>
+              <i class="fa-brands fa-youtube"></i>
+              <span class="item-name">YouTube</span>
+            </a>
+            <a href="https://www.instagram.com/camiloxtz/" target="_blank" class="social-item" title="Instagram">
+              <div class="item-bg"></div>
+              <i class="fa-brands fa-instagram"></i>
+              <span class="item-name">Instagram</span>
+            </a>
+            <a href="https://steamcommunity.com/profiles/76561198832154348/" target="_blank" class="social-item"
+              title="Steam">
+              <div class="item-bg"></div>
+              <i class="fa-brands fa-steam"></i>
+              <span class="item-name">Steam</span>
+            </a>
+          </div>
+        </nav>
       </div>
 
       <!-- Tech Stack Infinite Marquee -->
-      <div class="widget-card tech-stack-card">
-        <div class="marquee-mask">
-          <div class="marquee-track">
-            <!-- Original Set -->
-            <div class="tech-item" *ngFor="let tech of techStack" [title]="tech.name">
-              <i [class]="tech.icon" [style.color]="tech.color"></i>
-            </div>
-            <!-- Duplicate Set for Infinite Loop -->
-            <div class="tech-item" *ngFor="let tech of techStack" [title]="tech.name">
-              <i [class]="tech.icon" [style.color]="tech.color"></i>
-            </div>
-            <!-- Triplicate Set (just to be safe with wide screens) -->
-            <div class="tech-item" *ngFor="let tech of techStack" [title]="tech.name">
-              <i [class]="tech.icon" [style.color]="tech.color"></i>
+      <div class="anim-wrapper delay-4">
+        <section class="widget-card tech-stack-card">
+          <div class="marquee-mask">
+            <div class="marquee-track">
+              <!-- Original Set -->
+              <div class="tech-item" *ngFor="let tech of techStack" [title]="tech.name">
+                <i [class]="tech.icon" [style.color]="tech.color"></i>
+              </div>
+              <!-- Duplicate Set for Infinite Loop -->
+              <div class="tech-item" *ngFor="let tech of techStack" [title]="tech.name">
+                <i [class]="tech.icon" [style.color]="tech.color"></i>
+              </div>
+              <!-- Triplicate Set (just to be safe with wide screens) -->
+              <div class="tech-item" *ngFor="let tech of techStack" [title]="tech.name">
+                <i [class]="tech.icon" [style.color]="tech.color"></i>
+              </div>
             </div>
           </div>
-        </div>
+        </section>
       </div>
 
     </div>
   </div>
-</div>
+</main>
 
 <!-- Search Button -->
 <button class="floating-search-btn" (click)="openSearchModal()" title="Search Discord Profile">
@@ -120,8 +115,5 @@
   <div class="btn-glow"></div>
 </button>
 
-<app-search-modal 
-  [isOpen]="isModalOpen" 
-  (close)="closeSearchModal()" 
-  (search)="onSearchProfile($event)">
+<app-search-modal [isOpen]="isModalOpen" (close)="closeSearchModal()" (search)="onSearchProfile($event)">
 </app-search-modal>

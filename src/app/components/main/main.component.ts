@@ -1,5 +1,6 @@
-import { Component, ViewChild, ElementRef, ChangeDetectorRef, OnInit, OnDestroy } from '@angular/core';
+import { Component, ViewChild, ElementRef, ChangeDetectorRef, OnInit, OnDestroy, AfterViewInit, Renderer2 } from '@angular/core';
 import { Router } from '@angular/router';
+import { Card3DEffectService } from '../../services/card-3d-effect.service';
 
 @Component({
   selector: 'app-main',
@@ -7,7 +8,7 @@ import { Router } from '@angular/router';
   styleUrls: ['./main.component.scss'],
   standalone: false
 })
-export class MainComponent implements OnInit, OnDestroy {
+export class MainComponent implements OnInit, OnDestroy, AfterViewInit {
 
   public isModalOpen: boolean = false;
 
@@ -49,14 +50,85 @@ export class MainComponent implements OnInit, OnDestroy {
 
   constructor(
     private router: Router,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private el: ElementRef,
+    private renderer: Renderer2,
+    private card3DService: Card3DEffectService
   ) { }
 
   ngOnInit(): void {
     this.startTyping();
   }
 
+  private unlistenFunctions: (() => void)[] = [];
+
+  ngAfterViewInit(): void {
+    const cards = this.el.nativeElement.querySelectorAll('.widget-card');
+    cards.forEach((card: HTMLElement) => {
+      const unlistenMove = this.renderer.listen(card, 'mousemove', (e: MouseEvent) => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        card.style.setProperty('--mouse-x', `${x}px`);
+        card.style.setProperty('--mouse-y', `${y}px`);
+      });
+      this.unlistenFunctions.push(unlistenMove);
+
+      this.card3DService.initCard3DEffect(new ElementRef(card), {
+        maxRotation: 5,
+        scale: 1.02,
+        buttons: false
+      } as any);
+    });
+
+    const socialItems = this.el.nativeElement.querySelectorAll('.social-item');
+    socialItems.forEach((item: HTMLElement) => {
+      const nameSpan = item.querySelector('.item-name') as HTMLElement;
+      if (nameSpan) {
+        const originalText = nameSpan.innerText;
+        item.dataset['originalText'] = originalText;
+
+        const unlistenEnter = this.renderer.listen(item, 'mouseenter', () => {
+          this.scrambleText(nameSpan, originalText);
+        });
+        this.unlistenFunctions.push(unlistenEnter);
+      }
+    });
+  }
+
+  private scrambleText(element: HTMLElement, originalText: string): void {
+    const chars = '!<>-/[]{}—=+*^?#________';
+    let iterations = 0;
+    const maxIterations = 10;
+
+    const existingInterval = element.dataset['intervalId'];
+    if (existingInterval) clearInterval(parseInt(existingInterval));
+
+    const interval = setInterval(() => {
+      element.innerText = originalText
+        .split('')
+        .map((letter, index) => {
+          if (index < iterations) {
+            return originalText[index];
+          }
+          return chars[Math.floor(Math.random() * chars.length)];
+        })
+        .join('');
+
+      if (iterations >= originalText.length) {
+        clearInterval(interval);
+        element.dataset['intervalId'] = '';
+      }
+
+      iterations += 1 / 3;
+    }, 30);
+
+    element.dataset['intervalId'] = interval.toString();
+  }
+
   ngOnDestroy(): void {
+    this.unlistenFunctions.forEach(unlisten => unlisten());
+    this.unlistenFunctions = [];
     if (this.typeTimeout) {
       clearTimeout(this.typeTimeout);
     }
@@ -76,7 +148,6 @@ export class MainComponent implements OnInit, OnDestroy {
     this.cdr.detectChanges();
 
     let typeSpeed = this.isDeleting ? 20 : 50;
-    // Add some randomness to typing speed for realism
     if (!this.isDeleting) {
       typeSpeed += Math.random() * 20;
     }

@@ -1,7 +1,14 @@
 // ========================================
-// Main Container & Bento Grid
+// Main Container & Bento Grid - Background Container
 // ========================================
+.ethereal-background-container {
+  position: fixed;
+  inset: 0;
+  z-index: -100;
+}
+
 .main-container {
+
   min-height: 100vh;
   width: 100%;
   padding: 2rem;
@@ -21,7 +28,8 @@
   grid-template-columns: auto minmax(400px, 500px);
   gap: 1.5rem;
   width: auto;
-  animation: fadeInUp 0.8s ease-out;
+  width: auto;
+  // animation: fadeInUp 0.8s ease-out; // Removed in favor of staggered item animations
 
   @media (max-width: 1024px) {
     grid-template-columns: 1fr;
@@ -42,7 +50,8 @@
   width: auto;
 
   @media (max-width: 1024px) {
-    width: 400px;
+    width: 100%;
+    max-width: 400px; // Match profile card max-width
   }
 }
 
@@ -52,22 +61,47 @@
 .widget-card {
   position: relative;
   width: 100%;
-  background: rgba(0, 0, 0, 0.4);
+  transform-style: preserve-3d; // Crucial for 3D tilt effect logic to work visually
+  background: rgba(0, 0, 0, 0.4); // Static background that remains
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+
+  // Base border - matching social items slightly more
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-  transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-              box-shadow 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-              border-color 0.3s ease;
+  box-shadow:
+    0 4px 24px -1px rgba(0, 0, 0, 0.2),
+    0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+  transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.4s ease, border-color 0.4s ease;
+
+  // Spotlight Shine pseudo-element
+  // This element holds the gradient and fades in/out on hover
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: radial-gradient(800px circle at var(--mouse-x, -50%) var(--mouse-y, -50%),
+        rgba(255, 255, 255, 0.08),
+        transparent 40%);
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    z-index: 2;
+    pointer-events: none;
+  }
 
   &:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6), 0 0 20px rgba(255, 255, 255, 0.05);
+    transform: translateY(-4px) scale(1.005);
+    box-shadow:
+      0 20px 40px -5px rgba(0, 0, 0, 0.4),
+      0 0 0 1px rgba(255, 255, 255, 0.15) inset;
     border-color: rgba(255, 255, 255, 0.2);
     z-index: 10;
+
+    &::before {
+      opacity: 1;
+    }
   }
 }
 
@@ -78,7 +112,9 @@
 // --- Clock Card ---
 .clock-card {
   min-height: 150px;
-  
+  display: flex;
+  flex-direction: column;
+
   .clock-background-video {
     position: absolute;
     top: 50%;
@@ -99,7 +135,8 @@
   .clock-content {
     position: relative;
     z-index: 1;
-    height: 100%;
+    flex-grow: 1; // Ensures it fills the available height
+    width: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -129,12 +166,10 @@
       content: '';
       position: absolute;
       inset: 0;
-      background: linear-gradient(
-        to right,
-        rgba(0, 0, 0, 0.9) 0%,
-        rgba(0, 0, 0, 0.6) 50%,
-        rgba(0, 0, 0, 0.4) 100%
-      );
+      background: linear-gradient(to right,
+          rgba(0, 0, 0, 0.9) 0%,
+          rgba(0, 0, 0, 0.6) 50%,
+          rgba(0, 0, 0, 0.4) 100%);
     }
   }
 
@@ -153,7 +188,7 @@
     align-items: center;
     gap: 0.75rem;
     margin-bottom: 0.75rem;
-    
+
     i {
       color: #ffffff;
       font-size: 1.1rem;
@@ -196,8 +231,15 @@
   }
 
   @keyframes blink {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0; }
+
+    0%,
+    100% {
+      opacity: 1;
+    }
+
+    50% {
+      opacity: 0;
+    }
   }
 }
 
@@ -314,23 +356,23 @@
   gap: 0.75rem;
   padding: 0.875rem 1.25rem;
   background: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 50px;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 9999px;
   color: white;
   font-weight: 600;
   font-size: 0.95rem;
   cursor: pointer;
   z-index: 998;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 
+  box-shadow:
     0 8px 24px rgba(0, 0, 0, 0.4),
     0 0 40px rgba(255, 255, 255, 0.05);
   overflow: hidden;
   max-width: calc(100vw - 3rem);
   white-space: nowrap;
-  
+
   .btn-glow {
     position: absolute;
     inset: 0;
@@ -339,36 +381,36 @@
     transition: transform 0.6s;
     pointer-events: none;
   }
-  
+
   .search-icon {
     font-size: 1.125rem;
     transition: transform 0.3s;
     flex-shrink: 0;
   }
-  
+
   .btn-text {
     font-size: 0.9rem;
     letter-spacing: 0.02em;
     line-height: 1;
   }
-  
+
   &:hover {
     transform: translateY(-2px) scale(1.03);
-    box-shadow: 
+    box-shadow:
       0 12px 32px rgba(0, 0, 0, 0.5),
       0 0 60px rgba(255, 255, 255, 0.1);
     background: rgba(255, 255, 255, 0.1);
     border-color: rgba(255, 255, 255, 0.3);
-    
+
     .btn-glow {
       transform: translateX(100%);
     }
-    
+
     .search-icon {
       transform: rotate(90deg);
     }
   }
-  
+
   &:active {
     transform: translateY(-1px) scale(1);
   }
@@ -386,20 +428,16 @@
   .marquee-mask {
     width: 100%;
     overflow: hidden;
-    mask-image: linear-gradient(
-      to right,
-      transparent,
-      black 10%,
-      black 90%,
-      transparent
-    );
-    -webkit-mask-image: linear-gradient(
-      to right,
-      transparent,
-      black 10%,
-      black 90%,
-      transparent
-    );
+    mask-image: linear-gradient(to right,
+        transparent,
+        black 10%,
+        black 90%,
+        transparent);
+    -webkit-mask-image: linear-gradient(to right,
+        transparent,
+        black 10%,
+        black 90%,
+        transparent);
   }
 
   .marquee-track {
@@ -418,7 +456,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    
+
     i {
       font-size: 1.8rem;
       transition: all 0.3s ease;
@@ -439,6 +477,7 @@
   0% {
     transform: translateX(0);
   }
+
   100% {
     transform: translateX(calc(-100% / 3));
   }
@@ -451,11 +490,11 @@
     padding: 0.75rem;
     width: 52px;
     height: 52px;
-    
+
     .btn-text {
       display: none;
     }
-    
+
     .search-icon {
       font-size: 1.25rem;
     }
@@ -463,15 +502,61 @@
 }
 
 // ========================================
-// Animations
+// Animations & Wrappers
 // ========================================
 @keyframes fadeInUp {
   0% {
     opacity: 0;
     transform: translateY(20px);
   }
+
   100% {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+app-neko {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 9999;
+  pointer-events: none;
+}
+
+.anim-wrapper {
+  width: 100%;
+  opacity: 0;
+  animation: fadeInUp 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+.bento-col-profile {
+  opacity: 0;
+  animation: fadeInUp 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+  animation-delay: 0.1s;
+}
+
+.delay-1 {
+  animation-delay: 0.2s;
+}
+
+.delay-2 {
+  animation-delay: 0.3s;
+}
+
+.delay-3 {
+  animation-delay: 0.4s;
+}
+
+.delay-4 {
+  animation-delay: 0.5s;
+}
+
+.clock-card,
+.shadow-card,
+.social-card-container,
+.tech-stack-card {
+  opacity: 1;
 }
