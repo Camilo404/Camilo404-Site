@@ -30,20 +30,4 @@ describe('MainComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
-
-  it('should set bgVideo muted property after view initialization', () => {
-    spyOnProperty(component.bgVideo.nativeElement, 'muted', 'set');
-    component.ngAfterViewInit();
-    expect(component.bgVideo.nativeElement.muted).toEqual(true);
-  });
-
-
-  it('should change volume and update UI properly', () => {
-    spyOn(localStorage, 'setItem');
-    component.changeVolume({ target: { value: 50 } });
-    expect(component.volume).toEqual(50);
-    expect(localStorage.setItem).toHaveBeenCalled();
-    expect(component.isMuted).toEqual(false);
-    expect(component.bgVideo.nativeElement.volume).toEqual(0.5); // 50/100
-  });
 });

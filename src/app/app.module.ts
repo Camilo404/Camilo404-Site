@@ -12,6 +12,7 @@ import { CardProfileComponent } from './components/card-profile/card-profile.com
 import { ProfileViewerComponent } from './components/profile-viewer/profile-viewer.component';
 import { NekoComponent } from './components/neko/neko.component';
 import { SearchModalComponent } from './components/search-modal/search-modal.component';
+import { EtherealShadowComponent } from './components/ethereal-shadow/ethereal-shadow.component';
 
 @NgModule({
   declarations: [
@@ -28,7 +29,8 @@ import { SearchModalComponent } from './components/search-modal/search-modal.com
     ReactiveFormsModule,
     AppRoutingModule,
     HttpClientModule,
-    SearchModalComponent
+    SearchModalComponent,
+    EtherealShadowComponent
   ],
   providers: [],
   bootstrap: [AppComponent]

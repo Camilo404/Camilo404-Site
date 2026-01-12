@@ -10,7 +10,13 @@ import { map, startWith } from 'rxjs/operators';
 })
 export class ClockComponent implements OnInit, OnDestroy {
 
-  strTime: string = '';
+  hours: string = '00';
+  minutes: string = '00';
+  seconds: string = '00';
+  ampm: string = '';
+  day: string = '';
+  fullDate: string = '';
+
   private timerSubscription?: Subscription;
 
   constructor() { }
@@ -18,8 +24,8 @@ export class ClockComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.timerSubscription = interval(1000).pipe(
       startWith(0),
-      map(() => this.formatTime())
-    ).subscribe(time => this.strTime = time);
+      map(() => this.updateTime())
+    ).subscribe();
   }
 
   ngOnDestroy() {
@@ -28,19 +34,27 @@ export class ClockComponent implements OnInit, OnDestroy {
     }
   }
 
-  private formatTime(): string {
-    const date = new Date();
-    let hours = date.getHours();
-    const minutes = date.getMinutes();
-    const seconds = date.getSeconds();
+  private updateTime(): void {
+    const now = new Date();
+    
+    // Time
+    let h = now.getHours();
+    const m = now.getMinutes();
+    const s = now.getSeconds();
 
-    const ampm = hours >= 12 ? 'PM' : 'AM';
-    hours = hours % 12;
-    hours = hours ? hours : 12;
-    const formattedHours = hours < 10 ? '0' + hours : hours;
-    const formattedMinutes = minutes < 10 ? '0' + minutes : minutes;
-    const formattedSeconds = seconds < 10 ? '0' + seconds : seconds;
+    this.ampm = h >= 12 ? 'PM' : 'AM';
+    h = h % 12;
+    h = h ? h : 12; // Handle 0 as 12
 
-    return formattedHours + ':' + formattedMinutes + ':' + formattedSeconds + ' ' + ampm;
+    this.hours = h < 10 ? '0' + h : h.toString();
+    this.minutes = m < 10 ? '0' + m : m.toString();
+    this.seconds = s < 10 ? '0' + s : s.toString();
+
+    // Date
+    // Capitalize first letter of day
+    const dayStr = now.toLocaleDateString('en-US', { weekday: 'long' });
+    this.day = dayStr.charAt(0).toUpperCase() + dayStr.slice(1);
+
+    this.fullDate = now.toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' });
   }
 }

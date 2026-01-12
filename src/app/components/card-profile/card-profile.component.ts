@@ -8,7 +8,7 @@ import { Card3DEffectService } from 'src/app/services/card-3d-effect.service';
 import { ProfileEffectsService } from 'src/app/services/profile-effects.service';
 import { environment } from 'src/environments/environment';
 import { toHTML } from 'discord-markdown-fix';
-import { Subject } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 @Component({
@@ -71,6 +71,7 @@ export class CardProfileComponent implements OnInit, OnChanges, OnDestroy, After
   percentage = 0;
 
   private destroy$ = new Subject<void>();
+  private activitiesSubscription: Subscription = new Subscription();
 
   constructor(
     private discordApiService: DiscordApiService, 
@@ -117,6 +118,7 @@ export class CardProfileComponent implements OnInit, OnChanges, OnDestroy, After
       this.card3DService.destroyCard3DEffect(this.cardElement);
     }
     
+    this.activitiesSubscription.unsubscribe();
     this.destroy$.next();
     this.destroy$.complete();
   }
@@ -275,9 +277,12 @@ export class CardProfileComponent implements OnInit, OnChanges, OnDestroy, After
   }
 
   private processActivities(): void {
+    this.activitiesSubscription.unsubscribe();
+    this.activitiesSubscription = new Subscription();
+
     this.lanyardActivities.forEach((activity) => {
       if (activity.timestamps && activity.name === 'Spotify') {
-        this.timestampsService.getProgressPercentage(activity.timestamps.start, activity.timestamps.end)
+        const progressSub = this.timestampsService.getProgressPercentage(activity.timestamps.start, activity.timestamps.end)
           .pipe(takeUntil(this.destroy$))
           .subscribe({
             next: (percentage) => {
@@ -285,8 +290,9 @@ export class CardProfileComponent implements OnInit, OnChanges, OnDestroy, After
               this.cdr.markForCheck();
             }
           });
+        this.activitiesSubscription.add(progressSub);
 
-        this.timestampsService.getElapsedTime(activity.timestamps.start)
+        const elapsedSub = this.timestampsService.getElapsedTime(activity.timestamps.start)
           .pipe(takeUntil(this.destroy$))
           .subscribe({
             next: (timeElapsed) => {
@@ -294,12 +300,13 @@ export class CardProfileComponent implements OnInit, OnChanges, OnDestroy, After
               this.cdr.markForCheck();
             }
           });
+        this.activitiesSubscription.add(elapsedSub);
 
         activity.timestamps!.end = this.timestampsService.getTotalDuration(activity.timestamps.start, activity.timestamps.end);
       }
       
       if (activity.timestamps && activity.name !== 'Spotify') {
-        this.timestampsService.getElapsedTime(activity.timestamps.start)
+        const elapsedSub = this.timestampsService.getElapsedTime(activity.timestamps.start)
           .pipe(takeUntil(this.destroy$))
           .subscribe({
             next: (timeElapsed) => {
@@ -307,6 +314,7 @@ export class CardProfileComponent implements OnInit, OnChanges, OnDestroy, After
               this.cdr.markForCheck();
             }
           });
+        this.activitiesSubscription.add(elapsedSub);
       }
     });
   }

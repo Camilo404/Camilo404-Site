@@ -1,93 +1,114 @@
+<!-- Cursor Neko Animation -->
 <app-neko></app-neko>
 
-<div class="video-container">
-  <div id="video_cover"></div>
-  <video id='myVideo' autoplay muted playsinline webkit-playsinline loop #bgVideo>
-    <source src="../../../assets/videos/bgVideo.mp4" type="video/mp4">
-  </video>
-
-  <div class="video-overlay"></div>
+<!-- Background Ethereal Shadow -->
+<div style="position: fixed; inset: 0; z-index: -100;">
+  <app-ethereal-shadow
+    [sizing]="'fill'"
+    [color]="'rgba(128, 128, 128, 1)'"
+    [animation]="{ scale: 100, speed: 90 }"
+    [noise]="{ opacity: 1, scale: 1.2 }"
+    class="w-full h-full"
+  ></app-ethereal-shadow>
 </div>
 
-<div class="container-info">
-  <div class="grid content-center justify-items-center text-white">
-    <!-- Clock with nameplate video container -->
-    <div class="clock-video-container">
-      <video 
-        #nameplateVideo
-        class="clock-background-video" 
-        autoplay 
-        loop 
-        muted 
-        playsinline
-        preload="auto"
-        [class.hidden]="!nameplateVideoUrl"
-        [src]="nameplateVideoUrl || ''"
-        (loadeddata)="onVideoLoaded($event)"
-        (canplay)="onVideoCanPlay($event)"
-        (error)="onVideoError($event)">
-      </video>
-      <div class="clock-content">
-        <app-clock></app-clock>
-      </div>
+<div class="main-container">
+  <div class="bento-grid">
+    
+    <!-- Column Left: Profile -->
+    <div class="bento-col-profile">
+      <app-card-profile (nameplateAssetChange)="onNameplateAssetChange($event)"></app-card-profile>
     </div>
 
-    <div class="title-badge">
-      <div class="badge-icon">
-        <i class="fas fa-code"></i>
+    <!-- Column Right: Widgets -->
+    <div class="bento-col-widgets">
+      
+      <!-- Clock Widget -->
+      <div class="widget-card clock-card">
+        <video 
+          #nameplateVideo
+          class="clock-background-video" 
+          autoplay 
+          loop 
+          muted 
+          playsinline
+          preload="auto"
+          [class.hidden]="!nameplateVideoUrl"
+          [src]="nameplateVideoUrl || ''"
+          (loadeddata)="onVideoLoaded($event)"
+          (canplay)="onVideoCanPlay($event)"
+          (error)="onVideoError($event)">
+        </video>
+        <div class="clock-content">
+          <app-clock></app-clock>
+        </div>
       </div>
-      <span class="badge-text">Web Designer & Developer</span>
-    </div>
-  </div>
 
-  <app-card-profile (nameplateAssetChange)="onNameplateAssetChange($event)"></app-card-profile>
-
-  <!-- Info Container -->
-  <div class="bottom-controls-container">
-    <!-- Social Icons -->
-    <div class="social-icons-compact">
-      <a href="https://github.com/Camilo404" target="_blank" class="social-icon" title="GitHub">
-        <i class="fa-brands fa-github"></i>
-      </a>
-      <a href="https://www.youtube.com/channel/UChzlaSE1adSPVGYBBOQ1ibg" target="_blank" class="social-icon" title="YouTube">
-        <i class="fa-brands fa-youtube"></i>
-      </a>
-      <a href="https://www.instagram.com/camiloxtz/" target="_blank" class="social-icon" title="Instagram">
-        <i class="fa-brands fa-instagram"></i>
-      </a>
-      <a href="https://steamcommunity.com/profiles/76561198832154348/" target="_blank" class="social-icon" title="Steam">
-        <i class="fa-brands fa-steam"></i>
-      </a>
-    </div>
-
-    <!-- Volume Control -->
-    <div class="volume-control-compact">
-      <button 
-        class="volume-icon-btn" 
-        (click)="toggleMute()" 
-        (keyup.enter)="toggleMute()" 
-        (keyup.space)="toggleMute()" 
-        tabindex="0" 
-        role="button" 
-        [attr.aria-label]="isMuted ? 'Unmute' : 'Mute'">
-        <i class='bx' 
-           [class.bxs-volume-mute]="isMuted" 
-           [class.bxs-volume-full]="!isMuted"
-           [class.bx-tada]="isMuted"
-           [class.bx-flip-vertical]="isMuted"></i>
-      </button>
-      <div class="volume-slider-wrapper">
-        <input 
-          type="range" 
-          #volumeInput 
-          value="0" 
-          min="0" 
-          max="100" 
-          class="volume-slider" 
-          (input)="changeVolume($event)" 
-          aria-label="Volume control">
-        <div class="volume-percentage">{{volume}}%</div>
+      <!-- Shadow Widget -->
+      <div class="widget-card shadow-card">
+        <div class="shadow-bg"></div>
+        <div class="shadow-content">
+          <div class="shadow-role">
+            <i class="fas fa-terminal"></i>
+            <span>Web Designer & Developer</span>
+          </div>
+          <div class="shadow-quote">
+            <span>"{{ currentQuote }}<span class="typewriter-cursor">|</span>"</span>
+          </div>
+        </div>
       </div>
+
+      <!-- Social Connect Widget -->
+      <div class="widget-card social-card-container">
+        <div class="social-header">
+          <span class="line"></span>
+          <span class="social-title">Connect</span>
+          <span class="line"></span>
+        </div>
+        <div class="social-grid">
+          <a href="https://github.com/Camilo404" target="_blank" class="social-item" title="GitHub">
+            <div class="item-bg"></div>
+            <i class="fa-brands fa-github"></i>
+            <span class="item-name">GitHub</span>
+          </a>
+          <a href="https://www.youtube.com/channel/UChzlaSE1adSPVGYBBOQ1ibg" target="_blank" class="social-item" title="YouTube">
+            <div class="item-bg"></div>
+            <i class="fa-brands fa-youtube"></i>
+            <span class="item-name">YouTube</span>
+          </a>
+          <a href="https://www.instagram.com/camiloxtz/" target="_blank" class="social-item" title="Instagram">
+            <div class="item-bg"></div>
+            <i class="fa-brands fa-instagram"></i>
+            <span class="item-name">Instagram</span>
+          </a>
+          <a href="https://steamcommunity.com/profiles/76561198832154348/" target="_blank" class="social-item" title="Steam">
+            <div class="item-bg"></div>
+            <i class="fa-brands fa-steam"></i>
+            <span class="item-name">Steam</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Tech Stack Infinite Marquee -->
+      <div class="widget-card tech-stack-card">
+        <div class="marquee-mask">
+          <div class="marquee-track">
+            <!-- Original Set -->
+            <div class="tech-item" *ngFor="let tech of techStack" [title]="tech.name">
+              <i [class]="tech.icon" [style.color]="tech.color"></i>
+            </div>
+            <!-- Duplicate Set for Infinite Loop -->
+            <div class="tech-item" *ngFor="let tech of techStack" [title]="tech.name">
+              <i [class]="tech.icon" [style.color]="tech.color"></i>
+            </div>
+            <!-- Triplicate Set (just to be safe with wide screens) -->
+            <div class="tech-item" *ngFor="let tech of techStack" [title]="tech.name">
+              <i [class]="tech.icon" [style.color]="tech.color"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
 </div>
@@ -104,4 +125,3 @@
   (close)="closeSearchModal()" 
   (search)="onSearchProfile($event)">
 </app-search-modal>
-
