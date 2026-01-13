@@ -4,7 +4,7 @@
     <div class="modal-header">
       <div class="flex items-center gap-3">
         <div class="modal-icon-wrapper">
-          <i class="fas fa-search"></i>
+          <fa-icon [icon]="faSearch"></fa-icon>
         </div>
         <div>
           <h2 class="modal-title">Search Discord Profile</h2>
@@ -12,7 +12,7 @@
         </div>
       </div>
       <button class="modal-close-btn" (click)="closeModal()">
-        <i class="fas fa-times"></i>
+        <fa-icon [icon]="faTimes"></fa-icon>
       </button>
     </div>
 
@@ -28,19 +28,19 @@
           maxlength="19"
           autocomplete="off"
         />
-        <i class="fas fa-hashtag input-icon"></i>
+        <fa-icon [icon]="faHashtag" class="input-icon"></fa-icon>
       </div>
 
       <!-- Error Message -->
       <div class="error-message" *ngIf="searchError">
-        <i class="fas fa-exclamation-circle"></i>
+        <fa-icon [icon]="faExclamationCircle"></fa-icon>
         <span>{{ searchError }}</span>
       </div>
 
       <!-- Info Card -->
       <div class="info-card">
         <div class="info-icon">
-          <i class="fas fa-info-circle"></i>
+          <fa-icon [icon]="faInfoCircle"></fa-icon>
         </div>
         <div class="info-content">
           <p class="info-title">How to find your Discord ID:</p>
@@ -56,11 +56,11 @@
     <!-- Modal Footer -->
     <div class="modal-footer">
       <button class="btn-secondary" (click)="closeModal()">
-        <i class="fas fa-times mr-2"></i>
+        <fa-icon [icon]="faTimes" class="mr-2"></fa-icon>
         Cancel
       </button>
       <button class="btn-primary" (click)="searchProfile()">
-        <i class="fas fa-search mr-2"></i>
+        <fa-icon [icon]="faSearch" class="mr-2"></fa-icon>
         Search Profile
       </button>
     </div>

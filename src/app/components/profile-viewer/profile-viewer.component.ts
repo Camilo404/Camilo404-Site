@@ -1,16 +1,33 @@
 import { Component, OnInit, Output, Renderer2, OnDestroy, ChangeDetectorRef } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { environment } from 'src/environments/environment';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { ClockComponent } from '../clock/clock.component';
+import { CardProfileComponent } from '../card-profile/card-profile.component';
+import { SearchModalComponent } from '../search-modal/search-modal.component';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { faUserAstronaut, faCircle, faBolt, faRocket, faSyncAlt, faShieldAlt, faFingerprint, faSearch } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-profile-viewer',
   templateUrl: './profile-viewer.component.html',
   styleUrl: './profile-viewer.component.scss',
-  standalone: false
+  standalone: true,
+  imports: [CommonModule, RouterModule, ClockComponent, CardProfileComponent, SearchModalComponent, FontAwesomeModule]
 })
 export class ProfileViewerComponent implements OnInit, OnDestroy {
+
+  // FontAwesome Icons
+  faUserAstronaut = faUserAstronaut;
+  faCircle = faCircle;
+  faBolt = faBolt;
+  faRocket = faRocket;
+  faSyncAlt = faSyncAlt;
+  faShieldAlt = faShieldAlt;
+  faFingerprint = faFingerprint;
+  faSearch = faSearch;
 
   @Output() profileId!: string;
   

@@ -446,7 +446,7 @@
     line-height: 1.6;
     color: #dcddde;
 
-    ::ng-deep a {
+    a {
       color: #00aff4;
       text-decoration: none;
 
@@ -455,8 +455,8 @@
       }
     }
 
-    ::ng-deep .discord-emoji,
-    ::ng-deep .d-emoji {
+    .discord-emoji,
+    .d-emoji {
       display: inline-block;
       width: 24px;
       height: 24px;
@@ -465,9 +465,16 @@
       margin: 0 1px;
     }
 
-    ::ng-deep p {
+    p {
       margin: 0;
       display: inline;
+    }
+
+    blockquote {
+      border-left: 4px solid #4f545c;
+      margin: 0.5rem 0;
+      padding-left: 10px;
+      color: #b9bbbe;
     }
   }
 }

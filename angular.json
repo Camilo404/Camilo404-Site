@@ -25,9 +25,7 @@
             ],
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
-            "allowedCommonJsDependencies": [
-              "discord-markdown-fix"
-            ],
+            "allowedCommonJsDependencies": [],
             "assets": [
               "src/favicon.ico",
               "src/assets",
