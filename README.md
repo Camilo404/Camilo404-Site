@@ -24,9 +24,10 @@ A modern, immersive personal portfolio built with **Angular** that fuses **Glass
 
 ## 📋 Tech Stack
 
-- **Framework**: Angular 17+
+- **Framework**: Angular 17+ (Standalone Components)
 - **Styling**: SCSS (Sass), Tailwind CSS
 - **APIs**: Lanyard (Discord Presence), Discord Assets
+- **Performance**: Optimized bundle (<150KB), Custom Markdown Parser
 - **Animations**: CSS Keyframes, TypeScript-driven logic
 
 ## 🚀 Installation
@@ -81,12 +82,16 @@ src/
 ## 🔧 Customization
 
 ### Updating the Tech Stack
-Navigate to `src/app/components/main/main.component.ts` and modify the `techStack` array:
+Navigate to `src/app/components/main/main.component.ts` and modify the `techStack` array. Note that we use FontAwesome icon objects:
 
 ```typescript
+import { faAngular, faReact } from '@fortawesome/free-brands-svg-icons';
+
+// ...
+
 public techStack = [
-  { name: 'Angular', icon: 'fa-brands fa-angular', color: '#dd0031' },
-  { name: 'React', icon: 'fa-brands fa-react', color: '#61dafb' },
+  { name: 'Angular', icon: faAngular, color: '#dd0031' },
+  { name: 'React', icon: faReact, color: '#61dafb' },
   // Add your technologies here...
 ];
 ```
