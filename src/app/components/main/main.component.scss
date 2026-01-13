@@ -189,10 +189,10 @@
     gap: 0.75rem;
     margin-bottom: 0.75rem;
 
-    i {
+    fa-icon {
       color: #ffffff;
       font-size: 1.1rem;
-      text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+      filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.3));
     }
 
     span {
@@ -303,13 +303,16 @@
     transition: opacity 0.2s ease;
   }
 
-  i {
+  fa-icon {
     font-size: 1.2rem;
     color: rgba(255, 255, 255, 0.6);
     transition: all 0.2s ease;
     z-index: 1;
     width: 24px;
     text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 
   .item-name {
@@ -323,7 +326,7 @@
     z-index: 1;
   }
 
-  &:hover {
+    &:hover {
     background: rgba(255, 255, 255, 0.08);
     border-color: rgba(255, 255, 255, 0.15);
     transform: translateX(2px);
@@ -332,7 +335,7 @@
       opacity: 1;
     }
 
-    i {
+    fa-icon {
       color: #ffffff;
       transform: scale(1.1);
     }
@@ -457,18 +460,17 @@
     justify-content: center;
     align-items: center;
 
-    i {
+    fa-icon {
       font-size: 1.8rem;
       transition: all 0.3s ease;
       filter: grayscale(100%) brightness(0.7);
       opacity: 0.6;
     }
 
-    &:hover i {
-      filter: grayscale(0%) brightness(1.2);
+    &:hover fa-icon {
+      filter: grayscale(0%) brightness(1.2) drop-shadow(0 0 5px currentColor);
       opacity: 1;
       transform: scale(1.2);
-      text-shadow: 0 0 15px currentColor;
     }
   }
 }

@@ -37,7 +37,7 @@
           <div class="shadow-bg"></div>
           <div class="shadow-content">
             <div class="shadow-role">
-              <i class="fas fa-terminal"></i>
+              <fa-icon [icon]="faTerminal"></fa-icon>
               <span>Web Designer & Developer</span>
             </div>
             <div class="shadow-quote">
@@ -58,24 +58,24 @@
           <div class="social-grid">
             <a href="https://github.com/Camilo404" target="_blank" class="social-item" title="GitHub">
               <div class="item-bg"></div>
-              <i class="fa-brands fa-github"></i>
+              <fa-icon [icon]="faGithub"></fa-icon>
               <span class="item-name">GitHub</span>
             </a>
             <a href="https://www.youtube.com/channel/UChzlaSE1adSPVGYBBOQ1ibg" target="_blank" class="social-item"
               title="YouTube">
               <div class="item-bg"></div>
-              <i class="fa-brands fa-youtube"></i>
+              <fa-icon [icon]="faYoutube"></fa-icon>
               <span class="item-name">YouTube</span>
             </a>
             <a href="https://www.instagram.com/camiloxtz/" target="_blank" class="social-item" title="Instagram">
               <div class="item-bg"></div>
-              <i class="fa-brands fa-instagram"></i>
+              <fa-icon [icon]="faInstagram"></fa-icon>
               <span class="item-name">Instagram</span>
             </a>
             <a href="https://steamcommunity.com/profiles/76561198832154348/" target="_blank" class="social-item"
               title="Steam">
               <div class="item-bg"></div>
-              <i class="fa-brands fa-steam"></i>
+              <fa-icon [icon]="faSteam"></fa-icon>
               <span class="item-name">Steam</span>
             </a>
           </div>
@@ -89,15 +89,15 @@
             <div class="marquee-track">
               <!-- Original Set -->
               <div class="tech-item" *ngFor="let tech of techStack" [title]="tech.name">
-                <i [class]="tech.icon" [style.color]="tech.color"></i>
+                <fa-icon [icon]="tech.icon" [style.color]="tech.color"></fa-icon>
               </div>
               <!-- Duplicate Set for Infinite Loop -->
               <div class="tech-item" *ngFor="let tech of techStack" [title]="tech.name">
-                <i [class]="tech.icon" [style.color]="tech.color"></i>
+                <fa-icon [icon]="tech.icon" [style.color]="tech.color"></fa-icon>
               </div>
               <!-- Triplicate Set (just to be safe with wide screens) -->
               <div class="tech-item" *ngFor="let tech of techStack" [title]="tech.name">
-                <i [class]="tech.icon" [style.color]="tech.color"></i>
+                <fa-icon [icon]="tech.icon" [style.color]="tech.color"></fa-icon>
               </div>
             </div>
           </div>
@@ -110,7 +110,7 @@
 
 <!-- Search Button -->
 <button class="floating-search-btn" (click)="openSearchModal()" title="Search Discord Profile">
-  <i class="fas fa-search search-icon"></i>
+  <fa-icon [icon]="faSearch" class="search-icon"></fa-icon>
   <span class="btn-text">Search Profile</span>
   <div class="btn-glow"></div>
 </button>

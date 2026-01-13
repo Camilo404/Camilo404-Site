@@ -1,16 +1,46 @@
 import { Component, ViewChild, ElementRef, ChangeDetectorRef, OnInit, OnDestroy, AfterViewInit, Renderer2 } from '@angular/core';
-import { Router } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { Router, RouterModule } from '@angular/router';
 import { Card3DEffectService } from '../../services/card-3d-effect.service';
+import { NekoComponent } from '../neko/neko.component';
+import { EtherealShadowComponent } from '../ethereal-shadow/ethereal-shadow.component';
+import { CardProfileComponent } from '../card-profile/card-profile.component';
+import { ClockComponent } from '../clock/clock.component';
+import { SearchModalComponent } from '../search-modal/search-modal.component';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { faTerminal, faCode, faSearch } from '@fortawesome/free-solid-svg-icons';
+import { faAngular, faReact, faBootstrap, faPython, faJs, faSass, faHtml5, faCss3Alt, faNodeJs, faGitAlt, faDocker, faGithub, faYoutube, faInstagram, faSteam } from '@fortawesome/free-brands-svg-icons';
 
 @Component({
   selector: 'app-main',
   templateUrl: './main.component.html',
   styleUrls: ['./main.component.scss'],
-  standalone: false
+  standalone: true,
+  imports: [
+    CommonModule, 
+    RouterModule, 
+    NekoComponent, 
+    EtherealShadowComponent, 
+    CardProfileComponent, 
+    ClockComponent, 
+    SearchModalComponent,
+    FontAwesomeModule
+  ]
 })
 export class MainComponent implements OnInit, OnDestroy, AfterViewInit {
 
+  // FontAwesome Icons
+  faTerminal = faTerminal;
+  faSearch = faSearch;
+  
+  // Brand Icons
+  faGithub = faGithub;
+  faYoutube = faYoutube;
+  faInstagram = faInstagram;
+  faSteam = faSteam;
+
   public isModalOpen: boolean = false;
+
 
   @ViewChild('nameplateVideo') nameplateVideoRef?: ElementRef<HTMLVideoElement>;
 
@@ -34,18 +64,18 @@ export class MainComponent implements OnInit, OnDestroy, AfterViewInit {
 
   // Tech Stack Data
   public techStack = [
-    { name: 'Angular', icon: 'fa-brands fa-angular', color: '#dd0031' },
-    { name: 'React', icon: 'fa-brands fa-react', color: '#61dafb' },
-    { name: 'Bootstrap', icon: 'fa-brands fa-bootstrap', color: '#7952b3' },
-    { name: 'Python', icon: 'fa-brands fa-python', color: '#3776ab' },
-    { name: 'JavaScript', icon: 'fa-brands fa-js', color: '#f0db4f' },
-    { name: 'TypeScript', icon: 'fa-solid fa-code', color: '#3178c6' },
-    { name: 'Sass', icon: 'fa-brands fa-sass', color: '#cc6699' },
-    { name: 'HTML5', icon: 'fa-brands fa-html5', color: '#e34f26' },
-    { name: 'CSS3', icon: 'fa-brands fa-css3-alt', color: '#264de4' },
-    { name: 'Node.js', icon: 'fa-brands fa-node-js', color: '#339933' },
-    { name: 'Git', icon: 'fa-brands fa-git-alt', color: '#f05032' },
-    { name: 'Docker', icon: 'fa-brands fa-docker', color: '#2496ed' }
+    { name: 'Angular', icon: faAngular, color: '#dd0031' },
+    { name: 'React', icon: faReact, color: '#61dafb' },
+    { name: 'Bootstrap', icon: faBootstrap, color: '#7952b3' },
+    { name: 'Python', icon: faPython, color: '#3776ab' },
+    { name: 'JavaScript', icon: faJs, color: '#f0db4f' },
+    { name: 'TypeScript', icon: faCode, color: '#3178c6' },
+    { name: 'Sass', icon: faSass, color: '#cc6699' },
+    { name: 'HTML5', icon: faHtml5, color: '#e34f26' },
+    { name: 'CSS3', icon: faCss3Alt, color: '#264de4' },
+    { name: 'Node.js', icon: faNodeJs, color: '#339933' },
+    { name: 'Git', icon: faGitAlt, color: '#f05032' },
+    { name: 'Docker', icon: faDocker, color: '#2496ed' }
   ];
 
   constructor(
@@ -76,9 +106,8 @@ export class MainComponent implements OnInit, OnDestroy, AfterViewInit {
 
       this.card3DService.initCard3DEffect(new ElementRef(card), {
         maxRotation: 5,
-        scale: 1.02,
-        buttons: false
-      } as any);
+        scale: 1.02
+      });
     });
 
     const socialItems = this.el.nativeElement.querySelectorAll('.social-item');
@@ -99,7 +128,6 @@ export class MainComponent implements OnInit, OnDestroy, AfterViewInit {
   private scrambleText(element: HTMLElement, originalText: string): void {
     const chars = '!<>-/[]{}—=+*^?#________';
     let iterations = 0;
-    const maxIterations = 10;
 
     const existingInterval = element.dataset['intervalId'];
     if (existingInterval) clearInterval(parseInt(existingInterval));

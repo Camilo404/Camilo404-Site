@@ -34,7 +34,7 @@
   <div class="glass-container animate-fade-in-down" [class.glass-mobile]="isMobile">
     <div class="flex flex-col items-center gap-4 text-center">
       <div class="icon-wrapper">
-        <i class="fas fa-user-astronaut text-5xl header-icon-color"></i>
+        <fa-icon [icon]="faUserAstronaut" class="text-5xl header-icon-color"></fa-icon>
       </div>
       <div>
         <h1 class="text-4xl font-bold dynamic-title-gradient mb-2">
@@ -42,11 +42,11 @@
         </h1>
         <div class="flex items-center justify-center gap-3">
           <div class="status-badge">
-            <i class="fas fa-circle text-xs status-icon"></i>
+            <fa-icon [icon]="faCircle" class="text-xs status-icon"></fa-icon>
             <span class="text-xs font-medium">Real-time Updates</span>
           </div>
           <div class="tech-badge">
-            <i class="fas fa-bolt text-xs mr-1.5"></i>
+            <fa-icon [icon]="faBolt" class="text-xs mr-1.5"></fa-icon>
             <span class="text-xs font-medium">WebSocket Connected</span>
           </div>
         </div>
@@ -88,7 +88,7 @@
   <div class="grid grid-cols-1 md:grid-cols-3 gap-4 w-full max-w-3xl animate-fade-in animation-delay-600">
     <div class="stat-card" [class.glass-mobile]="isMobile">
       <div class="stat-icon">
-        <i class="fas fa-rocket"></i>
+        <fa-icon [icon]="faRocket"></fa-icon>
       </div>
       <div class="stat-content">
         <div class="stat-label">Status</div>
@@ -98,7 +98,7 @@
     
     <div class="stat-card" [class.glass-mobile]="isMobile">
       <div class="stat-icon">
-        <i class="fas fa-sync-alt animate-spin-slow"></i>
+        <fa-icon [icon]="faSyncAlt" class="animate-spin-slow"></fa-icon>
       </div>
       <div class="stat-content">
         <div class="stat-label">Updates</div>
@@ -108,7 +108,7 @@
     
     <div class="stat-card" [class.glass-mobile]="isMobile">
       <div class="stat-icon">
-        <i class="fas fa-shield-alt"></i>
+        <fa-icon [icon]="faShieldAlt"></fa-icon>
       </div>
       <div class="stat-content">
         <div class="stat-label">Security</div>
@@ -119,14 +119,14 @@
 
   <!-- Floating info badge -->
   <div class="floating-badge animate-fade-in animation-delay-800" [class.glass-mobile]="isMobile">
-    <i class="fas fa-fingerprint mr-2"></i>
+    <fa-icon [icon]="faFingerprint" class="mr-2"></fa-icon>
     <span class="text-xs font-medium">Dynamic Theme · Adaptive Colors</span>
   </div>
 </div>
 
 <!-- Floating Search Button -->
 <button class="floating-search-btn" (click)="openSearchModal()" title="Search Another Profile">
-  <i class="fas fa-search search-icon"></i>
+  <fa-icon [icon]="faSearch" class="search-icon"></fa-icon>
   <span class="btn-text">Search Profile</span>
   <div class="btn-glow"></div>
 </button>

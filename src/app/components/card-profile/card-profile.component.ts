@@ -1,4 +1,6 @@
-import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, OnChanges, SimpleChanges, ChangeDetectionStrategy, ChangeDetectorRef, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, OnChanges, SimpleChanges, ChangeDetectionStrategy, ChangeDetectorRef, ElementRef, ViewChild, AfterViewInit, ViewEncapsulation } from '@angular/core';
 import { DiscordApiService } from 'src/app/services/discord-api.service';
 import { Profile, ProfileEffectConfig, ProfileEffectLayer } from 'src/app/models/discord-profile.model';
 import { LanyardService } from 'src/app/services/lanyard.service';
@@ -7,7 +9,6 @@ import { TimestampsService } from 'src/app/services/timestamps.service';
 import { Card3DEffectService } from 'src/app/services/card-3d-effect.service';
 import { ProfileEffectsService } from 'src/app/services/profile-effects.service';
 import { environment } from 'src/environments/environment';
-import { toHTML } from 'discord-markdown-fix';
 import { Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
@@ -15,8 +16,10 @@ import { takeUntil } from 'rxjs/operators';
   selector: 'app-card-profile',
   templateUrl: './card-profile.component.html',
   styleUrls: ['./card-profile.component.scss'],
-  standalone: false,
-  changeDetection: ChangeDetectionStrategy.OnPush
+  standalone: true,
+  imports: [CommonModule, FormsModule],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  encapsulation: ViewEncapsulation.None
 })
 export class CardProfileComponent implements OnInit, OnChanges, OnDestroy, AfterViewInit {
 
@@ -357,11 +360,65 @@ export class CardProfileComponent implements OnInit, OnChanges, OnDestroy, After
     }
   }
 
+  // Helper to escape HTML characters
+  private escapeHtml(text: string): string {
+    return text
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
+
+  private simpleMarkdown(text: string): string {
+    if (!text) return '';
+
+    // First escape HTML to prevent XSS
+    let html = this.escapeHtml(text);
+
+    // Bold (**text**)
+    html = html.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
+    
+    // Italics (*text* or _text_)
+    html = html.replace(/\*(.*?)\*/g, '<i>$1</i>');
+    html = html.replace(/_(.*?)_/g, '<i>$1</i>');
+    
+    // Underline (__text__)
+    html = html.replace(/__(.*?)__/g, '<u>$1</u>');
+    
+    // Strikethrough (~~text~~)
+    html = html.replace(/~~(.*?)~~/g, '<s>$1</s>');
+    
+    // Monospace (`text`)
+    html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
+    
+    // Code blocks (```text```) - simplified (multiline support)
+    html = html.replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>');
+    
+    // Links ([text](url))
+    html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+
+    // Auto-link URLs (bare links)
+    // Avoid double linking by checking if it's already inside an <a> tag or src attribute
+    html = html.replace(/(?<!href="|">)(https?:\/\/[^\s<]+)/g, '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>');
+
+    // Blockquotes (> text)
+    html = html.replace(/^&gt; ?(.*$)/gm, '<blockquote>$1</blockquote>');
+
+    // Merge consecutive blockquotes to look like one block
+    html = html.replace(/<\/blockquote>\n<blockquote>/g, '<br>');
+
+    // Newlines to <br>
+    html = html.replace(/\n/g, '<br>');
+
+    return html;
+  }
+
   private parseBio(bio: string): string {
     if (!bio) return '';
 
     // 1. Parse standard Markdown
-    let html = toHTML(bio);
+    let html = this.simpleMarkdown(bio);
 
     // 2. Parse Custom Emojis
     const emojiRegex = /(&lt;|<)(a?):([a-zA-Z0-9_]+):(\d+)(&gt;|>)/g;
