@@ -7,12 +7,13 @@
     <!-- Profile Effect Overlay -->
     @if (hasProfileEffect) {
     <div class="profile-effect-container">
-      @for (layer of activeEffectLayers; track layer.src) {
+      @for (layer of renderedLayers; track layer.config.src) {
       <img
-        [src]="layer.src"
+        [src]="layer.config.src"
         [alt]="profileEffectConfig?.title || 'Profile Effect'"
         class="profile-effect-layer"
-        [style.z-index]="layer.zIndex || 100"
+        [style.z-index]="layer.config.zIndex || 100"
+        [style.visibility]="layer.isVisible ? 'visible' : 'hidden'"
         fetchpriority="high"
       />
       }
