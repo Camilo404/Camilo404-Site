@@ -12,6 +12,11 @@ import { environment } from 'src/environments/environment';
 import { Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
+interface RenderedLayer {
+  config: ProfileEffectLayer;
+  isVisible: boolean;
+}
+
 @Component({
   selector: 'app-card-profile',
   templateUrl: './card-profile.component.html',
@@ -57,10 +62,10 @@ export class CardProfileComponent implements OnInit, OnChanges, OnDestroy, After
 
   // Profile Effect properties
   profileEffectConfig: ProfileEffectConfig | null = null;
-  activeEffectLayers: ProfileEffectLayer[] = [];
+  renderedLayers: RenderedLayer[] = [];
 
   get hasProfileEffect(): boolean {
-    return !!this.profileEffectConfig && !!this.activeEffectLayers.length;
+    return !!this.profileEffectConfig && !!this.renderedLayers.length;
   }
 
   get profileEffectId(): string | null {
@@ -136,7 +141,7 @@ export class CardProfileComponent implements OnInit, OnChanges, OnDestroy, After
     this.custom_status = null;
     this.percentage = 0;
     this.profileEffectConfig = null;
-    this.activeEffectLayers = [];
+    this.renderedLayers = [];
 
     this.themeColorsChange.emit([]);
     this.nameplateAssetChange.emit(null);
@@ -207,43 +212,48 @@ export class CardProfileComponent implements OnInit, OnChanges, OnDestroy, After
   private initializeProfileEffectLayers(layers: ProfileEffectLayer[]): void {
     const sortedLayers = [...layers].sort((a, b) => (a.start || 0) - (b.start || 0));
 
-    this.activeEffectLayers = sortedLayers.filter(layer => (layer.start || 0) === 0);
+    this.renderedLayers = sortedLayers.map(layer => ({
+      config: layer,
+      isVisible: false
+    }));
     this.cdr.markForCheck();
 
-    sortedLayers.forEach(layer => {
-      const startTime = layer.start || 0;
+    this.renderedLayers.forEach(renderedLayer => {
+      const startTime = renderedLayer.config.start || 0;
 
       if (startTime === 0) {
-        this.handleLayerLifecycle(layer, 0);
+        renderedLayer.isVisible = true;
+        this.cdr.markForCheck();
+        this.handleLayerLifecycle(renderedLayer);
       } else {
         setTimeout(() => {
-          this.activeEffectLayers.push(layer);
+          renderedLayer.isVisible = true;
           this.cdr.markForCheck();
-          this.handleLayerLifecycle(layer, 0);
+          this.handleLayerLifecycle(renderedLayer);
         }, startTime);
       }
     });
   }
 
-  private handleLayerLifecycle(layer: ProfileEffectLayer, delay: number): void {
-    const duration = layer.duration || 0;
-    const loopDelay = layer.loopDelay || 0;
+  private handleLayerLifecycle(layer: RenderedLayer): void {
+    const duration = layer.config.duration || 0;
+    const loopDelay = layer.config.loopDelay || 0;
 
-    if (!layer.loop) {
+    if (!layer.config.loop) {
       if (duration > 0) {
         setTimeout(() => {
-          this.activeEffectLayers = this.activeEffectLayers.filter(l => l !== layer);
+          layer.isVisible = false;
           this.cdr.markForCheck();
-        }, delay + duration);
+        }, duration);
       }
     } else if (loopDelay > 0) {
       const cycleLayer = () => {
         setTimeout(() => {
-          this.activeEffectLayers = this.activeEffectLayers.filter(l => l !== layer);
+          layer.isVisible = false;
           this.cdr.markForCheck();
 
           setTimeout(() => {
-            this.activeEffectLayers.push(layer);
+            layer.isVisible = true;
             this.cdr.markForCheck();
             cycleLayer();
           }, loopDelay);
@@ -423,7 +433,7 @@ export class CardProfileComponent implements OnInit, OnChanges, OnDestroy, After
     // 2. Parse Custom Emojis
     const emojiRegex = /(&lt;|<)(a?):([a-zA-Z0-9_]+):(\d+)(&gt;|>)/g;
 
-    html = html.replace(emojiRegex, (match, left, animated, name, id, right) => {
+    html = html.replace(emojiRegex, (match, left, animated, name, id) => {
       const isAnimated = animated === 'a';
       const ext = isAnimated ? 'gif' : 'png';
       return `<img src="https://cdn.discordapp.com/emojis/${id}.${ext}" alt=":${name}:" title=":${name}:" class="discord-emoji">`;
