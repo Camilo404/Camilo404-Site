@@ -23,7 +23,15 @@
   }
 
   <!-- Front Card -->
-  <div class="card-front" [class.switching]="isSwitching" (click)="cycleActivity()" (keydown.enter)="cycleActivity()" (keydown.space)="cycleActivity()" [attr.role]="activities.length > 1 ? 'button' : null" [attr.tabindex]="activities.length > 1 ? 0 : null">
+  <div class="card-front" 
+       [class.switching]="isSwitching" 
+       (click)="cycleActivity()" 
+       (keydown.enter)="cycleActivity()" 
+       (keydown.space)="cycleActivity()" 
+       [attr.role]="activities.length > 1 ? 'button' : null" 
+       [attr.tabindex]="activities.length > 1 ? 0 : null"
+       [style.--dynamic-bg]="dynamicBgColor"
+       [style.--dynamic-accent]="dynamicAccentColor">
     
     <div class="glass-panel" [class.spotify-panel]="isSpotify" [class.generic-panel]="!isSpotify">
         
@@ -89,15 +97,16 @@
 
           @if (!showLyrics) {
              <div class="main-content fade-in">
-               <!-- Album Art / Game Icon -->
-               <div class="album-art-wrapper">
-                 <img 
-                   [src]="getActivityImage(currentActivity)" 
-                   (error)="handleImageError($event)"
-                   alt="Activity Art" 
-                   class="album-art"
-                 />
-                 @if (!isSpotify && getSmallActivityImage(currentActivity)) {
+              <!-- Album Art / Game Icon -->
+              <div class="album-art-wrapper">
+                <img 
+                  [src]="getActivityImage(currentActivity)" 
+                  (error)="handleImageError($event)"
+                  alt="Activity Art" 
+                  class="album-art"
+                  crossorigin="anonymous"
+                />
+                @if (!isSpotify && getSmallActivityImage(currentActivity)) {
                    <img [src]="getSmallActivityImage(currentActivity)" class="small-icon" alt="Small Icon" />
                  }
                </div>

@@ -164,7 +164,7 @@
   display: block; 
   position: relative;
   padding: 1rem;
-  background: rgba(18, 18, 18, 0.85);
+  background: var(--dynamic-bg, rgba(18, 18, 18, 0.85));
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
   border: 1px solid rgba(255, 255, 255, 0.08);
@@ -172,7 +172,7 @@
   box-shadow: 
     0 8px 32px 0 rgba(0, 0, 0, 0.4),
     0 0 0 1px rgba(255, 255, 255, 0.05) inset;
-  transition: all 0.3s ease;
+  transition: background 0.6s ease, box-shadow 0.6s ease, all 0.3s ease;
   overflow: hidden;
   text-decoration: none;
 
@@ -233,16 +233,18 @@
     height: 100%;
     width: 110%; 
     justify-content: center;
-    filter: drop-shadow(0 0 8px rgba(29, 185, 84, 0.5));
+    filter: drop-shadow(0 0 8px var(--dynamic-accent, rgba(29, 185, 84, 0.5)));
+    transition: filter 0.6s ease;
   }
 
   .bar {
     width: 12px; 
-    background: linear-gradient(to top, #1db954, #1ed760);
+    background: var(--dynamic-accent, linear-gradient(to top, #1db954, #1ed760));
     border-radius: 4px 4px 0 0;
     animation: wave 1.2s ease-in-out infinite alternate;
     transform-origin: bottom;
     opacity: 0.8;
+    transition: background 0.6s ease;
 
     &:nth-child(1)  { height: 30%; animation-delay: -1.2s; animation-duration: 1.4s; }
     &:nth-child(2)  { height: 50%; animation-delay: -1.0s; animation-duration: 1.6s; }

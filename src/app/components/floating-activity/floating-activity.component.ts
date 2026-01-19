@@ -6,6 +6,7 @@ import { LyricsService, LyricLine } from 'src/app/services/lyrics.service';
 import { Activity } from 'src/app/models/lanyard-profile.model';
 import { Subscription, Subject, timer } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { FastAverageColor } from 'fast-average-color';
 
 @Component({
   selector: 'app-floating-activity',
@@ -32,6 +33,12 @@ export class FloatingActivityComponent implements OnInit, OnDestroy, AfterViewCh
   percentage = 0;
   currentTime = '0:00';
   totalDuration = '0:00';
+
+  // Theme State
+  dynamicBgColor: string = 'rgba(18, 18, 18, 0.85)';
+  dynamicAccentColor: string = '#1db954';
+  private fac = new FastAverageColor();
+  private currentImageUrl: string | null = null;
 
   // Lyrics State
   showLyrics = false;
@@ -141,12 +148,17 @@ export class FloatingActivityComponent implements OnInit, OnDestroy, AfterViewCh
 
     if (this.isSpotify) {
       this.handleSpotifyLyrics(activity);
+      
+      const imageUrl = this.getActivityImage(activity);
+       this.updateThemeFromImage(imageUrl);
+
     } else {
       if (this.lastTrackId) {
          this.lyrics = [];
          this.currentLineIndex = -1;
          this.lastTrackId = null;
-         this.showLyrics = false; 
+         this.showLyrics = false;
+         this.resetTheme();
       }
     }
 
@@ -176,6 +188,49 @@ export class FloatingActivityComponent implements OnInit, OnDestroy, AfterViewCh
         });
       this.activitiesSubscription.add(elapsedSub);
     }
+  }
+
+  private updateThemeFromImage(imageUrl: string): void {
+     if (!imageUrl) {
+        this.currentImageUrl = null;
+        this.resetTheme();
+        return;
+     }
+
+     if (this.currentImageUrl === imageUrl) {
+        return;
+     }
+
+     this.currentImageUrl = imageUrl;
+
+     this.fac.getColorAsync(imageUrl)
+        .then(color => {
+           // Default background based on dominant color
+           this.dynamicBgColor = `rgba(${color.value[0]}, ${color.value[1]}, ${color.value[2]}, 0.85)`;
+           
+           if (color.isDark) {
+              const lighten = (val: number) => Math.min(255, val + 150);
+              this.dynamicAccentColor = `rgb(${lighten(color.value[0])}, ${lighten(color.value[1])}, ${lighten(color.value[2])})`;
+           } else {
+              this.dynamicBgColor = `rgba(${color.value[0] * 0.3}, ${color.value[1] * 0.3}, ${color.value[2] * 0.3}, 0.9)`;
+              this.dynamicAccentColor = color.hex;
+           }
+
+           this.cdr.markForCheck();
+        })
+        .catch(() => {
+           // Fallback to default colors but keep currentImageUrl set to avoid retry loop
+           this.dynamicBgColor = 'rgba(18, 18, 18, 0.85)';
+           this.dynamicAccentColor = '#1db954';
+           this.cdr.markForCheck();
+        });
+  }
+
+  private resetTheme(): void {
+     this.currentImageUrl = null;
+     this.dynamicBgColor = 'rgba(18, 18, 18, 0.85)';
+     this.dynamicAccentColor = '#1db954';
+     this.cdr.markForCheck();
   }
 
   private handleSpotifyLyrics(activity: Activity): void {
