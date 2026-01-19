@@ -8,6 +8,7 @@ import { Lanyard, Activity } from 'src/app/models/lanyard-profile.model';
 import { TimestampsService } from 'src/app/services/timestamps.service';
 import { Card3DEffectService } from 'src/app/services/card-3d-effect.service';
 import { ProfileEffectsService } from 'src/app/services/profile-effects.service';
+import { MobileActivityComponent } from '../mobile-activity/mobile-activity.component';
 import { environment } from 'src/environments/environment';
 import { Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -22,7 +23,7 @@ interface RenderedLayer {
   templateUrl: './card-profile.component.html',
   styleUrls: ['./card-profile.component.scss'],
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, MobileActivityComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None
 })
@@ -275,7 +276,10 @@ export class CardProfileComponent implements OnInit, OnChanges, OnDestroy, After
           this.custom_status = this.lanyardData.d?.activities?.find(activity => activity.name === 'Custom Status') || null;
           console.log(this.custom_status);
           this.lanyardActivities = this.lanyardData.d?.activities || [];
-          this.lanyardActivities = this.lanyardActivities.filter(activity => activity.id !== 'custom');
+          // Filter out Custom Status AND Spotify from the main card activities list
+          this.lanyardActivities = this.lanyardActivities.filter(activity => 
+            activity.id !== 'custom' && activity.name !== 'Spotify' && activity.id !== 'spotify:1'
+          );
 
           this.processActivities();
           this.updateStatusColor();
@@ -294,30 +298,7 @@ export class CardProfileComponent implements OnInit, OnChanges, OnDestroy, After
     this.activitiesSubscription = new Subscription();
 
     this.lanyardActivities.forEach((activity) => {
-      if (activity.timestamps && activity.name === 'Spotify') {
-        const progressSub = this.timestampsService.getProgressPercentage(activity.timestamps.start, activity.timestamps.end)
-          .pipe(takeUntil(this.destroy$))
-          .subscribe({
-            next: (percentage) => {
-              this.percentage = percentage;
-              this.cdr.markForCheck();
-            }
-          });
-        this.activitiesSubscription.add(progressSub);
-
-        const elapsedSub = this.timestampsService.getElapsedTime(activity.timestamps.start)
-          .pipe(takeUntil(this.destroy$))
-          .subscribe({
-            next: (timeElapsed) => {
-              activity.timestamps!.start = timeElapsed;
-              this.cdr.markForCheck();
-            }
-          });
-        this.activitiesSubscription.add(elapsedSub);
-
-        activity.timestamps!.end = this.timestampsService.getTotalDuration(activity.timestamps.start, activity.timestamps.end);
-      }
-
+      // Logic for non-Spotify activities (if any need timestamps)
       if (activity.timestamps && activity.name !== 'Spotify') {
         const elapsedSub = this.timestampsService.getElapsedTime(activity.timestamps.start)
           .pipe(takeUntil(this.destroy$))

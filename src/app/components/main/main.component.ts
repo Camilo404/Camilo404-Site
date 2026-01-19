@@ -5,6 +5,7 @@ import { Card3DEffectService } from '../../services/card-3d-effect.service';
 import { NekoComponent } from '../neko/neko.component';
 import { EtherealShadowComponent } from '../ethereal-shadow/ethereal-shadow.component';
 import { CardProfileComponent } from '../card-profile/card-profile.component';
+import { FloatingActivityComponent } from '../floating-activity/floating-activity.component';
 import { ClockComponent } from '../clock/clock.component';
 import { SearchModalComponent } from '../search-modal/search-modal.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
@@ -22,6 +23,7 @@ import { faAngular, faReact, faBootstrap, faPython, faJs, faSass, faHtml5, faCss
     NekoComponent, 
     EtherealShadowComponent, 
     CardProfileComponent, 
+    FloatingActivityComponent,
     ClockComponent, 
     SearchModalComponent,
     FontAwesomeModule
