@@ -1,0 +1,70 @@
+@if (isVisible && spotifyActivity) {
+<div class="floating-container animate-slide-up">
+  <a [href]="'https://open.spotify.com/track/' + spotifyActivity.sync_id" target="_blank" class="glass-panel">
+    
+    <!-- Background Audio Visualizer -->
+    <div class="visualizer-background">
+      <div class="bar-group">
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+      </div>
+    </div>
+
+    <div class="content-wrapper">
+      
+      <!-- Header Label -->
+      <div class="header-label">
+        <img src="assets/images/connections/spotify.svg" alt="Spotify" class="spotify-icon-small" />
+        <span>Listening on Spotify</span>
+      </div>
+
+      <div class="main-content">
+        <!-- Album Art -->
+        <div class="album-art-wrapper">
+          <img 
+            [src]="'https://i.scdn.co/image/' + getActivityImageId(spotifyActivity.assets?.large_image)" 
+            alt="Album Art" 
+            class="album-art"
+          />
+        </div>
+
+        <!-- Track Info -->
+        <div class="track-info">
+          <div class="scrolling-text-container">
+            <span class="track-title" [title]="spotifyActivity.details">{{ spotifyActivity.details }}</span>
+          </div>
+          <div class="track-details">
+            <span class="track-artist" [title]="spotifyActivity.state">{{ spotifyActivity.state }}</span>
+            @if (spotifyActivity.assets?.large_text) {
+              <span class="track-album" [title]="spotifyActivity.assets?.large_text"> • {{ spotifyActivity.assets?.large_text }}</span>
+            }
+          </div>
+          
+          <!-- Time and Progress -->
+          <div class="time-container">
+            <span class="time-text">{{ currentTime }}</span>
+            <div class="progress-container">
+              <div class="progress-bar" [style.width.%]="percentage"></div>
+            </div>
+            <span class="time-text">{{ totalDuration }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </a>
+</div>
+}

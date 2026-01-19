@@ -176,37 +176,8 @@
             @for (activity of lanyardActivities; track $index) {
             <div
               class="activity-card"
-              [class.spotify-card]="activity.name === 'Spotify'"
             >
               <div class="activity-icon">
-                @if (activity.name === 'Spotify') {
-                <a
-                  href="https://open.spotify.com/track/{{ activity.sync_id }}"
-                  target="_blank"
-                >
-                  <img
-                    [src]="
-                      'https://i.scdn.co/image/' +
-                      getActivityImageId(activity.assets?.large_image || '')
-                    "
-                    class="large-asset"
-                    (error)="handleImageError($event)"
-                    alt="Spotify Cover"
-                    loading="lazy"
-                  />
-                  @if (activity.assets?.small_image) {
-                  <img
-                    [src]="
-                      'https://i.scdn.co/image/' +
-                      getActivityImageId(activity.assets?.small_image || '')
-                    "
-                    class="small-asset"
-                    (error)="handleImageError($event)"
-                    alt="Spotify Small Icon"
-                  />
-                  }
-                </a>
-                } @else {
                 <img
                   [src]="
                     'https://cdn.discordapp.com/app-assets/' +
@@ -233,25 +204,14 @@
                   (error)="handleImageError($event)"
                   alt="Activity Small Image"
                 />
-                } }
+                }
               </div>
               <div class="activity-details">
                 <span class="activity-name">{{ activity.name }}</span>
                 <span class="activity-state">{{ activity.details }}</span>
                 <span class="activity-desc">{{ activity.state }}</span>
 
-                @if (activity.name === 'Spotify') {
-                <div class="spotify-progress">
-                  <span class="time">{{ activity.timestamps?.start }}</span>
-                  <div class="progress-bar">
-                    <div
-                      class="progress-fill"
-                      [style.width.%]="percentage"
-                    ></div>
-                  </div>
-                  <span class="time">{{ activity.timestamps?.end }}</span>
-                </div>
-                } @else if (activity.timestamps?.start) {
+                @if (activity.timestamps?.start) {
                 <span class="activity-time"
                   >{{ activity.timestamps?.start }} elapsed</span
                 >
@@ -262,6 +222,11 @@
           </div>
         </section>
         }
+
+        <!-- Mobile Spotify Activity -->
+        <div class="mobile-only-section">
+          <app-mobile-activity></app-mobile-activity>
+        </div>
 
         <!-- Connections -->
         @if (userData?.connected_accounts!.length > 0) {

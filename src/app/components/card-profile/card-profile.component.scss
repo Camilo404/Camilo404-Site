@@ -502,6 +502,7 @@
   &.spotify-card {
     background: rgba(29, 185, 84, 0.1);
     border: 1px solid rgba(29, 185, 84, 0.2);
+    display: none;
   }
 
   .activity-icon {
@@ -558,30 +559,7 @@
     }
 
     .spotify-progress {
-      margin-top: 6px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-
-      .time {
-        font-size: 0.7rem;
-        color: #b9bbbe;
-        font-family: monospace;
-      }
-
-      .progress-bar {
-        flex: 1;
-        height: 4px;
-        background: rgba(255, 255, 255, 0.2);
-        border-radius: 2px;
-        overflow: hidden;
-
-        .progress-fill {
-          height: 100%;
-          background: #fff;
-          border-radius: 2px;
-        }
-      }
+      display: none;
     }
   }
 }
