@@ -1,16 +1,15 @@
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, OnChanges, SimpleChanges, ChangeDetectionStrategy, ChangeDetectorRef, ElementRef, ViewChild, AfterViewInit, ViewEncapsulation } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, OnChanges, SimpleChanges, ChangeDetectionStrategy, ChangeDetectorRef, ElementRef, ViewChild, AfterViewInit, ViewEncapsulation, HostListener } from '@angular/core';
 import { DiscordApiService } from 'src/app/services/discord-api.service';
 import { Profile, ProfileEffectConfig, ProfileEffectLayer } from 'src/app/models/discord-profile.model';
 import { LanyardService } from 'src/app/services/lanyard.service';
 import { Lanyard, Activity } from 'src/app/models/lanyard-profile.model';
-import { TimestampsService } from 'src/app/services/timestamps.service';
 import { Card3DEffectService } from 'src/app/services/card-3d-effect.service';
 import { ProfileEffectsService } from 'src/app/services/profile-effects.service';
-import { MobileActivityComponent } from '../mobile-activity/mobile-activity.component';
+import { FloatingActivityComponent } from '../floating-activity/floating-activity.component';
 import { environment } from 'src/environments/environment';
-import { Subject, Subscription } from 'rxjs';
+import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 interface RenderedLayer {
@@ -23,7 +22,7 @@ interface RenderedLayer {
   templateUrl: './card-profile.component.html',
   styleUrls: ['./card-profile.component.scss'],
   standalone: true,
-  imports: [CommonModule, FormsModule, MobileActivityComponent],
+  imports: [CommonModule, FormsModule, FloatingActivityComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None
 })
@@ -39,6 +38,7 @@ export class CardProfileComponent implements OnInit, OnChanges, OnDestroy, After
   userData?: Profile;
   userBioFormatted?: string;
   themesColor: string[] = [];
+  isMobile: boolean = false;
 
   message = '';
   lanyardData!: Lanyard | null;
@@ -74,26 +74,33 @@ export class CardProfileComponent implements OnInit, OnChanges, OnDestroy, After
   }
 
 
-  lanyardActivities: Activity[] = [];
   custom_status: Activity | null = null;
   statusColor: string = '#43b581'
-  percentage = 0;
 
   private destroy$ = new Subject<void>();
-  private activitiesSubscription: Subscription = new Subscription();
 
   constructor(
     private discordApiService: DiscordApiService,
     private lanyardService: LanyardService,
-    private timestampsService: TimestampsService,
     private cdr: ChangeDetectorRef,
     private card3DService: Card3DEffectService,
     private profileEffectsService: ProfileEffectsService
   ) { }
 
   ngOnInit(): void {
+    this.checkScreenSize();
     this.getDiscordUserData();
     this.getLanyardData();
+  }
+
+  @HostListener('window:resize')
+  onResize() {
+    this.checkScreenSize();
+  }
+
+  private checkScreenSize() {
+    this.isMobile = window.innerWidth <= 768;
+    this.cdr.markForCheck();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -127,7 +134,6 @@ export class CardProfileComponent implements OnInit, OnChanges, OnDestroy, After
       this.card3DService.destroyCard3DEffect(this.cardElement);
     }
 
-    this.activitiesSubscription.unsubscribe();
     this.destroy$.next();
     this.destroy$.complete();
   }
@@ -138,9 +144,7 @@ export class CardProfileComponent implements OnInit, OnChanges, OnDestroy, After
     this.userBioFormatted = undefined;
     this.themesColor = [];
     this.lanyardData = null;
-    this.lanyardActivities = [];
     this.custom_status = null;
-    this.percentage = 0;
     this.profileEffectConfig = null;
     this.renderedLayers = [];
 
@@ -274,16 +278,8 @@ export class CardProfileComponent implements OnInit, OnChanges, OnDestroy, After
         next: (data) => {
           this.lanyardData = data;
           this.custom_status = this.lanyardData.d?.activities?.find(activity => activity.name === 'Custom Status') || null;
-          console.log(this.custom_status);
-          this.lanyardActivities = this.lanyardData.d?.activities || [];
-          // Filter out Custom Status AND Spotify from the main card activities list
-          this.lanyardActivities = this.lanyardActivities.filter(activity => 
-            activity.id !== 'custom' && activity.name !== 'Spotify' && activity.id !== 'spotify:1'
-          );
-
-          this.processActivities();
+          
           this.updateStatusColor();
-
           this.cdr.markForCheck();
         },
         error: (error) => {
@@ -291,26 +287,6 @@ export class CardProfileComponent implements OnInit, OnChanges, OnDestroy, After
           this.cdr.markForCheck();
         }
       });
-  }
-
-  private processActivities(): void {
-    this.activitiesSubscription.unsubscribe();
-    this.activitiesSubscription = new Subscription();
-
-    this.lanyardActivities.forEach((activity) => {
-      // Logic for non-Spotify activities (if any need timestamps)
-      if (activity.timestamps && activity.name !== 'Spotify') {
-        const elapsedSub = this.timestampsService.getElapsedTime(activity.timestamps.start)
-          .pipe(takeUntil(this.destroy$))
-          .subscribe({
-            next: (timeElapsed) => {
-              activity.timestamps!.start = timeElapsed;
-              this.cdr.markForCheck();
-            }
-          });
-        this.activitiesSubscription.add(elapsedSub);
-      }
-    });
   }
 
   private updateStatusColor(): void {
@@ -339,15 +315,6 @@ export class CardProfileComponent implements OnInit, OnChanges, OnDestroy, After
       default:
         this.statusColor = '#747f8d';
         break;
-    }
-  }
-
-  getActivityImageId(imageUrl: string): string {
-    if (imageUrl && imageUrl.startsWith('spotify:')) {
-      const parts = imageUrl.split(':');
-      return parts[1];
-    } else {
-      return imageUrl;
     }
   }
 

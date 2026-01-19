@@ -168,65 +168,12 @@
         </section>
         }
 
-        <!-- Activities -->
-        @if (lanyardActivities.length > 0) {
-        <section class="section activities-section">
-          <h3 class="section-title">Activity</h3>
-          <div class="activities-list">
-            @for (activity of lanyardActivities; track $index) {
-            <div
-              class="activity-card"
-            >
-              <div class="activity-icon">
-                <img
-                  [src]="
-                    'https://cdn.discordapp.com/app-assets/' +
-                    activity.application_id +
-                    '/' +
-                    activity.assets?.large_image +
-                    '.png'
-                  "
-                  class="large-asset"
-                  (error)="handleImageError($event)"
-                  alt="Activity Large Image"
-                  loading="lazy"
-                />
-                @if (activity.assets?.small_image) {
-                <img
-                  [src]="
-                    'https://cdn.discordapp.com/app-assets/' +
-                    activity.application_id +
-                    '/' +
-                    activity.assets?.small_image +
-                    '.png'
-                  "
-                  class="small-asset"
-                  (error)="handleImageError($event)"
-                  alt="Activity Small Image"
-                />
-                }
-              </div>
-              <div class="activity-details">
-                <span class="activity-name">{{ activity.name }}</span>
-                <span class="activity-state">{{ activity.details }}</span>
-                <span class="activity-desc">{{ activity.state }}</span>
-
-                @if (activity.timestamps?.start) {
-                <span class="activity-time"
-                  >{{ activity.timestamps?.start }} elapsed</span
-                >
-                }
-              </div>
-            </div>
-            }
-          </div>
-        </section>
-        }
-
-        <!-- Mobile Spotify Activity -->
+        <!-- Mobile Activities -->
+        @if (isMobile) {
         <div class="mobile-only-section">
-          <app-mobile-activity></app-mobile-activity>
+          <app-floating-activity [isMobileEmbedded]="true"></app-floating-activity>
         </div>
+        }
 
         <!-- Connections -->
         @if (userData?.connected_accounts!.length > 0) {

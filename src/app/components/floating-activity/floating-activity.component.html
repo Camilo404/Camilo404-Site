@@ -1,70 +1,135 @@
-@if (isVisible && spotifyActivity) {
-<div class="floating-container animate-slide-up">
-  <a [href]="'https://open.spotify.com/track/' + spotifyActivity.sync_id" target="_blank" class="glass-panel">
-    
-    <!-- Background Audio Visualizer -->
-    <div class="visualizer-background">
-      <div class="bar-group">
-        <div class="bar"></div>
-        <div class="bar"></div>
-        <div class="bar"></div>
-        <div class="bar"></div>
-        <div class="bar"></div>
-        <div class="bar"></div>
-        <div class="bar"></div>
-        <div class="bar"></div>
-        <div class="bar"></div>
-        <div class="bar"></div>
-        <div class="bar"></div>
-        <div class="bar"></div>
-        <div class="bar"></div>
-        <div class="bar"></div>
-        <div class="bar"></div>
-        <div class="bar"></div>
-      </div>
-    </div>
-
-    <div class="content-wrapper">
-      
-      <!-- Header Label -->
-      <div class="header-label">
-        <img src="assets/images/connections/spotify.svg" alt="Spotify" class="spotify-icon-small" />
-        <span>Listening on Spotify</span>
-      </div>
-
-      <div class="main-content">
-        <!-- Album Art -->
-        <div class="album-art-wrapper">
-          <img 
-            [src]="'https://i.scdn.co/image/' + getActivityImageId(spotifyActivity.assets?.large_image)" 
-            alt="Album Art" 
-            class="album-art"
-          />
-        </div>
-
-        <!-- Track Info -->
-        <div class="track-info">
-          <div class="scrolling-text-container">
-            <span class="track-title" [title]="spotifyActivity.details">{{ spotifyActivity.details }}</span>
+@if (currentActivity) {
+<div class="activity-stack" [class.has-multiple]="activities.length > 1" [class.mobile-embedded]="isMobileEmbedded">
+  
+  <!-- Back Card (Peeking from top) -->
+  @if (nextActivity) {
+  <div class="card-back" (click)="cycleActivity()" (keydown.enter)="cycleActivity()" (keydown.space)="cycleActivity()" role="button" tabindex="0">
+    <div class="glass-panel dimmed">
+       <div class="visualizer-background"></div>
+       <img [src]="getActivityImage(nextActivity)" class="back-bg-image" alt="" />
+       
+       <div class="peek-content">
+          <div class="peek-header">
+             @if (nextActivity.name === 'Spotify') {
+                <img src="assets/images/connections/spotify.svg" alt="Spotify" class="mini-icon" />
+             } @else {
+                <span class="mini-icon">🎮</span>
+             }
+             <span class="peek-title">Next: {{ nextActivity.name }}</span>
           </div>
-          <div class="track-details">
-            <span class="track-artist" [title]="spotifyActivity.state">{{ spotifyActivity.state }}</span>
-            @if (spotifyActivity.assets?.large_text) {
-              <span class="track-album" [title]="spotifyActivity.assets?.large_text"> • {{ spotifyActivity.assets?.large_text }}</span>
+       </div>
+    </div>
+  </div>
+  }
+
+  <!-- Front Card -->
+  <div class="card-front" [class.switching]="isSwitching" (click)="cycleActivity()" (keydown.enter)="cycleActivity()" (keydown.space)="cycleActivity()" [attr.role]="activities.length > 1 ? 'button' : null" [attr.tabindex]="activities.length > 1 ? 0 : null">
+    
+    <div class="glass-panel" [class.spotify-panel]="isSpotify" [class.generic-panel]="!isSpotify">
+        
+        <!-- Background Audio Visualizer (Only for Spotify) -->
+        @if (isSpotify) {
+        <div class="visualizer-background">
+          <div class="bar-group">
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+          </div>
+        </div>
+        }
+
+        <div class="content-wrapper">
+          <!-- Header -->
+          <div class="header-label">
+            @if (isSpotify) {
+                <img src="assets/images/connections/spotify.svg" alt="Spotify" class="spotify-icon-small" />
+                <span>Listening on Spotify</span>
+            } @else {
+                <span class="generic-icon">🎮</span>
+                <span>Playing {{ currentActivity.name }}</span>
+            }
+            
+            <!-- External Link Button -->
+            @if (isSpotify && currentActivity.sync_id) {
+                <a [href]="'https://open.spotify.com/track/' + currentActivity.sync_id" 
+                   target="_blank" 
+                   class="external-link"
+                   (click)="$event.stopPropagation()"
+                   title="Open in Spotify">
+                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                </a>
             }
           </div>
-          
-          <!-- Time and Progress -->
-          <div class="time-container">
-            <span class="time-text">{{ currentTime }}</span>
-            <div class="progress-container">
-              <div class="progress-bar" [style.width.%]="percentage"></div>
+
+          <div class="main-content">
+            <!-- Album Art / Game Icon -->
+            <div class="album-art-wrapper">
+              <img 
+                [src]="getActivityImage(currentActivity)" 
+                (error)="handleImageError($event)"
+                alt="Activity Art" 
+                class="album-art"
+              />
+              @if (!isSpotify && getSmallActivityImage(currentActivity)) {
+                <img [src]="getSmallActivityImage(currentActivity)" class="small-icon" alt="Small Icon" />
+              }
             </div>
-            <span class="time-text">{{ totalDuration }}</span>
+
+            <!-- Info -->
+            <div class="track-info">
+              <div class="scrolling-text-container">
+                <span class="track-title" [title]="currentActivity.details">{{ currentActivity.details || currentActivity.name }}</span>
+              </div>
+              <div class="track-details">
+                <span class="track-artist" [title]="currentActivity.state">{{ currentActivity.state }}</span>
+                @if (currentActivity.assets?.large_text) {
+                  <span class="track-album" [title]="currentActivity.assets?.large_text"> • {{ currentActivity.assets?.large_text }}</span>
+                }
+              </div>
+              
+              <!-- Time -->
+              @if (isSpotify) {
+                  <div class="time-container">
+                    <span class="time-text">{{ currentTime }}</span>
+                    <div class="progress-container">
+                      <div class="progress-bar" [style.width.%]="percentage"></div>
+                    </div>
+                    <span class="time-text">{{ totalDuration }}</span>
+                  </div>
+              } @else {
+                  @if (currentTime !== '0:00') {
+                    <div class="time-container elapsed-only">
+                        <span class="time-text">{{ currentTime }} elapsed</span>
+                    </div>
+                  }
+              }
+            </div>
           </div>
         </div>
-      </div>
+        
+        <!-- Paginator Dots -->
+        @if (activities.length > 1) {
+          <div class="stack-pagination">
+             @for (activity of activities; track $index) {
+               <div class="dot" [class.active]="$index === currentIndex"></div>
+             }
+          </div>
+        }
+
     </div>
-  </a>
+  </div>
 </div>
 }
