@@ -62,62 +62,103 @@
                 <span>Playing {{ currentActivity.name }}</span>
             }
             
-            <!-- External Link Button -->
-            @if (isSpotify && currentActivity.sync_id) {
-                <a [href]="'https://open.spotify.com/track/' + currentActivity.sync_id" 
-                   target="_blank" 
-                   class="external-link"
-                   (click)="$event.stopPropagation()"
-                   title="Open in Spotify">
-                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-                </a>
-            }
+            <div class="actions-container">
+               <!-- Lyrics Button -->
+               @if (isSpotify) {
+                  <button 
+                     class="action-btn lyrics-btn" 
+                     [class.active]="showLyrics"
+                     (click)="toggleLyrics($event)"
+                     title="Toggle Lyrics">
+                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>
+                  </button>
+               }
+
+               <!-- External Link Button -->
+               @if (isSpotify && currentActivity.sync_id) {
+                   <a [href]="'https://open.spotify.com/track/' + currentActivity.sync_id" 
+                      target="_blank" 
+                      class="action-btn external-link"
+                      (click)="$event.stopPropagation()"
+                      title="Open in Spotify">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                   </a>
+               }
+            </div>
           </div>
 
-          <div class="main-content">
-            <!-- Album Art / Game Icon -->
-            <div class="album-art-wrapper">
-              <img 
-                [src]="getActivityImage(currentActivity)" 
-                (error)="handleImageError($event)"
-                alt="Activity Art" 
-                class="album-art"
-              />
-              @if (!isSpotify && getSmallActivityImage(currentActivity)) {
-                <img [src]="getSmallActivityImage(currentActivity)" class="small-icon" alt="Small Icon" />
-              }
-            </div>
-
-            <!-- Info -->
-            <div class="track-info">
-              <div class="scrolling-text-container">
-                <span class="track-title" [title]="currentActivity.details">{{ currentActivity.details || currentActivity.name }}</span>
-              </div>
-              <div class="track-details">
-                <span class="track-artist" [title]="currentActivity.state">{{ currentActivity.state }}</span>
-                @if (currentActivity.assets?.large_text) {
-                  <span class="track-album" [title]="currentActivity.assets?.large_text"> • {{ currentActivity.assets?.large_text }}</span>
+          @if (!showLyrics) {
+             <div class="main-content fade-in">
+               <!-- Album Art / Game Icon -->
+               <div class="album-art-wrapper">
+                 <img 
+                   [src]="getActivityImage(currentActivity)" 
+                   (error)="handleImageError($event)"
+                   alt="Activity Art" 
+                   class="album-art"
+                 />
+                 @if (!isSpotify && getSmallActivityImage(currentActivity)) {
+                   <img [src]="getSmallActivityImage(currentActivity)" class="small-icon" alt="Small Icon" />
+                 }
+               </div>
+   
+               <!-- Info -->
+               <div class="track-info">
+                 <div class="scrolling-text-container">
+                   <span class="track-title" [title]="currentActivity.details">{{ currentActivity.details || currentActivity.name }}</span>
+                 </div>
+                 <div class="track-details">
+                   <span class="track-artist" [title]="currentActivity.state">{{ currentActivity.state }}</span>
+                   @if (currentActivity.assets?.large_text) {
+                     <span class="track-album" [title]="currentActivity.assets?.large_text"> • {{ currentActivity.assets?.large_text }}</span>
+                   }
+                 </div>
+                 
+                 <!-- Time -->
+                 @if (isSpotify) {
+                     <div class="time-container">
+                       <span class="time-text">{{ currentTime }}</span>
+                       <div class="progress-container">
+                         <div class="progress-bar" [style.width.%]="percentage"></div>
+                       </div>
+                       <span class="time-text">{{ totalDuration }}</span>
+                     </div>
+                 } @else {
+                     @if (currentTime !== '0:00') {
+                       <div class="time-container elapsed-only">
+                           <span class="time-text">{{ currentTime }} elapsed</span>
+                       </div>
+                     }
+                 }
+               </div>
+             </div>
+          } @else {
+             <!-- Lyrics View -->
+             <div class="lyrics-view fade-in">
+                @if (lyricsLoading) {
+                   <div class="lyrics-loading">
+                      <div class="spinner"></div>
+                      <span>Loading lyrics...</span>
+                   </div>
+                } @else if (lyrics.length === 0) {
+                   <div class="lyrics-empty">
+                      <span>No lyrics found</span>
+                   </div>
+                } @else {
+                   <div class="lyrics-scroll-container" #lyricsContainer>
+                      @for (line of lyrics; track $index) {
+                         <p class="lyric-line" 
+                            [class.active]="$index === currentLineIndex"
+                            [class.past]="$index < currentLineIndex">
+                            {{ line.text }}
+                         </p>
+                      }
+                      <!-- Spacer at bottom to allow scrolling last line to center -->
+                      <div class="lyrics-spacer"></div>
+                   </div>
                 }
-              </div>
-              
-              <!-- Time -->
-              @if (isSpotify) {
-                  <div class="time-container">
-                    <span class="time-text">{{ currentTime }}</span>
-                    <div class="progress-container">
-                      <div class="progress-bar" [style.width.%]="percentage"></div>
-                    </div>
-                    <span class="time-text">{{ totalDuration }}</span>
-                  </div>
-              } @else {
-                  @if (currentTime !== '0:00') {
-                    <div class="time-container elapsed-only">
-                        <span class="time-text">{{ currentTime }} elapsed</span>
-                    </div>
-                  }
-              }
-            </div>
-          </div>
+             </div>
+          }
         </div>
         
         <!-- Paginator Dots -->

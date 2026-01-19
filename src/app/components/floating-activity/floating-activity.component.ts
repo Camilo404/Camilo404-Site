@@ -1,11 +1,11 @@
-import { Component, OnInit, OnDestroy, ChangeDetectorRef, ViewEncapsulation, Input } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef, ViewEncapsulation, Input, ViewChild, ElementRef, AfterViewChecked } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LanyardService } from 'src/app/services/lanyard.service';
 import { TimestampsService } from 'src/app/services/timestamps.service';
+import { LyricsService, LyricLine } from 'src/app/services/lyrics.service';
 import { Activity } from 'src/app/models/lanyard-profile.model';
-import { Subscription, Subject } from 'rxjs';
+import { Subscription, Subject, timer } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-floating-activity',
@@ -21,8 +21,9 @@ import { environment } from 'src/environments/environment';
     }
   `]
 })
-export class FloatingActivityComponent implements OnInit, OnDestroy {
+export class FloatingActivityComponent implements OnInit, OnDestroy, AfterViewChecked {
   @Input() isMobileEmbedded: boolean = false;
+  @ViewChild('lyricsContainer') lyricsContainer!: ElementRef;
   
   activities: Activity[] = [];
   currentIndex = 0;
@@ -32,13 +33,21 @@ export class FloatingActivityComponent implements OnInit, OnDestroy {
   currentTime = '0:00';
   totalDuration = '0:00';
 
+  // Lyrics State
+  showLyrics = false;
+  lyrics: LyricLine[] = [];
+  currentLineIndex = -1;
+  lyricsLoading = false;
+  private lastTrackId: string | null = null;
+  private lyricsSyncSubscription: Subscription = new Subscription();
+
   private destroy$ = new Subject<void>();
   private activitiesSubscription: Subscription = new Subscription();
-  private userId = environment.discordId;
 
   constructor(
     private lanyardService: LanyardService,
     private timestampsService: TimestampsService,
+    private lyricsService: LyricsService,
     private cdr: ChangeDetectorRef
   ) {}
 
@@ -83,6 +92,13 @@ export class FloatingActivityComponent implements OnInit, OnDestroy {
       });
   }
 
+  ngAfterViewChecked(): void {
+    if (this.showLyrics && this.currentLineIndex !== -1) {
+       // Logic to maintain scroll position if needed during updates
+       // Currently handled by scrollToActiveLine called on updates
+    }
+  }
+
   cycleActivity(): void {
     if (this.activities.length < 2 || this.isSwitching) return;
 
@@ -97,9 +113,19 @@ export class FloatingActivityComponent implements OnInit, OnDestroy {
     }, 300);
   }
 
+  toggleLyrics(event: Event): void {
+    event.stopPropagation();
+    this.showLyrics = !this.showLyrics;
+    if (this.showLyrics) {
+       setTimeout(() => this.scrollToActiveLine(), 100);
+    }
+    this.cdr.markForCheck();
+  }
+
   private processCurrentActivity(): void {
     this.activitiesSubscription.unsubscribe();
     this.activitiesSubscription = new Subscription();
+    this.lyricsSyncSubscription.unsubscribe();
 
     const activity = this.currentActivity;
 
@@ -107,7 +133,21 @@ export class FloatingActivityComponent implements OnInit, OnDestroy {
       this.percentage = 0;
       this.currentTime = '0:00';
       this.totalDuration = '0:00';
+      this.lyrics = [];
+      this.currentLineIndex = -1;
+      this.lastTrackId = null;
       return;
+    }
+
+    if (this.isSpotify) {
+      this.handleSpotifyLyrics(activity);
+    } else {
+      if (this.lastTrackId) {
+         this.lyrics = [];
+         this.currentLineIndex = -1;
+         this.lastTrackId = null;
+         this.showLyrics = false; 
+      }
     }
 
     if (activity.timestamps) {
@@ -136,6 +176,84 @@ export class FloatingActivityComponent implements OnInit, OnDestroy {
         });
       this.activitiesSubscription.add(elapsedSub);
     }
+  }
+
+  private handleSpotifyLyrics(activity: Activity): void {
+     const trackId = activity.sync_id || activity.details || '';
+     
+     // Fetch lyrics only if track changed
+     if (this.lastTrackId !== trackId) {
+        this.lastTrackId = trackId;
+        this.lyrics = [];
+        this.currentLineIndex = -1;
+        this.lyricsLoading = true;
+        
+        const durationSeconds = activity.timestamps?.end 
+           ? Math.floor((activity.timestamps.end - activity.timestamps.start) / 1000) 
+           : 0;
+
+        this.lyricsService.getLyrics(
+           activity.details || '',
+           activity.state || '',
+           activity.assets?.large_text || '',
+           durationSeconds
+        ).pipe(takeUntil(this.destroy$)).subscribe(lyrics => {
+           this.lyrics = lyrics;
+           this.lyricsLoading = false;
+           this.cdr.markForCheck();
+        });
+     }
+
+     // Start Sync Loop
+     if (activity.timestamps?.start) {
+        this.lyricsSyncSubscription = timer(0, 200).pipe(
+           takeUntil(this.destroy$)
+        ).subscribe(() => {
+           if (!this.lyrics.length) return;
+           
+           const elapsedMs = Date.now() - activity.timestamps!.start;
+           this.updateCurrentLine(elapsedMs);
+        });
+        this.activitiesSubscription.add(this.lyricsSyncSubscription);
+     }
+  }
+
+  private updateCurrentLine(elapsedMs: number): void {
+     let activeIndex = -1;
+     for (let i = 0; i < this.lyrics.length; i++) {
+        if (elapsedMs >= this.lyrics[i].time) {
+           activeIndex = i;
+        } else {
+           break;
+        }
+     }
+     
+     if (this.currentLineIndex !== activeIndex) {
+        this.currentLineIndex = activeIndex;
+        this.scrollToActiveLine();
+        this.cdr.markForCheck();
+     }
+  }
+
+  private scrollToActiveLine(): void {
+     if (!this.lyricsContainer || this.currentLineIndex === -1) return;
+     
+     const container = this.lyricsContainer.nativeElement as HTMLElement;
+     const activeLineElement = container.children[this.currentLineIndex] as HTMLElement;
+     
+     if (activeLineElement) {
+        const containerHeight = container.clientHeight;
+        const lineTop = activeLineElement.offsetTop;
+        const lineHeight = activeLineElement.clientHeight;
+        
+        // Center the active line
+        const scrollTarget = lineTop - (containerHeight / 2) + (lineHeight / 2);
+        
+        container.scrollTo({
+           top: scrollTarget,
+           behavior: 'smooth'
+        });
+     }
   }
 
   getActivityImage(activity: Activity): string {
@@ -173,5 +291,6 @@ export class FloatingActivityComponent implements OnInit, OnDestroy {
     this.destroy$.next();
     this.destroy$.complete();
     this.activitiesSubscription.unsubscribe();
+    this.lyricsSyncSubscription.unsubscribe();
   }
 }
