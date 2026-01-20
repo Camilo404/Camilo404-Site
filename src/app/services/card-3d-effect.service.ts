@@ -30,6 +30,11 @@ export class Card3DEffectService {
   }
 
   initCard3DEffect(element: ElementRef, config?: Partial<Card3DConfig>): void {
+    // Si es un dispositivo móvil (ancho <= 768px), no aplicar el efecto inicial
+    if (window.innerWidth <= 768) {
+      return;
+    }
+
     const finalConfig = { ...this.defaultConfig, ...config };
     const cardElement = element.nativeElement;
 
@@ -110,14 +115,16 @@ export class Card3DEffectService {
 
   // Touch event handlers for mobile devices
   private onTouchStart(element: HTMLElement, event: TouchEvent, config: Card3DConfig): void {
-    // Prevent default to avoid scrolling issues
+    if (window.innerWidth <= 768) return;
+    
     event.preventDefault();
     this.renderer.setStyle(element, 'transition', 'transform 0.2s ease-out');
     this.renderer.setStyle(element, 'perspective', `${config.perspective}px`);
   }
 
   private onTouchMove(element: HTMLElement, event: TouchEvent, config: Card3DConfig): void {
-    // Prevent default to avoid scrolling issues
+    if (window.innerWidth <= 768) return;
+
     event.preventDefault();
     
     // Get the first touch point
