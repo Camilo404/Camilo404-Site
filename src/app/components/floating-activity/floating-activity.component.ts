@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ChangeDetectorRef, ViewEncapsulation, Input, ViewChild, ElementRef, AfterViewChecked } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef, ViewEncapsulation, Input, ViewChild, ElementRef, AfterViewChecked, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LanyardService } from 'src/app/services/lanyard.service';
 import { TimestampsService } from 'src/app/services/timestamps.service';
@@ -24,6 +24,7 @@ import { FastAverageColor } from 'fast-average-color';
 })
 export class FloatingActivityComponent implements OnInit, OnDestroy, AfterViewChecked {
   @Input() isMobileEmbedded: boolean = false;
+  @Output() visibilityChange = new EventEmitter<boolean>();
   @ViewChild('lyricsContainer') lyricsContainer!: ElementRef;
   
   activities: Activity[] = [];
@@ -82,6 +83,9 @@ export class FloatingActivityComponent implements OnInit, OnDestroy, AfterViewCh
         
           this.activities = allActivities.filter(a => a.id !== 'custom');
           
+          const hasActivities = this.activities.length > 0;
+          this.visibilityChange.emit(hasActivities);
+
           if (this.activities.length === 0) {
             this.currentIndex = 0;
             this.processCurrentActivity();
