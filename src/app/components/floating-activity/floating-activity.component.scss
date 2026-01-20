@@ -26,7 +26,7 @@
       width: 100%;
       min-width: 0;
       max-width: 100%;
-      margin-top: 2rem;
+      margin-top: 1rem;
       
       &.animate-slide-up {
           animation: none;
@@ -69,14 +69,21 @@
   &[role="button"] {
     cursor: pointer;
     
-    &:hover {
-      transform: translateY(-4px);
+    @media (hover: hover) {
+      &:hover {
+        transform: translateY(-4px);
+      }
     }
     
     &:active {
       transform: scale(0.98);
     }
   }
+
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 
   &.switching {
     animation: swapOut 0.4s forwards;
