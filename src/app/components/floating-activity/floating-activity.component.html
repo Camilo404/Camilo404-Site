@@ -12,6 +12,8 @@
           <div class="peek-header">
              @if (nextActivity.name === 'Spotify') {
                 <img src="assets/images/connections/spotify.svg" alt="Spotify" class="mini-icon" />
+             } @else if (getServiceIcon(nextActivity)) {
+                <img [src]="getServiceIcon(nextActivity)" [alt]="nextActivity.name" class="mini-icon" />
              } @else {
                 <span class="mini-icon">🎮</span>
              }
@@ -66,7 +68,11 @@
                 <img src="assets/images/connections/spotify.svg" alt="Spotify" class="spotify-icon-small" />
                 <span>Listening on Spotify</span>
             } @else {
-                <span class="generic-icon">🎮</span>
+                @if (getServiceIcon(currentActivity)) {
+                    <img [src]="getServiceIcon(currentActivity)" [alt]="currentActivity.name" class="spotify-icon-small" />
+                } @else {
+                    <span class="generic-icon">🎮</span>
+                }
                 <span>Playing {{ currentActivity.name }}</span>
             }
             
@@ -82,7 +88,7 @@
                   </button>
                }
 
-               <!-- External Link Button -->
+               <!-- External Link Button (Spotify) -->
                @if (isSpotify && currentActivity.sync_id) {
                    <a [href]="'https://open.spotify.com/track/' + currentActivity.sync_id" 
                       target="_blank" 
@@ -124,7 +130,7 @@
                  </div>
                  
                  <!-- Time -->
-                 @if (isSpotify) {
+                 @if (currentActivity.timestamps?.end) {
                      <div class="time-container">
                        <span class="time-text">{{ currentTime }}</span>
                        <div class="progress-container">
@@ -139,6 +145,7 @@
                        </div>
                      }
                  }
+                 
                </div>
              </div>
           } @else {

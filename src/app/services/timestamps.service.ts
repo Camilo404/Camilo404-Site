@@ -21,7 +21,8 @@ export class TimestampsService implements OnDestroy {
   }
 
   private calculateElapsedTime(start: number): number {
-    return Math.floor((Date.now() - start) / 1000);
+    const elapsed = Math.floor((Date.now() - start) / 1000);
+    return Math.max(0, elapsed);
   }
 
   getTotalDuration(startTimestamp: number, endTimestamp: number): string {

@@ -547,7 +547,7 @@
     
     .progress-bar {
       height: 100%;
-      background-color: #1db954;
+      background-color: var(--dynamic-accent, #1db954);
       border-radius: 2px;
       transition: width 0.3s linear;
       box-shadow: 0 0 8px rgba(29, 185, 84, 0.4);
