@@ -1,5 +1,7 @@
 import { Component, OnInit, OnDestroy, ChangeDetectorRef, ViewEncapsulation, Input, ViewChild, ElementRef, AfterViewChecked, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { faGamepad } from '@fortawesome/free-solid-svg-icons';
 import { LanyardService } from 'src/app/services/lanyard.service';
 import { TimestampsService } from 'src/app/services/timestamps.service';
 import { LyricsService, LyricLine } from 'src/app/services/lyrics.service';
@@ -11,7 +13,7 @@ import { FastAverageColor } from 'fast-average-color';
 @Component({
   selector: 'app-floating-activity',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FontAwesomeModule],
   templateUrl: './floating-activity.component.html',
   styleUrls: ['./floating-activity.component.scss'],
   encapsulation: ViewEncapsulation.None,
@@ -26,6 +28,9 @@ export class FloatingActivityComponent implements OnInit, OnDestroy, AfterViewCh
   @Input() isMobileEmbedded: boolean = false;
   @Output() visibilityChange = new EventEmitter<boolean>();
   @ViewChild('lyricsContainer') lyricsContainer!: ElementRef;
+  
+  // Font Awesome icons
+  faGamepad = faGamepad;
   
   activities: Activity[] = [];
   currentIndex = 0;
@@ -345,31 +350,36 @@ export class FloatingActivityComponent implements OnInit, OnDestroy, AfterViewCh
 
   getServiceIcon(activity: Activity): string {
     if (!activity || !activity.name) return '';
-    if (activity.name === 'Spotify') return 'assets/images/connections/spotify.svg';
-    
-    const knownServices = [
-      'youtube', 'twitch', 'github', 'visual studio code', 'reddit', 
-      'twitter', 'steam', 'playstation', 'xbox', 'battle.net', 'epic games',
-      'facebook', 'instagram', 'tiktok', 'league of legends', 'valorant'
-    ];
     
     const lowerName = activity.name.toLowerCase();
     
-    if (lowerName === 'visual studio code' || lowerName === 'code') return 'assets/images/connections/visual-studio-code.svg';
-    if (lowerName === 'battle.net') return 'assets/images/connections/battlenet.svg';
-    if (lowerName === 'league of legends') return 'assets/images/connections/leagueoflegends.svg';
+    const iconMap: { [key: string]: string } = {
+      'spotify': 'spotify',
+      'visual studio code': 'github',
+      'code': 'github',
+      'battle.net': 'battlenet',
+      'epic games': 'epicgames',
+      'league of legends': 'leagueoflegends'
+    };
     
-    if (knownServices.includes(lowerName)) {
-      return `assets/images/connections/${lowerName}.svg`;
+    if (iconMap[lowerName]) {
+      return `assets/images/connections/${iconMap[lowerName]}.svg`;
     }
     
-    return '';
+    const normalizedName = lowerName.replace(/\s+/g, '');
+    return `assets/images/connections/${normalizedName}.svg`;
   }
 
   handleImageError(event: Event) {
     const target = event.target as HTMLImageElement;
     target.src = 'assets/images/no-image-found.jpg';
     target.style.display = 'none';
+  }
+
+  handleIconError(event: Event) {
+    const target = event.target as HTMLImageElement;
+    target.style.display = 'none';
+    target.classList.add('icon-error');
   }
 
   ngOnDestroy(): void {

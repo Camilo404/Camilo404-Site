@@ -153,6 +153,30 @@
           font-size: 12px;
       }
       
+      .icon-wrapper {
+          position: relative;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          
+          .service-icon {
+              display: block;
+              
+              &.icon-error {
+                  display: none;
+              }
+          }
+          
+          .fallback-icon {
+              display: none;
+              opacity: 0.7;
+          }
+          
+          .service-icon.icon-error ~ .fallback-icon {
+              display: block;
+          }
+      }
+      
       .peek-title {
           font-size: 0.75rem;
           color: #fff;
@@ -293,6 +317,30 @@
     height: 16px;
     opacity: 0.9;
     flex-shrink: 0;
+  }
+  
+  .icon-wrapper {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      
+      .service-icon {
+          display: block;
+          
+          &.icon-error {
+              display: none;
+          }
+      }
+      
+      .fallback-icon {
+          display: none;
+          opacity: 0.7;
+      }
+      
+      .service-icon.icon-error ~ .fallback-icon {
+          display: block;
+      }
   }
 
   .generic-icon {
