@@ -7,7 +7,7 @@
     [noise]="{ opacity: 1, scale: 1.2 }" class="w-full h-full"></app-ethereal-shadow>
 </div>
 
-<main class="main-container">
+<main class="main-container" [class.has-floating-activity]="isActivityVisible">
   <div class="bento-grid">
 
     <!-- Column Left: Profile -->
@@ -119,4 +119,4 @@
 </app-search-modal>
 
 <!-- Floating Spotify Activity -->
-<app-floating-activity></app-floating-activity>
+<app-floating-activity (visibilityChange)="onActivityVisibilityChange($event)"></app-floating-activity>

@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ChangeDetectorRef, ViewEncapsulation, Input, ViewChild, ElementRef, AfterViewChecked } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef, ViewEncapsulation, Input, ViewChild, ElementRef, AfterViewChecked, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LanyardService } from 'src/app/services/lanyard.service';
 import { TimestampsService } from 'src/app/services/timestamps.service';
@@ -24,6 +24,7 @@ import { FastAverageColor } from 'fast-average-color';
 })
 export class FloatingActivityComponent implements OnInit, OnDestroy, AfterViewChecked {
   @Input() isMobileEmbedded: boolean = false;
+  @Output() visibilityChange = new EventEmitter<boolean>();
   @ViewChild('lyricsContainer') lyricsContainer!: ElementRef;
   
   activities: Activity[] = [];
@@ -82,6 +83,9 @@ export class FloatingActivityComponent implements OnInit, OnDestroy, AfterViewCh
         
           this.activities = allActivities.filter(a => a.id !== 'custom');
           
+          const hasActivities = this.activities.length > 0;
+          this.visibilityChange.emit(hasActivities);
+
           if (this.activities.length === 0) {
             this.currentIndex = 0;
             this.processCurrentActivity();
@@ -319,7 +323,7 @@ export class FloatingActivityComponent implements OnInit, OnDestroy, AfterViewCh
         return `https://i.scdn.co/image/${activity.assets.large_image.split(':')[1]}`;
       }
       if (activity.assets.large_image.startsWith('mp:external/')) {
-         return `https://cdn.discordapp.com/app-assets/${activity.application_id}/${activity.assets.large_image}.png`;
+         return activity.assets.large_image.replace('mp:external/', 'https://media.discordapp.net/external/');
       }
       return `https://cdn.discordapp.com/app-assets/${activity.application_id}/${activity.assets.large_image}.png`;
     }
@@ -333,7 +337,33 @@ export class FloatingActivityComponent implements OnInit, OnDestroy, AfterViewCh
      if (activity.assets.small_image.startsWith('spotify:')) {
         return `https://i.scdn.co/image/${activity.assets.small_image.split(':')[1]}`;
      }
+     if (activity.assets.small_image.startsWith('mp:external/')) {
+        return activity.assets.small_image.replace('mp:external/', 'https://media.discordapp.net/external/');
+     }
      return `https://cdn.discordapp.com/app-assets/${activity.application_id}/${activity.assets.small_image}.png`;
+  }
+
+  getServiceIcon(activity: Activity): string {
+    if (!activity || !activity.name) return '';
+    if (activity.name === 'Spotify') return 'assets/images/connections/spotify.svg';
+    
+    const knownServices = [
+      'youtube', 'twitch', 'github', 'visual studio code', 'reddit', 
+      'twitter', 'steam', 'playstation', 'xbox', 'battle.net', 'epic games',
+      'facebook', 'instagram', 'tiktok', 'league of legends', 'valorant'
+    ];
+    
+    const lowerName = activity.name.toLowerCase();
+    
+    if (lowerName === 'visual studio code' || lowerName === 'code') return 'assets/images/connections/visual-studio-code.svg';
+    if (lowerName === 'battle.net') return 'assets/images/connections/battlenet.svg';
+    if (lowerName === 'league of legends') return 'assets/images/connections/leagueoflegends.svg';
+    
+    if (knownServices.includes(lowerName)) {
+      return `assets/images/connections/${lowerName}.svg`;
+    }
+    
+    return '';
   }
 
   handleImageError(event: Event) {

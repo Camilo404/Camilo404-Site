@@ -42,6 +42,7 @@ export class MainComponent implements OnInit, OnDestroy, AfterViewInit {
   faSteam = faSteam;
 
   public isModalOpen: boolean = false;
+  public isActivityVisible: boolean = false;
 
 
   @ViewChild('nameplateVideo') nameplateVideoRef?: ElementRef<HTMLVideoElement>;
@@ -206,6 +207,11 @@ export class MainComponent implements OnInit, OnDestroy, AfterViewInit {
 
   public onSearchProfile(userId: string): void {
     this.router.navigate(['/profile', userId]);
+  }
+
+  public onActivityVisibilityChange(isVisible: boolean): void {
+    this.isActivityVisible = isVisible;
+    this.cdr.detectChanges();
   }
 
   // Nameplate methods
