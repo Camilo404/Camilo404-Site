@@ -1,5 +1,5 @@
-import { Component, ViewChild, ElementRef, ChangeDetectorRef, OnInit, OnDestroy, AfterViewInit, Renderer2 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, ViewChild, ElementRef, OnInit, OnDestroy, AfterViewInit, Renderer2, signal, inject, effect } from '@angular/core';
+
 import { Router, RouterModule } from '@angular/router';
 import { Card3DEffectService } from '../../services/card-3d-effect.service';
 import { NekoComponent } from '../neko/neko.component';
@@ -13,23 +13,25 @@ import { faTerminal, faCode, faSearch } from '@fortawesome/free-solid-svg-icons'
 import { faAngular, faReact, faBootstrap, faPython, faJs, faSass, faHtml5, faCss3Alt, faNodeJs, faGitAlt, faDocker, faGithub, faYoutube, faInstagram, faSteam } from '@fortawesome/free-brands-svg-icons';
 
 @Component({
-  selector: 'app-main',
-  templateUrl: './main.component.html',
-  styleUrls: ['./main.component.scss'],
-  standalone: true,
-  imports: [
-    CommonModule, 
-    RouterModule, 
-    NekoComponent, 
-    EtherealShadowComponent, 
-    CardProfileComponent, 
+    selector: 'app-main',
+    templateUrl: './main.component.html',
+    styleUrls: ['./main.component.scss'],
+    imports: [
+    RouterModule,
+    NekoComponent,
+    EtherealShadowComponent,
+    CardProfileComponent,
     FloatingActivityComponent,
-    ClockComponent, 
+    ClockComponent,
     SearchModalComponent,
     FontAwesomeModule
-  ]
+]
 })
 export class MainComponent implements OnInit, OnDestroy, AfterViewInit {
+  private router = inject(Router);
+  private el = inject(ElementRef);
+  private renderer = inject(Renderer2);
+  private card3DService = inject(Card3DEffectService);
 
   // FontAwesome Icons
   faTerminal = faTerminal;
@@ -41,17 +43,14 @@ export class MainComponent implements OnInit, OnDestroy, AfterViewInit {
   faInstagram = faInstagram;
   faSteam = faSteam;
 
-  public isModalOpen: boolean = false;
-  public isActivityVisible: boolean = false;
-
+  isModalOpen = signal(false);
+  isActivityVisible = signal(false);
+  nameplateAsset = signal<string | null>(null);
+  currentQuote = signal('');
 
   @ViewChild('nameplateVideo') nameplateVideoRef?: ElementRef<HTMLVideoElement>;
 
-  // Nameplate asset from profile
-  nameplateAsset: string | null = null;
-
   // Typewriter Effect Variables
-  public currentQuote: string = '';
   private quotes: string[] = [
     "The world doesn't need heroes, it needs someone to pull the strings from the shadows.",
     "I am the one who lurks in the shadows to hunt the shadows.",
@@ -61,12 +60,12 @@ export class MainComponent implements OnInit, OnDestroy, AfterViewInit {
     "I am Atomic."
   ];
   private typeTimeout: ReturnType<typeof setTimeout> | undefined;
-  private quoteIndex: number = 0;
-  private charIndex: number = 0;
-  private isDeleting: boolean = false;
+  private quoteIndex = signal(0);
+  private charIndex = signal(0);
+  private isDeleting = signal(false);
 
   // Tech Stack Data
-  public techStack = [
+  techStack = [
     { name: 'Angular', icon: faAngular, color: '#dd0031' },
     { name: 'React', icon: faReact, color: '#61dafb' },
     { name: 'Bootstrap', icon: faBootstrap, color: '#7952b3' },
@@ -81,13 +80,7 @@ export class MainComponent implements OnInit, OnDestroy, AfterViewInit {
     { name: 'Docker', icon: faDocker, color: '#2496ed' }
   ];
 
-  constructor(
-    private router: Router,
-    private cdr: ChangeDetectorRef,
-    private el: ElementRef,
-    private renderer: Renderer2,
-    private card3DService: Card3DEffectService
-  ) { }
+  constructor() { }
 
   ngOnInit(): void {
     this.startTyping();
@@ -166,29 +159,30 @@ export class MainComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private startTyping(): void {
-    const currentFullQuote = this.quotes[this.quoteIndex];
+    const currentFullQuote = this.quotes[this.quoteIndex()];
+    const isDeleting = this.isDeleting();
+    const charIdx = this.charIndex();
 
-    if (this.isDeleting) {
-      this.currentQuote = currentFullQuote.substring(0, this.charIndex - 1);
-      this.charIndex--;
+    if (isDeleting) {
+      this.currentQuote.set(currentFullQuote.substring(0, charIdx - 1));
+      this.charIndex.update(i => i - 1);
     } else {
-      this.currentQuote = currentFullQuote.substring(0, this.charIndex + 1);
-      this.charIndex++;
+      this.currentQuote.set(currentFullQuote.substring(0, charIdx + 1));
+      this.charIndex.update(i => i + 1);
     }
 
-    this.cdr.detectChanges();
-
-    let typeSpeed = this.isDeleting ? 20 : 50;
-    if (!this.isDeleting) {
+    let typeSpeed = isDeleting ? 20 : 50;
+    if (!isDeleting) {
       typeSpeed += Math.random() * 20;
     }
 
-    if (!this.isDeleting && this.charIndex === currentFullQuote.length) {
+    const newCharIdx = this.charIndex();
+    if (!isDeleting && newCharIdx === currentFullQuote.length) {
       typeSpeed = 4000;
-      this.isDeleting = true;
-    } else if (this.isDeleting && this.charIndex === 0) {
-      this.isDeleting = false;
-      this.quoteIndex = (this.quoteIndex + 1) % this.quotes.length;
+      this.isDeleting.set(true);
+    } else if (isDeleting && newCharIdx === 0) {
+      this.isDeleting.set(false);
+      this.quoteIndex.update(i => (i + 1) % this.quotes.length);
       typeSpeed = 500;
     }
 
@@ -197,34 +191,33 @@ export class MainComponent implements OnInit, OnDestroy, AfterViewInit {
     }, typeSpeed);
   }
 
-  public openSearchModal(): void {
-    this.isModalOpen = true;
+  openSearchModal(): void {
+    this.isModalOpen.set(true);
   }
 
-  public closeSearchModal(): void {
-    this.isModalOpen = false;
+  closeSearchModal(): void {
+    this.isModalOpen.set(false);
   }
 
-  public onSearchProfile(userId: string): void {
+  onSearchProfile(userId: string): void {
     this.router.navigate(['/profile', userId]);
   }
 
-  public onActivityVisibilityChange(isVisible: boolean): void {
-    this.isActivityVisible = isVisible;
-    this.cdr.detectChanges();
+  onActivityVisibilityChange(isVisible: boolean): void {
+    this.isActivityVisible.set(isVisible);
   }
 
   // Nameplate methods
   onNameplateAssetChange(asset: string | null): void {
-    this.nameplateAsset = asset;
-    this.cdr.detectChanges();
+    this.nameplateAsset.set(asset);
   }
 
   get nameplateVideoUrl(): string | null {
-    if (!this.nameplateAsset) {
+    const asset = this.nameplateAsset();
+    if (!asset) {
       return null;
     }
-    return `https://cdn.discordapp.com/assets/collectibles/${this.nameplateAsset}asset.webm`;
+    return `https://cdn.discordapp.com/assets/collectibles/${asset}asset.webm`;
   }
 
   onVideoCanPlay(event: Event): void {

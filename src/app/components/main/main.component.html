@@ -4,10 +4,10 @@
 <!-- Background Ethereal Shadow -->
 <div class="ethereal-background-container">
   <app-ethereal-shadow [sizing]="'fill'" [color]="'rgba(128, 128, 128, 1)'" [animation]="{ scale: 100, speed: 90 }"
-    [noise]="{ opacity: 1, scale: 1.2 }" class="w-full h-full"></app-ethereal-shadow>
+  [noise]="{ opacity: 1, scale: 1.2 }" class="w-full h-full"></app-ethereal-shadow>
 </div>
 
-<main class="main-container" [class.has-floating-activity]="isActivityVisible">
+<main class="main-container" [class.has-floating-activity]="isActivityVisible()">
   <div class="bento-grid">
 
     <!-- Column Left: Profile -->
@@ -41,7 +41,7 @@
               <span>Web Designer & Developer</span>
             </div>
             <div class="shadow-quote">
-              <span>"{{ currentQuote }}<span class="typewriter-cursor">|</span>"</span>
+              <span>"{{ currentQuote() }}<span class="typewriter-cursor">|</span>"</span>
             </div>
           </div>
         </article>
@@ -88,17 +88,23 @@
           <div class="marquee-mask">
             <div class="marquee-track">
               <!-- Original Set -->
-              <div class="tech-item" *ngFor="let tech of techStack" [title]="tech.name">
-                <fa-icon [icon]="tech.icon" [style.color]="tech.color"></fa-icon>
-              </div>
+              @for (tech of techStack; track tech) {
+                <div class="tech-item" [title]="tech.name">
+                  <fa-icon [icon]="tech.icon" [style.color]="tech.color"></fa-icon>
+                </div>
+              }
               <!-- Duplicate Set for Infinite Loop -->
-              <div class="tech-item" *ngFor="let tech of techStack" [title]="tech.name">
-                <fa-icon [icon]="tech.icon" [style.color]="tech.color"></fa-icon>
-              </div>
+              @for (tech of techStack; track tech) {
+                <div class="tech-item" [title]="tech.name">
+                  <fa-icon [icon]="tech.icon" [style.color]="tech.color"></fa-icon>
+                </div>
+              }
               <!-- Triplicate Set (just to be safe with wide screens) -->
-              <div class="tech-item" *ngFor="let tech of techStack" [title]="tech.name">
-                <fa-icon [icon]="tech.icon" [style.color]="tech.color"></fa-icon>
-              </div>
+              @for (tech of techStack; track tech) {
+                <div class="tech-item" [title]="tech.name">
+                  <fa-icon [icon]="tech.icon" [style.color]="tech.color"></fa-icon>
+                </div>
+              }
             </div>
           </div>
         </section>
@@ -115,7 +121,7 @@
   <div class="btn-glow"></div>
 </button>
 
-<app-search-modal [isOpen]="isModalOpen" (close)="closeSearchModal()" (search)="onSearchProfile($event)">
+<app-search-modal [isOpen]="isModalOpen()" (close)="closeSearchModal()" (search)="onSearchProfile($event)">
 </app-search-modal>
 
 <!-- Floating Spotify Activity -->

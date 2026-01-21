@@ -1,12 +1,11 @@
-import { Injectable, OnDestroy } from '@angular/core';
-import { Observable, Subject } from 'rxjs';
+import { Injectable, signal, Signal } from '@angular/core';
 import { Lanyard } from '../models/lanyard-profile.model';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
-export class LanyardService implements OnDestroy {
+export class LanyardService {
 
   private webSocketUrl = environment.webSocketUrl;
   private socket?: WebSocket;
@@ -24,11 +23,11 @@ export class LanyardService implements OnDestroy {
   private maxReconnectAttempts = 5;
   private baseReconnectDelay = 1000; // 1 second
 
-  private lanyardData = new Subject<Lanyard>();
+  private lanyardDataSignal = signal<Lanyard | null>(null);
 
   constructor() { }
 
-  ngOnDestroy() {
+  destroy() {
     this.cleanup();
   }
 
@@ -110,11 +109,12 @@ export class LanyardService implements OnDestroy {
   }
 
   public setLanyardData(data: Lanyard): void {
-    this.lanyardData.next(data);
+    this.lanyardDataSignal.set(data);
   }
 
-  public getLanyardData(): Observable<Lanyard> {
-    return this.lanyardData.asObservable();
+  // Exponer el signal como readonly
+  public getLanyardData(): Signal<Lanyard | null> {
+    return this.lanyardDataSignal.asReadonly();
   }
 
   // Method to manually close the connection

@@ -1,5 +1,5 @@
-<div class="modal-overlay" [class.modal-open]="isOpen" (click)="closeModal()" (keyup.escape)="closeModal()" role="dialog" [attr.aria-hidden]="!isOpen" aria-modal="true">
-  <div class="modal-container" [class.modal-show]="isOpen" (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()" tabindex="-1">
+<div class="modal-overlay" [class.modal-open]="isOpen()" (click)="closeModal()" (keyup.escape)="closeModal()" role="dialog" [attr.aria-hidden]="!isOpen()" aria-modal="true">
+  <div class="modal-container" [class.modal-show]="isOpen()" (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()" tabindex="-1">
     <!-- Modal Header -->
     <div class="modal-header">
       <div class="flex items-center gap-3">
@@ -19,50 +19,53 @@
     <!-- Modal Body -->
     <div class="modal-body">
       <div class="search-input-wrapper">
-        <input 
-          type="text" 
+        <input
+          type="text"
           class="search-input"
-          [(ngModel)]="searchUserId"
+          [ngModel]="searchUserId()"
+          (ngModelChange)="searchUserId.set($event)"
           (keydown)="handleKeyPress($event)"
           placeholder="Enter Discord User ID (e.g., 1234567890123456789)"
           maxlength="19"
           autocomplete="off"
-        />
-        <fa-icon [icon]="faHashtag" class="input-icon"></fa-icon>
-      </div>
-
-      <!-- Error Message -->
-      <div class="error-message" *ngIf="searchError">
-        <fa-icon [icon]="faExclamationCircle"></fa-icon>
-        <span>{{ searchError }}</span>
-      </div>
-
-      <!-- Info Card -->
-      <div class="info-card">
-        <div class="info-icon">
-          <fa-icon [icon]="faInfoCircle"></fa-icon>
+          />
+          <fa-icon [icon]="faHashtag" class="input-icon"></fa-icon>
         </div>
-        <div class="info-content">
-          <p class="info-title">How to find your Discord ID:</p>
-          <ol class="info-list">
-            <li>Enable Developer Mode in Discord Settings</li>
-            <li>Right-click on a user profile</li>
-            <li>Click "Copy User ID"</li>
-          </ol>
+
+        <!-- Error Message -->
+        @if (searchError()) {
+          <div class="error-message">
+            <fa-icon [icon]="faExclamationCircle"></fa-icon>
+            <span>{{ searchError() }}</span>
+          </div>
+        }
+
+        <!-- Info Card -->
+        <div class="info-card">
+          <div class="info-icon">
+            <fa-icon [icon]="faInfoCircle"></fa-icon>
+          </div>
+          <div class="info-content">
+            <p class="info-title">How to find your Discord ID:</p>
+            <ol class="info-list">
+              <li>Enable Developer Mode in Discord Settings</li>
+              <li>Right-click on a user profile</li>
+              <li>Click "Copy User ID"</li>
+            </ol>
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- Modal Footer -->
-    <div class="modal-footer">
-      <button class="btn-secondary" (click)="closeModal()">
-        <fa-icon [icon]="faTimes" class="mr-2"></fa-icon>
-        Cancel
-      </button>
-      <button class="btn-primary" (click)="searchProfile()">
-        <fa-icon [icon]="faSearch" class="mr-2"></fa-icon>
-        Search Profile
-      </button>
+      <!-- Modal Footer -->
+      <div class="modal-footer">
+        <button class="btn-secondary" (click)="closeModal()">
+          <fa-icon [icon]="faTimes" class="mr-2"></fa-icon>
+          Cancel
+        </button>
+        <button class="btn-primary" (click)="searchProfile()">
+          <fa-icon [icon]="faSearch" class="mr-2"></fa-icon>
+          Search Profile
+        </button>
+      </div>
     </div>
   </div>
-</div>

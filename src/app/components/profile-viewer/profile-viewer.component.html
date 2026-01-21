@@ -1,37 +1,37 @@
 <!-- Animated gradient background with mesh -->
-<div class="fixed inset-0 dynamic-gradient overflow-hidden" [class.mobile-optimized]="isMobile">
+<div class="fixed inset-0 dynamic-gradient overflow-hidden" [class.mobile-optimized]="isMobile()">
   <!-- Animated mesh gradient pattern -->
-  <div class="absolute inset-0 mesh-pattern opacity-20" [class.mobile-disabled]="isMobile"></div>
+  <div class="absolute inset-0 mesh-pattern opacity-20" [class.mobile-disabled]="isMobile()"></div>
   
   <!-- Animated gradient orbs -->
   <div class="absolute top-0 -left-4 w-96 h-96 rounded-full mix-blend-screen opacity-30 animate-blob-float dynamic-orb-1"
-       [class.filter]="!isMobile"
-       [class.blur-3xl]="!isMobile"
-       [class.blur-xl]="isMobile"></div>
+       [class.filter]="!isMobile()"
+       [class.blur-3xl]="!isMobile()"
+       [class.blur-xl]="isMobile()"></div>
   <div class="absolute top-0 -right-4 w-96 h-96 rounded-full mix-blend-screen opacity-25 animate-blob-float animation-delay-2000 dynamic-orb-2"
-       [class.filter]="!isMobile"
-       [class.blur-3xl]="!isMobile"
-       [class.blur-xl]="isMobile"></div>
+       [class.filter]="!isMobile()"
+       [class.blur-3xl]="!isMobile()"
+       [class.blur-xl]="isMobile()"></div>
   <div class="absolute -bottom-8 left-20 w-96 h-96 rounded-full mix-blend-screen opacity-20 dynamic-orb-3"
-       [class.filter]="!isMobile"
-       [class.blur-3xl]="!isMobile"
-       [class.animate-blob-float]="!isMobile"
-       [class.animation-delay-4000]="!isMobile"></div>
+       [class.filter]="!isMobile()"
+       [class.blur-3xl]="!isMobile()"
+       [class.animate-blob-float]="!isMobile()"
+       [class.animation-delay-4000]="!isMobile()"></div>
   <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 rounded-full mix-blend-screen opacity-15 dynamic-orb-4"
-       [class.filter]="!isMobile"
-       [class.blur-3xl]="!isMobile"
-       [class.animate-pulse-slow]="!isMobile"></div>
+       [class.filter]="!isMobile()"
+       [class.blur-3xl]="!isMobile()"
+       [class.animate-pulse-slow]="!isMobile()"></div>
   
   <!-- Particles container -->
   <div class="particles-container"></div>
   
   <!-- Scanline effect -->
-  <div class="scanline" [class.mobile-disabled]="isMobile"></div>
+  <div class="scanline" [class.mobile-disabled]="isMobile()"></div>
 </div>
 
 <!-- Main content -->
 <div class="relative z-10 min-h-screen w-full overflow-y-auto flex flex-col items-center justify-center py-8 px-4 gap-8">
-  <div class="glass-container animate-fade-in-down" [class.glass-mobile]="isMobile">
+  <div class="glass-container animate-fade-in-down" [class.glass-mobile]="isMobile()">
     <div class="flex flex-col items-center gap-4 text-center">
       <div class="icon-wrapper">
         <fa-icon [icon]="faUserAstronaut" class="text-5xl header-icon-color"></fa-icon>
@@ -54,7 +54,7 @@
     </div>
   </div>
 
-  <div class="glass-container-minimal animate-fade-in animation-delay-200 clock-video-container" [class.glass-mobile]="isMobile">
+  <div class="glass-container-minimal animate-fade-in animation-delay-200 clock-video-container" [class.glass-mobile]="isMobile()">
     <video 
       #nameplateVideo
       class="clock-background-video" 
@@ -63,8 +63,8 @@
       muted 
       playsinline
       preload="auto"
-      [class.hidden]="!nameplateVideoUrl"
-      [src]="nameplateVideoUrl || ''"
+      [class.hidden]="!nameplateVideoUrl()"
+      [src]="nameplateVideoUrl() || ''"
       (loadeddata)="onVideoLoaded($event)"
       (canplay)="onVideoCanPlay($event)"
       (error)="onVideoError($event)">
@@ -78,7 +78,7 @@
   <div class="profile-card-wrapper animate-fade-in-up animation-delay-400">
     <div class="card-glow-effect"></div>
     <app-card-profile 
-      [ProfileId]="profileId" 
+      [ProfileId]="profileId()" 
       (themeColorsChange)="onThemeColorsChange($event)"
       (nameplateAssetChange)="onNameplateAssetChange($event)">
     </app-card-profile>
@@ -86,7 +86,7 @@
 
   <!-- Stats/Info cards -->
   <div class="grid grid-cols-1 md:grid-cols-3 gap-4 w-full max-w-3xl animate-fade-in animation-delay-600">
-    <div class="stat-card" [class.glass-mobile]="isMobile">
+    <div class="stat-card" [class.glass-mobile]="isMobile()">
       <div class="stat-icon">
         <fa-icon [icon]="faRocket"></fa-icon>
       </div>
@@ -96,7 +96,7 @@
       </div>
     </div>
     
-    <div class="stat-card" [class.glass-mobile]="isMobile">
+    <div class="stat-card" [class.glass-mobile]="isMobile()">
       <div class="stat-icon">
         <fa-icon [icon]="faSyncAlt" class="animate-spin-slow"></fa-icon>
       </div>
@@ -106,7 +106,7 @@
       </div>
     </div>
     
-    <div class="stat-card" [class.glass-mobile]="isMobile">
+    <div class="stat-card" [class.glass-mobile]="isMobile()">
       <div class="stat-icon">
         <fa-icon [icon]="faShieldAlt"></fa-icon>
       </div>
@@ -118,7 +118,7 @@
   </div>
 
   <!-- Floating info badge -->
-  <div class="floating-badge animate-fade-in animation-delay-800" [class.glass-mobile]="isMobile">
+  <div class="floating-badge animate-fade-in animation-delay-800" [class.glass-mobile]="isMobile()">
     <fa-icon [icon]="faFingerprint" class="mr-2"></fa-icon>
     <span class="text-xs font-medium">Dynamic Theme · Adaptive Colors</span>
   </div>
@@ -133,7 +133,7 @@
 
 <!-- Search Modal -->
 <app-search-modal 
-  [isOpen]="isModalOpen" 
+  [isOpen]="isModalOpen()" 
   (close)="closeSearchModal()" 
   (search)="onSearchProfile($event)">
 </app-search-modal>

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, map, of, catchError } from 'rxjs';
 
@@ -22,9 +22,8 @@ export interface LrcLibResponse {
   providedIn: 'root'
 })
 export class LyricsService {
+  private http = inject(HttpClient);
   private apiUrl = 'https://lrclib.net/api/get';
-
-  constructor(private http: HttpClient) {}
 
   getLyrics(trackName: string, artistName: string, albumName: string, duration: number): Observable<LyricLine[]> {
     const params = new HttpParams()

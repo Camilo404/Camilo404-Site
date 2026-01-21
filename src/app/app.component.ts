@@ -1,18 +1,17 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss'],
-  standalone: true,
-  imports: [RouterOutlet]
+    selector: 'app-root',
+    templateUrl: './app.component.html',
+    styleUrls: ['./app.component.scss'],
+    imports: [RouterOutlet]
 })
 export class AppComponent implements OnInit {
   title = 'C a m i l o 4 0 4';
   animSeq = ["/", "$", "\\", "|", "$"];
-  animIndex = 0;
-  titleIndex = 0;
+  animIndex = signal(0);
+  titleIndex = signal(0);
 
   constructor() { }
 
@@ -31,16 +30,19 @@ export class AppComponent implements OnInit {
   }
 
   doInverseSpinZeroPitch() {
-    const loadTitle = this.title.substring(0, this.titleIndex);
-    if (this.titleIndex > this.title.length) {
-      this.animIndex = 0;
-      this.titleIndex = 0;
+    const titleIdx = this.titleIndex();
+    const animIdx = this.animIndex();
+    const loadTitle = this.title.substring(0, titleIdx);
+    
+    if (titleIdx > this.title.length) {
+      this.animIndex.set(0);
+      this.titleIndex.set(0);
     }
-    if (this.animIndex > 3) {
-      this.titleIndex++;
-      this.animIndex = 0;
+    if (animIdx > 3) {
+      this.titleIndex.update(i => i + 1);
+      this.animIndex.set(0);
     }
-    document.title = loadTitle + this.animSeq[this.animIndex];
-    this.animIndex++;
+    document.title = loadTitle + this.animSeq[this.animIndex()];
+    this.animIndex.update(i => i + 1);
   }
 }

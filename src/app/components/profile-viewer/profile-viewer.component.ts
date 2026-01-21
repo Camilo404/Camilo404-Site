@@ -1,9 +1,7 @@
-import { Component, OnInit, Output, Renderer2, OnDestroy, ChangeDetectorRef } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, OnDestroy, Renderer2, signal, computed, effect, inject, DestroyRef, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { environment } from 'src/environments/environment';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ClockComponent } from '../clock/clock.component';
 import { CardProfileComponent } from '../card-profile/card-profile.component';
 import { SearchModalComponent } from '../search-modal/search-modal.component';
@@ -11,11 +9,11 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faUserAstronaut, faCircle, faBolt, faRocket, faSyncAlt, faShieldAlt, faFingerprint, faSearch } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
-  selector: 'app-profile-viewer',
-  templateUrl: './profile-viewer.component.html',
-  styleUrl: './profile-viewer.component.scss',
-  standalone: true,
-  imports: [CommonModule, RouterModule, ClockComponent, CardProfileComponent, SearchModalComponent, FontAwesomeModule]
+    selector: 'app-profile-viewer',
+    templateUrl: './profile-viewer.component.html',
+    styleUrl: './profile-viewer.component.scss',
+    imports: [RouterModule, ClockComponent, CardProfileComponent, SearchModalComponent, FontAwesomeModule],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ProfileViewerComponent implements OnInit, OnDestroy {
 
@@ -29,48 +27,47 @@ export class ProfileViewerComponent implements OnInit, OnDestroy {
   faFingerprint = faFingerprint;
   faSearch = faSearch;
 
-  @Output() profileId!: string;
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private renderer = inject(Renderer2);
+  private destroyRef = inject(DestroyRef);
+
+  profileId = signal<string>(environment.discordId);
+  isModalOpen = signal<boolean>(false);
+  isMobile = signal<boolean>(false);
+  themeColors = signal<string[]>([]);
+  gradientColor1 = signal<string>('#1e293b'); // slate-900
+  gradientColor2 = signal<string>('#7e22ce'); // purple-700
+  gradientColor3 = signal<string>('#1e293b'); // slate-900
+  nameplateAsset = signal<string | null>(null);
   
-  public isModalOpen: boolean = false;
-  public isMobile: boolean = false;
-  
-  private destroy$ = new Subject<void>();
   private particleInterval: ReturnType<typeof setInterval> | undefined;
   private particleTypes = ['✨', '⭐', '💫', '✦', '◆', '●', '★', '◉'];
   private colors = ['#a78bfa', '#c084fc', '#e879f9', '#60a5fa', '#818cf8', '#f472b6', '#fb7185', '#fbbf24'];
-  
-  // Theme colors from profile
-  themeColors: string[] = [];
-  gradientColor1: string = '#1e293b'; // slate-900
-  gradientColor2: string = '#7e22ce'; // purple-700
-  gradientColor3: string = '#1e293b'; // slate-900
 
-  nameplateAsset: string | null = null;
+  nameplateVideoUrl = computed(() => {
+    const asset = this.nameplateAsset();
+    if (!asset) return null;
+    return `https://cdn.discordapp.com/assets/collectibles/${asset}asset.webm`;
+  });
 
-  constructor(
-    private route: ActivatedRoute, 
-    private router: Router,
-    private renderer: Renderer2,
-    private cdr: ChangeDetectorRef
-  ) { }
-  
-  ngOnInit(): void {
-    this.isMobile = this.detectMobile();
-    
+  constructor() {
     this.route.paramMap.pipe(
-      takeUntil(this.destroy$)
+      takeUntilDestroyed(this.destroyRef)
     ).subscribe(params => {
       const newId = params.get('id') || environment.discordId;
-      
-      if (this.profileId !== newId) {
-        this.profileId = newId;
-        this.cdr.detectChanges();
+      if (this.profileId() !== newId) {
+        this.profileId.set(newId);
       }
     });
-
+  }
+  
+  ngOnInit(): void {
+    this.isMobile.set(this.detectMobile());
+    
     this.addKeyframes();
     
-    if (this.isMobile) {
+    if (this.isMobile()) {
       this.createInitialParticles(5);
       this.particleInterval = setInterval(() => this.createParticle(), 500);
     } else {
@@ -88,29 +85,26 @@ export class ProfileViewerComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
-    
     if (this.particleInterval) {
       clearInterval(this.particleInterval);
     }
   }
 
   onThemeColorsChange(colors: string[]): void {
-    this.themeColors = colors;
+    this.themeColors.set(colors);
     
     if (colors.length >= 2) {
       const baseColor = colors[0];
       const accentColor = colors[1];
       
-      this.gradientColor1 = this.generateDeepVariant(baseColor);
-      this.gradientColor2 = this.generateVibranceVariant(accentColor, 0.7);
-      this.gradientColor3 = this.generateComplementaryDark(baseColor);
+      this.gradientColor1.set(this.generateDeepVariant(baseColor));
+      this.gradientColor2.set(this.generateVibranceVariant(accentColor, 0.7));
+      this.gradientColor3.set(this.generateComplementaryDark(baseColor));
     } else if (colors.length === 1) {
       const baseColor = colors[0];
-      this.gradientColor1 = this.generateDeepVariant(baseColor);
-      this.gradientColor2 = this.generateVibranceVariant(baseColor, 0.8);
-      this.gradientColor3 = this.generateComplementaryDark(baseColor);
+      this.gradientColor1.set(this.generateDeepVariant(baseColor));
+      this.gradientColor2.set(this.generateVibranceVariant(baseColor, 0.8));
+      this.gradientColor3.set(this.generateComplementaryDark(baseColor));
     }
     
     this.colors = this.generateSophisticatedParticleColors(colors);
@@ -119,20 +113,12 @@ export class ProfileViewerComponent implements OnInit, OnDestroy {
   }
 
   onNameplateAssetChange(asset: string | null): void {
-    this.nameplateAsset = asset;
-    this.cdr.detectChanges();
-  }
-
-  get nameplateVideoUrl(): string | null {
-    if (!this.nameplateAsset) {
-      return null;
-    }
-    return `https://cdn.discordapp.com/assets/collectibles/${this.nameplateAsset}asset.webm`;
+    this.nameplateAsset.set(asset);
   }
 
   onVideoCanPlay(event: Event): void {
     const video = event.target as HTMLVideoElement;
-    if (video.paused && this.nameplateVideoUrl) {
+    if (video.paused && this.nameplateVideoUrl()) {
       video.play().catch((error) => {
         console.warn('Autoplay bloqueado por el navegador:', error);
         console.log('El video se reproducirá cuando el usuario interactúe con la página');
@@ -142,7 +128,7 @@ export class ProfileViewerComponent implements OnInit, OnDestroy {
 
   onVideoLoaded(event: Event): void {
     const video = event.target as HTMLVideoElement;
-    if (this.nameplateVideoUrl) {
+    if (this.nameplateVideoUrl()) {
       video.play().catch((error) => {
         console.debug('Reproducción en loadeddata falló, esperando canplay...', error);
       });
@@ -151,7 +137,7 @@ export class ProfileViewerComponent implements OnInit, OnDestroy {
 
   onVideoError(event: Event): void {
     const video = event.target as HTMLVideoElement;
-    if (video.error && this.nameplateVideoUrl) {
+    if (video.error && this.nameplateVideoUrl()) {
       console.error('Error al cargar el video del nameplate:', video.error);
     }
   }
@@ -303,9 +289,9 @@ export class ProfileViewerComponent implements OnInit, OnDestroy {
 
 
   private updateBackgroundColors(): void {
-    document.documentElement.style.setProperty('--gradient-color-1', this.gradientColor1);
-    document.documentElement.style.setProperty('--gradient-color-2', this.gradientColor2);
-    document.documentElement.style.setProperty('--gradient-color-3', this.gradientColor3);
+    document.documentElement.style.setProperty('--gradient-color-1', this.gradientColor1());
+    document.documentElement.style.setProperty('--gradient-color-2', this.gradientColor2());
+    document.documentElement.style.setProperty('--gradient-color-3', this.gradientColor3());
   }
 
   createInitialParticles(count: number = 15): void {
@@ -330,7 +316,7 @@ export class ProfileViewerComponent implements OnInit, OnDestroy {
     const opacity = Math.random() * 0.4 + 0.3;
     const color = this.colors[Math.floor(Math.random() * this.colors.length)];
     
-    const blur = this.isMobile ? 0 : Math.random() * 1;
+    const blur = this.isMobile() ? 0 : Math.random() * 1;
 
     this.renderer.setStyle(particle, 'fontSize', fontSize);
     this.renderer.setStyle(particle, 'left', leftPosition);
@@ -341,7 +327,7 @@ export class ProfileViewerComponent implements OnInit, OnDestroy {
       this.renderer.setStyle(particle, 'filter', `blur(${blur}px)`);
     }
     
-    const animations = this.isMobile 
+    const animations = this.isMobile() 
       ? `particleFall ${fallDuration} linear, particleSway ${sideWaysDuration} ease-in-out infinite`
       : `particleFall ${fallDuration} linear, particleSway ${sideWaysDuration} ease-in-out infinite, particleRotate ${rotationDuration} linear infinite`;
     
@@ -459,11 +445,11 @@ export class ProfileViewerComponent implements OnInit, OnDestroy {
   }
 
   public openSearchModal(): void {
-    this.isModalOpen = true;
+    this.isModalOpen.set(true);
   }
 
   public closeSearchModal(): void {
-    this.isModalOpen = false;
+    this.isModalOpen.set(false);
   }
 
   public onSearchProfile(userId: string): void {
