@@ -12,6 +12,7 @@ import { FastAverageColor } from 'fast-average-color';
 
 @Component({
     selector: 'app-floating-activity',
+    standalone: true,
     imports: [FontAwesomeModule],
     templateUrl: './floating-activity.component.html',
     styleUrls: ['./floating-activity.component.scss'],

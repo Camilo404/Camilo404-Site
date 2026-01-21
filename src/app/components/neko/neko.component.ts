@@ -4,6 +4,7 @@ type SpriteDirection = 'idle' | 'alert' | 'scratch' | 'tired' | 'sleeping' | 'N'
 
 @Component({
     selector: 'app-neko',
+    standalone: true,
     template: `
     <div #oneko id="oneko" style="width: 32px; height: 32px; position: fixed; background-image: url(/assets/images/oneko.gif); image-rendering: pixelated; z-index: 5; left: 16px; top: 16px;"></div>
   `,

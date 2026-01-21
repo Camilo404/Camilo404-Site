@@ -14,6 +14,7 @@ import { faAngular, faReact, faBootstrap, faPython, faJs, faSass, faHtml5, faCss
 
 @Component({
     selector: 'app-main',
+    standalone: true,
     templateUrl: './main.component.html',
     styleUrls: ['./main.component.scss'],
     imports: [

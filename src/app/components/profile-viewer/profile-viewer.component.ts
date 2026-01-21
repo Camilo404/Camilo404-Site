@@ -12,6 +12,7 @@ import { faUserAstronaut, faCircle, faBolt, faRocket, faSyncAlt, faShieldAlt, fa
 
 @Component({
     selector: 'app-profile-viewer',
+    standalone: true,
     templateUrl: './profile-viewer.component.html',
     styleUrl: './profile-viewer.component.scss',
     imports: [RouterModule, ClockComponent, CardProfileComponent, SearchModalComponent, FontAwesomeModule],

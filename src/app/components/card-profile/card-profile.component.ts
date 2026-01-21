@@ -20,6 +20,7 @@ interface RenderedLayer {
 
 @Component({
     selector: 'app-card-profile',
+    standalone: true,
     templateUrl: './card-profile.component.html',
     styleUrls: ['./card-profile.component.scss'],
     imports: [CommonModule, FormsModule, FloatingActivityComponent],

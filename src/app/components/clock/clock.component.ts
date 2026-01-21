@@ -4,6 +4,7 @@ import { interval } from 'rxjs';
 
 @Component({
     selector: 'app-clock',
+    standalone: true,
     templateUrl: './clock.component.html',
     styleUrls: ['./clock.component.scss'],
     imports: []

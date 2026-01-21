@@ -28,6 +28,7 @@ function mapRange(
 
 @Component({
     selector: 'app-ethereal-shadow',
+    standalone: true,
     imports: [CommonModule],
     changeDetection: ChangeDetectionStrategy.OnPush,
     template: `

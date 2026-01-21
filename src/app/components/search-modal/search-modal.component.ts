@@ -5,6 +5,7 @@ import { faSearch, faTimes, faHashtag, faExclamationCircle, faInfoCircle } from 
 
 @Component({
     selector: 'app-search-modal',
+    standalone: true,
     imports: [FormsModule, FontAwesomeModule],
     templateUrl: './search-modal.component.html',
     styleUrl: './search-modal.component.scss',
