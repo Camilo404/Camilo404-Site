@@ -55,5 +55,8 @@
     "tailwindcss": "^3.3.3",
     "typescript": "~5.9.3",
     "webpack-bundle-analyzer": "^4.10.2"
+  },
+  "overrides": {
+    "undici": "^7.19.0"
   }
 }
