@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, ChangeDetectorRef, ViewEncapsulation, Input, ViewChild, ElementRef, AfterViewChecked, Output, EventEmitter } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faGamepad } from '@fortawesome/free-solid-svg-icons';
 import { LanyardService } from 'src/app/services/lanyard.service';
@@ -12,7 +12,7 @@ import { FastAverageColor } from 'fast-average-color';
 
 @Component({
     selector: 'app-floating-activity',
-    imports: [CommonModule, FontAwesomeModule],
+    imports: [FontAwesomeModule],
     templateUrl: './floating-activity.component.html',
     styleUrls: ['./floating-activity.component.scss'],
     encapsulation: ViewEncapsulation.None,

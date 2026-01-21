@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { interval, Subscription } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 
@@ -7,7 +7,7 @@ import { map, startWith } from 'rxjs/operators';
     selector: 'app-clock',
     templateUrl: './clock.component.html',
     styleUrls: ['./clock.component.scss'],
-    imports: [CommonModule]
+    imports: []
 })
 export class ClockComponent implements OnInit, OnDestroy {
 

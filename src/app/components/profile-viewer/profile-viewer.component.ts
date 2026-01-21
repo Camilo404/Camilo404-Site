@@ -1,5 +1,5 @@
 import { Component, OnInit, Output, Renderer2, OnDestroy, ChangeDetectorRef } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { environment } from 'src/environments/environment';
 import { Subject } from 'rxjs';
@@ -14,7 +14,7 @@ import { faUserAstronaut, faCircle, faBolt, faRocket, faSyncAlt, faShieldAlt, fa
     selector: 'app-profile-viewer',
     templateUrl: './profile-viewer.component.html',
     styleUrl: './profile-viewer.component.scss',
-    imports: [CommonModule, RouterModule, ClockComponent, CardProfileComponent, SearchModalComponent, FontAwesomeModule]
+    imports: [RouterModule, ClockComponent, CardProfileComponent, SearchModalComponent, FontAwesomeModule]
 })
 export class ProfileViewerComponent implements OnInit, OnDestroy {
 

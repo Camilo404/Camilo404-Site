@@ -1,12 +1,12 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faSearch, faTimes, faHashtag, faExclamationCircle, faInfoCircle } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
     selector: 'app-search-modal',
-    imports: [CommonModule, FormsModule, FontAwesomeModule],
+    imports: [FormsModule, FontAwesomeModule],
     templateUrl: './search-modal.component.html',
     styleUrl: './search-modal.component.scss'
 })

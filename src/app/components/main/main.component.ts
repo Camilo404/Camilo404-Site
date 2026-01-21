@@ -1,5 +1,5 @@
 import { Component, ViewChild, ElementRef, ChangeDetectorRef, OnInit, OnDestroy, AfterViewInit, Renderer2 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { Router, RouterModule } from '@angular/router';
 import { Card3DEffectService } from '../../services/card-3d-effect.service';
 import { NekoComponent } from '../neko/neko.component';
@@ -17,16 +17,15 @@ import { faAngular, faReact, faBootstrap, faPython, faJs, faSass, faHtml5, faCss
     templateUrl: './main.component.html',
     styleUrls: ['./main.component.scss'],
     imports: [
-        CommonModule,
-        RouterModule,
-        NekoComponent,
-        EtherealShadowComponent,
-        CardProfileComponent,
-        FloatingActivityComponent,
-        ClockComponent,
-        SearchModalComponent,
-        FontAwesomeModule
-    ]
+    RouterModule,
+    NekoComponent,
+    EtherealShadowComponent,
+    CardProfileComponent,
+    FloatingActivityComponent,
+    ClockComponent,
+    SearchModalComponent,
+    FontAwesomeModule
+]
 })
 export class MainComponent implements OnInit, OnDestroy, AfterViewInit {
 
