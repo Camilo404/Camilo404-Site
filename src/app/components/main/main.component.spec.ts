@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { HttpClientModule } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
 import { MainComponent } from './main.component';
 
@@ -14,14 +14,15 @@ describe('MainComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [
+    declarations: [
         MainComponent,
         CustomCursorComponent,
         ClockComponent,
         CardProfileComponent
-      ],
-      imports: [HttpClientModule]
-    });
+    ],
+    imports: [],
+    providers: [provideHttpClient(withInterceptorsFromDi())]
+});
     fixture = TestBed.createComponent(MainComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
