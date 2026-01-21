@@ -99,7 +99,7 @@ export class CardProfileComponent implements OnInit, OnDestroy, AfterViewInit {
         this.custom_status.set(customStatus);
         this.updateStatusColor();
       }
-    }, { allowSignalWrites: true });
+    });
   }
 
   ngOnInit(): void {

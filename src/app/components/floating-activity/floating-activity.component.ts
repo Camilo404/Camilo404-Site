@@ -82,7 +82,7 @@ export class FloatingActivityComponent implements OnDestroy {
           this.processCurrentActivity();
         }
       }
-    }, { allowSignalWrites: true });
+    });
   }
 
   // Computed values
