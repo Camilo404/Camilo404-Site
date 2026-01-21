@@ -1,16 +1,16 @@
 <div class="card-3d-container" #cardElement>
-  @if (userDataStatus) {
+  @if (userDataStatus()) {
   <div
     class="aesthetic-card animate-scale-in"
-    [ngStyle]="{ '--accent-color': themesColor[0] || '#7289da' }"
+    [ngStyle]="{ '--accent-color': themesColor()[0] || '#7289da' }"
   >
     <!-- Profile Effect Overlay -->
-    @if (hasProfileEffect) {
+    @if (hasProfileEffect()) {
     <div class="profile-effect-container">
-      @for (layer of renderedLayers; track layer.config.src) {
+      @for (layer of renderedLayers(); track layer.config.src) {
       <img
         [src]="layer.config.src"
-        [alt]="profileEffectConfig?.title || 'Profile Effect'"
+        [alt]="profileEffectConfig()?.title || 'Profile Effect'"
         class="profile-effect-layer"
         [style.z-index]="layer.config.zIndex || 100"
         [style.visibility]="layer.isVisible ? 'visible' : 'hidden'"
@@ -23,7 +23,7 @@
     <!-- Cover Image -->
     <div
       class="card-cover"
-      [style.background-image]="'url(' + apiUrl + 'banner/' + ProfileId + ')'"
+      [style.background-image]="'url(' + apiUrl + 'banner/' + ProfileId() + ')'"
     >
       <div class="cover-overlay"></div>
     </div>
@@ -33,11 +33,11 @@
       <div class="header-section">
         <div class="avatar-wrapper">
           <div class="avatar-container">
-            @if (userData?.user?.avatar_decoration_data?.asset) {
+            @if (userData()?.user?.avatar_decoration_data?.asset) {
             <img
               [src]="
                 'https://cdn.discordapp.com/avatar-decoration-presets/' +
-                userData?.user?.avatar_decoration_data?.asset +
+                userData()?.user?.avatar_decoration_data?.asset +
                 '.png'
               "
               alt="Avatar Decoration"
@@ -46,7 +46,7 @@
             }
             <img
               class="avatar-img"
-              [src]="apiUrl + 'avatar/' + ProfileId"
+              [src]="apiUrl + 'avatar/' + ProfileId()"
               alt="Avatar"
             />
           </div>
@@ -54,11 +54,11 @@
           <!-- Status Badge -->
           <div
             class="status-badge"
-            [ngClass]="lanyardData?.d?.discord_status || 'offline'"
+            [ngClass]="lanyardData()?.d?.discord_status || 'offline'"
           >
             <div class="status-dot"></div>
             <span class="status-text">{{
-              lanyardData?.d?.discord_status || "offline" | titlecase
+              lanyardData()?.d?.discord_status || "offline" | titlecase
             }}</span>
           </div>
         </div>
@@ -66,30 +66,30 @@
         <div class="user-info">
           <div class="name-row">
             <h1 class="display-name">
-              {{ userData?.user?.global_name || userData?.user?.username }}
+              {{ userData()?.user?.global_name || userData()?.user?.username }}
             </h1>
-            @if (clanTag && clanBadgeUrl) {
+            @if (clanTag() && clanBadgeUrl()) {
             <div class="clan-tag">
               <img
-                [src]="clanBadgeUrl"
+                [src]="clanBadgeUrl()"
                 class="clan-badge"
                 (error)="handleImageError($event)"
                 alt="Clan Badge"
               />
-              <span>{{ clanTag }}</span>
+              <span>{{ clanTag() }}</span>
             </div>
             }
           </div>
           <div class="username-row">
-            <span class="username">{{ "@" + userData?.user?.username }}</span>
-            @if (userData?.user_profile?.pronouns) {
+            <span class="username">{{ "@" + userData()?.user?.username }}</span>
+            @if (userData()?.user_profile?.pronouns) {
             <span class="divider">•</span>
-            <span class="pronouns">{{ userData?.user_profile?.pronouns }}</span>
+            <span class="pronouns">{{ userData()?.user_profile?.pronouns }}</span>
             }
 
             <!-- Desktop/Mobile/Web indicators here -->
             <div class="platform-indicators">
-              @if (lanyardData?.d?.active_on_discord_desktop) {
+              @if (lanyardData()?.d?.active_on_discord_desktop) {
               <i class="platform-icon desktop" title="Desktop">
                 <svg viewBox="0 0 24 24" fill="currentColor">
                   <path
@@ -97,7 +97,7 @@
                   />
                 </svg>
               </i>
-              } @if (lanyardData?.d?.active_on_discord_web) {
+              } @if (lanyardData()?.d?.active_on_discord_web) {
               <i class="platform-icon web" title="Web">
                 <svg viewBox="0 0 24 24" fill="currentColor">
                   <path
@@ -105,7 +105,7 @@
                   />
                 </svg>
               </i>
-              } @if (lanyardData?.d?.active_on_discord_mobile) {
+              } @if (lanyardData()?.d?.active_on_discord_mobile) {
               <i class="platform-icon mobile" title="Mobile">
                 <svg viewBox="0 0 24 24" fill="currentColor">
                   <path
@@ -119,7 +119,7 @@
 
           <!-- Badges -->
           <div class="badges-list">
-            @for (badge of userData?.badges; track $index) {
+            @for (badge of userData()?.badges; track $index) {
             <a
               [href]="badge.link || ''"
               target="_blank"
@@ -139,48 +139,48 @@
 
       <div class="scrollable-content">
         <!-- Custom Status -->
-        @if (custom_status && custom_status.state) {
+        @if (custom_status() && custom_status()!.state) {
         <div class="custom-status-card">
-          @if (custom_status.emoji) { @if (custom_status.emoji.id) {
+          @if (custom_status()!.emoji) { @if (custom_status()!.emoji!.id) {
           <img
             [src]="
               'https://cdn.discordapp.com/emojis/' +
-              custom_status.emoji.id +
-              (custom_status.emoji.animated ? '.gif' : '.png') +
+              custom_status()!.emoji!.id +
+              (custom_status()!.emoji!.animated ? '.gif' : '.png') +
               '?size=24&quality=lossless'
             "
             class="status-emoji"
             (error)="handleImageError($event)"
             alt="Status Emoji"
           />
-          } @else if (custom_status.emoji.name) {
-          <span class="status-emoji-text">{{ custom_status.emoji.name }}</span>
+          } @else if (custom_status()!.emoji!.name) {
+          <span class="status-emoji-text">{{ custom_status()!.emoji!.name }}</span>
           } }
-          <span class="status-text">{{ custom_status.state }}</span>
+          <span class="status-text">{{ custom_status()!.state }}</span>
         </div>
         }
 
         <!-- Bio -->
-        @if (userData?.user_profile?.bio!.length > 0) {
+        @if (userData()?.user_profile?.bio!.length > 0) {
         <section class="section bio-section">
           <h3 class="section-title">About Me</h3>
-          <div class="markdown-content" [innerHTML]="userBioFormatted"></div>
+          <div class="markdown-content" [innerHTML]="userBioFormatted()"></div>
         </section>
         }
 
         <!-- Mobile Activities -->
-        @if (isMobile) {
+        @if (isMobile()) {
         <div class="mobile-only-section">
           <app-floating-activity [isMobileEmbedded]="true"></app-floating-activity>
         </div>
         }
 
         <!-- Connections -->
-        @if (userData?.connected_accounts!.length > 0) {
+        @if (userData()?.connected_accounts!.length > 0) {
         <section class="section connections-section">
           <h3 class="section-title">Connections</h3>
           <div class="connections-grid">
-            @for (account of userData?.connected_accounts; track $index) {
+            @for (account of userData()?.connected_accounts; track $index) {
             <a
               class="connection-item"
               [href]="'#'"
@@ -202,7 +202,8 @@
           <input
             type="text"
             placeholder="Send a message..."
-            [(ngModel)]="message"
+            [ngModel]="message()"
+            (ngModelChange)="message.set($event)"
             name="message"
             (keyup.enter)="sendMessage()"
             class="aesthetic-input"

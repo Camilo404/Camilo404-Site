@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, OnChanges, SimpleChanges, ChangeDetectionStrategy, ChangeDetectorRef, ElementRef, ViewChild, AfterViewInit, ViewEncapsulation, HostListener } from '@angular/core';
+import { Component, input, output, OnInit, OnDestroy, effect, ChangeDetectionStrategy, ElementRef, ViewChild, AfterViewInit, ViewEncapsulation, HostListener, signal, computed, inject, DestroyRef } from '@angular/core';
 import { DiscordApiService } from 'src/app/services/discord-api.service';
 import { Profile, ProfileEffectConfig, ProfileEffectLayer } from 'src/app/models/discord-profile.model';
 import { LanyardService } from 'src/app/services/lanyard.service';
@@ -9,8 +9,7 @@ import { Card3DEffectService } from 'src/app/services/card-3d-effect.service';
 import { ProfileEffectsService } from 'src/app/services/profile-effects.service';
 import { FloatingActivityComponent } from '../floating-activity/floating-activity.component';
 import { environment } from 'src/environments/environment';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 interface RenderedLayer {
   config: ProfileEffectLayer;
@@ -25,71 +24,86 @@ interface RenderedLayer {
     changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.None
 })
-export class CardProfileComponent implements OnInit, OnChanges, OnDestroy, AfterViewInit {
-
-  @Input() ProfileId: string = environment.discordId;
-  @Output() themeColorsChange = new EventEmitter<string[]>();
-  @Output() nameplateAssetChange = new EventEmitter<string | null>();
+export class CardProfileComponent implements OnInit, OnDestroy, AfterViewInit {
+  ProfileId = input<string>(environment.discordId);
+  themeColorsChange = output<string[]>();
+  nameplateAssetChange = output<string | null>();
+  
   @ViewChild('cardElement', { static: false }) cardElement!: ElementRef;
+  
+  private discordApiService = inject(DiscordApiService);
+  private lanyardService = inject(LanyardService);
+  private card3DService = inject(Card3DEffectService);
+  private profileEffectsService = inject(ProfileEffectsService);
+  private destroyRef = inject(DestroyRef);
+  
   userId = environment.discordId;
   apiUrl = environment.apiUrl;
-  userDataStatus = false;
-  userData?: Profile;
-  userBioFormatted?: string;
-  themesColor: string[] = [];
-  isMobile: boolean = false;
-
-  message = '';
-  lanyardData!: Lanyard | null;
-
-  // Clan/Primary Guild getters
-  get clanTag(): string | null {
-    return this.userData?.user?.clan?.tag || this.userData?.user?.primary_guild?.tag || null;
-  }
-
-  get clanBadge(): string | null {
-    return this.userData?.user?.clan?.badge || this.userData?.user?.primary_guild?.badge || null;
-  }
-
-  get clanGuildId(): string | null {
-    return this.userData?.user?.clan?.identity_guild_id || this.userData?.user?.primary_guild?.identity_guild_id || null;
-  }
-
-  get clanBadgeUrl(): string | null {
-    if (!this.clanBadge || !this.clanGuildId) return null;
-    return `https://cdn.discordapp.com/clan-badges/${this.clanGuildId}/${this.clanBadge}.png?size=32`;
-  }
+  userDataStatus = signal(false);
+  userData = signal<Profile | undefined>(undefined);
+  userBioFormatted = signal<string | undefined>(undefined);
+  themesColor = signal<string[]>([]);
+  isMobile = signal(false);
+  message = signal('');
+  lanyardData = signal<Lanyard | null>(null);
 
   // Profile Effect properties
-  profileEffectConfig: ProfileEffectConfig | null = null;
-  renderedLayers: RenderedLayer[] = [];
+  profileEffectConfig = signal<ProfileEffectConfig | null>(null);
+  renderedLayers = signal<RenderedLayer[]>([]);
+  custom_status = signal<Activity | null>(null);
+  statusColor = signal<string>('#43b581');
 
-  get hasProfileEffect(): boolean {
-    return !!this.profileEffectConfig && !!this.renderedLayers.length;
+  clanTag = computed(() => {
+    const data = this.userData();
+    return data?.user?.clan?.tag || data?.user?.primary_guild?.tag || null;
+  });
+
+  clanBadge = computed(() => {
+    const data = this.userData();
+    return data?.user?.clan?.badge || data?.user?.primary_guild?.badge || null;
+  });
+
+  clanGuildId = computed(() => {
+    const data = this.userData();
+    return data?.user?.clan?.identity_guild_id || data?.user?.primary_guild?.identity_guild_id || null;
+  });
+
+  clanBadgeUrl = computed(() => {
+    const badge = this.clanBadge();
+    const guildId = this.clanGuildId();
+    if (!badge || !guildId) return null;
+    return `https://cdn.discordapp.com/clan-badges/${guildId}/${badge}.png?size=32`;
+  });
+
+  hasProfileEffect = computed(() => {
+    return !!this.profileEffectConfig() && !!this.renderedLayers().length;
+  });
+
+  profileEffectId = computed(() => {
+    return this.userData()?.user_profile?.profile_effect?.id || null;
+  });
+
+  constructor() {
+    effect(() => {
+      this.ProfileId();
+      this.resetProfileData();
+      this.getDiscordUserData();
+      this.getLanyardData();
+    });
+
+    effect(() => {
+      const data = this.lanyardService.getLanyardData()();
+      if (data) {
+        this.lanyardData.set(data);
+        const customStatus = data.d?.activities?.find((activity: Activity) => activity.name === 'Custom Status') || null;
+        this.custom_status.set(customStatus);
+        this.updateStatusColor();
+      }
+    }, { allowSignalWrites: true });
   }
-
-  get profileEffectId(): string | null {
-    return this.userData?.user_profile?.profile_effect?.id || null;
-  }
-
-
-  custom_status: Activity | null = null;
-  statusColor: string = '#43b581'
-
-  private destroy$ = new Subject<void>();
-
-  constructor(
-    private discordApiService: DiscordApiService,
-    private lanyardService: LanyardService,
-    private cdr: ChangeDetectorRef,
-    private card3DService: Card3DEffectService,
-    private profileEffectsService: ProfileEffectsService
-  ) { }
 
   ngOnInit(): void {
     this.checkScreenSize();
-    this.getDiscordUserData();
-    this.getLanyardData();
   }
 
   @HostListener('window:resize')
@@ -98,22 +112,7 @@ export class CardProfileComponent implements OnInit, OnChanges, OnDestroy, After
   }
 
   private checkScreenSize() {
-    this.isMobile = window.innerWidth <= 768;
-    this.cdr.markForCheck();
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['ProfileId'] && !changes['ProfileId'].firstChange) {
-      const newId = changes['ProfileId'].currentValue;
-      const oldId = changes['ProfileId'].previousValue;
-
-      if (newId !== oldId) {
-        this.resetProfileData();
-
-        this.getDiscordUserData();
-        this.getLanyardData();
-      }
-    }
+    this.isMobile.set(window.innerWidth <= 768);
   }
 
   ngAfterViewInit(): void {
@@ -132,78 +131,67 @@ export class CardProfileComponent implements OnInit, OnChanges, OnDestroy, After
     if (this.cardElement) {
       this.card3DService.destroyCard3DEffect(this.cardElement);
     }
-
-    this.destroy$.next();
-    this.destroy$.complete();
   }
 
   private resetProfileData(): void {
-    this.userDataStatus = false;
-    this.userData = undefined;
-    this.userBioFormatted = undefined;
-    this.themesColor = [];
-    this.lanyardData = null;
-    this.custom_status = null;
-    this.profileEffectConfig = null;
-    this.renderedLayers = [];
+    this.userDataStatus.set(false);
+    this.userData.set(undefined);
+    this.userBioFormatted.set(undefined);
+    this.themesColor.set([]);
+    this.lanyardData.set(null);
+    this.custom_status.set(null);
+    this.profileEffectConfig.set(null);
+    this.renderedLayers.set([]);
 
     this.themeColorsChange.emit([]);
     this.nameplateAssetChange.emit(null);
-
-    this.cdr.markForCheck();
   }
 
   public getDiscordUserData(): void {
-    this.discordApiService.getDiscordUser(this.ProfileId)
-      .pipe(takeUntil(this.destroy$))
+    this.discordApiService.getDiscordUser(this.ProfileId())
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (data: Profile) => {
-          this.userDataStatus = true;
-          this.userData = data;
+          this.userDataStatus.set(true);
+          this.userData.set(data);
 
           // Format the user bio to HTML
-          this.userBioFormatted = this.parseBio(this.userData.user_profile?.bio || '');
+          this.userBioFormatted.set(this.parseBio(data.user_profile?.bio || ''));
 
-          const themeColors = this.userData.user_profile?.theme_colors || [];
-          if (themeColors.length === 0) {
-            this.themesColor = ['#5C5C5C', '#5C5C5C'];
-          } else {
-            // Convert the decimal color to hex
-            this.themesColor = themeColors.map((color) => {
-              return '#' + color.toString(16).padStart(6, '0').toUpperCase();
-            });
-          }
+          const themeColors = data.user_profile?.theme_colors || [];
+          const colors = themeColors.length === 0 
+            ? ['#5C5C5C', '#5C5C5C']
+            : themeColors.map((color) => '#' + color.toString(16).padStart(6, '0').toUpperCase());
+          
+          this.themesColor.set(colors);
 
           // Emit theme colors to parent component
-          this.themeColorsChange.emit(this.themesColor);
+          this.themeColorsChange.emit(colors);
 
           // Emit nameplate asset to parent component
-          const nameplateAsset = this.userData.user?.collectibles?.nameplate?.asset || null;
+          const nameplateAsset = data.user?.collectibles?.nameplate?.asset || null;
           this.nameplateAssetChange.emit(nameplateAsset);
 
           // Initialize profile effect animation
-          if (this.profileEffectId) {
-            this.loadProfileEffect(this.profileEffectId);
+          const effectId = this.profileEffectId();
+          if (effectId) {
+            this.loadProfileEffect(effectId);
           }
-
-          // Trigger change detection
-          this.cdr.markForCheck();
         },
         error: (error) => {
-          this.userDataStatus = false;
+          this.userDataStatus.set(false);
           console.error('Error fetching Discord user data:', error);
-          this.cdr.markForCheck();
         }
       });
   }
 
   private loadProfileEffect(effectId: string): void {
     this.profileEffectsService.getEffectById(effectId)
-      .pipe(takeUntil(this.destroy$))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (effectConfig) => {
           if (effectConfig && effectConfig.effects) {
-            this.profileEffectConfig = effectConfig;
+            this.profileEffectConfig.set(effectConfig);
             this.initializeProfileEffectLayers(effectConfig.effects);
           }
         },
@@ -216,23 +204,24 @@ export class CardProfileComponent implements OnInit, OnChanges, OnDestroy, After
   private initializeProfileEffectLayers(layers: ProfileEffectLayer[]): void {
     const sortedLayers = [...layers].sort((a, b) => (a.start || 0) - (b.start || 0));
 
-    this.renderedLayers = sortedLayers.map(layer => ({
+    const initialLayers = sortedLayers.map(layer => ({
       config: layer,
       isVisible: false
     }));
-    this.cdr.markForCheck();
+    
+    this.renderedLayers.set(initialLayers);
 
-    this.renderedLayers.forEach(renderedLayer => {
+    initialLayers.forEach((renderedLayer, index) => {
       const startTime = renderedLayer.config.start || 0;
 
       if (startTime === 0) {
         renderedLayer.isVisible = true;
-        this.cdr.markForCheck();
+        this.renderedLayers.update(layers => [...layers]);
         this.handleLayerLifecycle(renderedLayer);
       } else {
         setTimeout(() => {
           renderedLayer.isVisible = true;
-          this.cdr.markForCheck();
+          this.renderedLayers.update(layers => [...layers]);
           this.handleLayerLifecycle(renderedLayer);
         }, startTime);
       }
@@ -247,18 +236,18 @@ export class CardProfileComponent implements OnInit, OnChanges, OnDestroy, After
       if (duration > 0) {
         setTimeout(() => {
           layer.isVisible = false;
-          this.cdr.markForCheck();
+          this.renderedLayers.update(layers => [...layers]);
         }, duration);
       }
     } else if (loopDelay > 0) {
       const cycleLayer = () => {
         setTimeout(() => {
           layer.isVisible = false;
-          this.cdr.markForCheck();
+          this.renderedLayers.update(layers => [...layers]);
 
           setTimeout(() => {
             layer.isVisible = true;
-            this.cdr.markForCheck();
+            this.renderedLayers.update(layers => [...layers]);
             cycleLayer();
           }, loopDelay);
         }, duration);
@@ -268,53 +257,30 @@ export class CardProfileComponent implements OnInit, OnChanges, OnDestroy, After
   }
 
   public getLanyardData(): void {
-    this.lanyardService.setInitialData(this.ProfileId);
+    this.lanyardService.setInitialData(this.ProfileId());
     this.lanyardService.setupWebSocket();
-
-    this.lanyardService.getLanyardData()
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (data) => {
-          this.lanyardData = data;
-          this.custom_status = this.lanyardData.d?.activities?.find(activity => activity.name === 'Custom Status') || null;
-          
-          this.updateStatusColor();
-          this.cdr.markForCheck();
-        },
-        error: (error) => {
-          console.error('Error getting Lanyard data:', error);
-          this.cdr.markForCheck();
-        }
-      });
   }
 
   private updateStatusColor(): void {
-    switch (this.lanyardData?.d?.discord_status) {
+    const status = this.lanyardData()?.d?.discord_status;
+    let color = '#747f8d';
+    
+    switch (status) {
       case 'online':
-        this.statusColor = '#43b581';
+        color = '#43b581';
         break;
       case 'idle':
-        this.statusColor = '#faa61a';
+        color = '#faa61a';
         break;
       case 'dnd':
-        this.statusColor = '#f04747';
-        break;
-      case 'offline':
-        this.statusColor = '#747f8d';
+        color = '#f04747';
         break;
       case 'streaming':
-        this.statusColor = '#593695';
-        break;
-      case 'invisible':
-        this.statusColor = '#747f8d';
-        break;
-      case 'unknown':
-        this.statusColor = '#747f8d';
-        break;
-      default:
-        this.statusColor = '#747f8d';
+        color = '#593695';
         break;
     }
+    
+    this.statusColor.set(color);
   }
 
   // Helper to escape HTML characters
@@ -391,7 +357,7 @@ export class CardProfileComponent implements OnInit, OnChanges, OnDestroy, After
 
   public sendMessage(): void {
     window.open(`https://discord.com/users/${this.userId}`, '_blank');
-    this.message = '';
+    this.message.set('');
   }
 
   handleImageError(event: Event) {

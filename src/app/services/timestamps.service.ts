@@ -1,20 +1,12 @@
-import { Injectable, OnDestroy } from '@angular/core';
-import { Observable, Subject, timer, takeUntil, map } from 'rxjs';
+import { Injectable } from '@angular/core';
+import { Observable, timer, map } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
-export class TimestampsService implements OnDestroy {
-  private destroy$ = new Subject<void>();
-
-  ngOnDestroy() {
-    this.destroy$.next();
-    this.destroy$.complete();
-  }
-
+export class TimestampsService {
   getElapsedTime(startTimestamp: number): Observable<string> {
     return timer(0, 1000).pipe(
-      takeUntil(this.destroy$),
       map(() => this.calculateElapsedTime(startTimestamp)),
       map(seconds => this.formatTime(seconds))
     );
@@ -32,7 +24,6 @@ export class TimestampsService implements OnDestroy {
 
   getProgressPercentage(startTimestamp: number, endTimestamp: number): Observable<number> {
     return timer(0, 1000).pipe(
-      takeUntil(this.destroy$),
       map(() => {
         const totalDuration = endTimestamp - startTimestamp;
         const elapsed = Date.now() - startTimestamp;

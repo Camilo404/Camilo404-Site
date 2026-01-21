@@ -1,4 +1,4 @@
-import { Component, HostListener, OnDestroy, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, HostListener, OnDestroy, AfterViewInit, ViewChild, ElementRef, signal } from '@angular/core';
 
 type SpriteDirection = 'idle' | 'alert' | 'scratch' | 'tired' | 'sleeping' | 'N' | 'NE' | 'E' | 'SE' | 'S' | 'SW' | 'W' | 'NW';
 
@@ -11,14 +11,16 @@ type SpriteDirection = 'idle' | 'alert' | 'scratch' | 'tired' | 'sleeping' | 'N'
     imports: []
 })
 export class NekoComponent implements AfterViewInit, OnDestroy {
-  nekoPosX = 32;
-  nekoPosY = 32;
-  mousePosX = 0;
-  mousePosY = 0;
-  frameCount = 0;
-  idleTime = 0;
-  idleAnimation: string | null = null;
-  idleAnimationFrame = 0;
+  // Migrado a signals
+  nekoPosX = signal(32);
+  nekoPosY = signal(32);
+  mousePosX = signal(0);
+  mousePosY = signal(0);
+  frameCount = signal(0);
+  idleTime = signal(0);
+  idleAnimation = signal<string | null>(null);
+  idleAnimationFrame = signal(0);
+  
   nekoSpeed = 10;
   nekoEl: HTMLElement | null = null;
   onekoInterval: any;
@@ -85,8 +87,8 @@ export class NekoComponent implements AfterViewInit, OnDestroy {
 
   @HostListener('document:mousemove', ['$event'])
   onMouseMove(event: MouseEvent): void {
-    this.mousePosX = event.clientX;
-    this.mousePosY = event.clientY;
+    this.mousePosX.set(event.clientX);
+    this.mousePosY.set(event.clientY);
   }
 
   setSprite(name: SpriteDirection, frame: number): void {
@@ -97,31 +99,34 @@ export class NekoComponent implements AfterViewInit, OnDestroy {
   }
 
   resetIdleAnimation(): void {
-    this.idleAnimation = null;
-    this.idleAnimationFrame = 0;
+    this.idleAnimation.set(null);
+    this.idleAnimationFrame.set(0);
   }
 
   idle(): void {
-    this.idleTime += 1;
+    this.idleTime.update(t => t + 1);
+    const currentIdleTime = this.idleTime();
+    const currentIdleAnimation = this.idleAnimation();
+    const currentIdleAnimationFrame = this.idleAnimationFrame();
 
-    if (this.idleTime > 10 && Math.floor(Math.random() * 200) === 0 && this.idleAnimation === null) {
-      this.idleAnimation = ['sleeping', 'scratch'][Math.floor(Math.random() * 2)];
+    if (currentIdleTime > 10 && Math.floor(Math.random() * 200) === 0 && currentIdleAnimation === null) {
+      this.idleAnimation.set(['sleeping', 'scratch'][Math.floor(Math.random() * 2)]);
     }
 
-    switch (this.idleAnimation) {
+    switch (this.idleAnimation()) {
       case 'sleeping':
-        if (this.idleAnimationFrame < 8) {
+        if (currentIdleAnimationFrame < 8) {
           this.setSprite('tired', 0);
           break;
         }
-        this.setSprite('sleeping', Math.floor(this.idleAnimationFrame / 4));
-        if (this.idleAnimationFrame > 192) {
+        this.setSprite('sleeping', Math.floor(currentIdleAnimationFrame / 4));
+        if (currentIdleAnimationFrame > 192) {
           this.resetIdleAnimation();
         }
         break;
       case 'scratch':
-        this.setSprite('scratch', this.idleAnimationFrame);
-        if (this.idleAnimationFrame > 9) {
+        this.setSprite('scratch', currentIdleAnimationFrame);
+        if (currentIdleAnimationFrame > 9) {
           this.resetIdleAnimation();
         }
         break;
@@ -129,13 +134,17 @@ export class NekoComponent implements AfterViewInit, OnDestroy {
         this.setSprite('idle', 0);
         return;
     }
-    this.idleAnimationFrame += 1;
+    this.idleAnimationFrame.update(f => f + 1);
   }
 
   frame(): void {
-    this.frameCount += 1;
-    const diffX = this.nekoPosX - this.mousePosX;
-    const diffY = this.nekoPosY - this.mousePosY;
+    this.frameCount.update(f => f + 1);
+    const nekoPosX = this.nekoPosX();
+    const nekoPosY = this.nekoPosY();
+    const mousePosX = this.mousePosX();
+    const mousePosY = this.mousePosY();
+    const diffX = nekoPosX - mousePosX;
+    const diffY = nekoPosY - mousePosY;
     const distance = Math.sqrt(diffX ** 2 + diffY ** 2);
 
     if (distance < this.nekoSpeed || distance < 48) {
@@ -143,13 +152,13 @@ export class NekoComponent implements AfterViewInit, OnDestroy {
       return;
     }
 
-    this.idleAnimation = null;
-    this.idleAnimationFrame = 0;
+    this.idleAnimation.set(null);
+    this.idleAnimationFrame.set(0);
 
-    if (this.idleTime > 1) {
+    const currentIdleTime = this.idleTime();
+    if (currentIdleTime > 1) {
       this.setSprite('alert', 0);
-      this.idleTime = Math.min(this.idleTime, 7);
-      this.idleTime -= 1;
+      this.idleTime.set(Math.min(currentIdleTime, 7) - 1);
       return;
     }
 
@@ -157,14 +166,14 @@ export class NekoComponent implements AfterViewInit, OnDestroy {
     direction += diffY / distance < -0.5 ? 'S' : '';
     direction += diffX / distance > 0.5 ? 'W' : '';
     direction += diffX / distance < -0.5 ? 'E' : '';
-    this.setSprite(direction as SpriteDirection, this.frameCount);
+    this.setSprite(direction as SpriteDirection, this.frameCount());
 
-    this.nekoPosX -= (diffX / distance) * this.nekoSpeed;
-    this.nekoPosY -= (diffY / distance) * this.nekoSpeed;
+    this.nekoPosX.update(x => x - (diffX / distance) * this.nekoSpeed);
+    this.nekoPosY.update(y => y - (diffY / distance) * this.nekoSpeed);
 
     if (this.oneko) {
-      this.oneko.nativeElement.style.left = `${this.nekoPosX - 16}px`;
-      this.oneko.nativeElement.style.top = `${this.nekoPosY - 16}px`;
+      this.oneko.nativeElement.style.left = `${this.nekoPosX() - 16}px`;
+      this.oneko.nativeElement.style.top = `${this.nekoPosY() - 16}px`;
     }
   }
 }

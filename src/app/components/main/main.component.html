@@ -7,7 +7,7 @@
   [noise]="{ opacity: 1, scale: 1.2 }" class="w-full h-full"></app-ethereal-shadow>
 </div>
 
-<main class="main-container" [class.has-floating-activity]="isActivityVisible">
+<main class="main-container" [class.has-floating-activity]="isActivityVisible()">
   <div class="bento-grid">
 
     <!-- Column Left: Profile -->
@@ -41,7 +41,7 @@
               <span>Web Designer & Developer</span>
             </div>
             <div class="shadow-quote">
-              <span>"{{ currentQuote }}<span class="typewriter-cursor">|</span>"</span>
+              <span>"{{ currentQuote() }}<span class="typewriter-cursor">|</span>"</span>
             </div>
           </div>
         </article>
@@ -121,7 +121,7 @@
   <div class="btn-glow"></div>
 </button>
 
-<app-search-modal [isOpen]="isModalOpen" (close)="closeSearchModal()" (search)="onSearchProfile($event)">
+<app-search-modal [isOpen]="isModalOpen()" (close)="closeSearchModal()" (search)="onSearchProfile($event)">
 </app-search-modal>
 
 <!-- Floating Spotify Activity -->

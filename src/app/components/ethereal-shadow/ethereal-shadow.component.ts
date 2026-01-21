@@ -1,4 +1,4 @@
-import { Component, ElementRef, Input, OnDestroy, OnInit, ViewChild, NgZone, Inject, PLATFORM_ID, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ElementRef, input, OnDestroy, OnInit, ViewChild, NgZone, inject, PLATFORM_ID, ChangeDetectionStrategy, computed } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 
 export interface AnimationConfig {
@@ -32,14 +32,14 @@ function mapRange(
     changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
     <div
-      [class]="className"
+      [class]="className()"
       [ngStyle]="{
         overflow: 'hidden',
         position: 'relative',
         width: '100%',
         height: '100%'
       }"
-      [style]="style"
+      [style]="style()"
     >
       <div
         [ngStyle]="{
@@ -90,15 +90,15 @@ function mapRange(
         }
         <div
           [ngStyle]="{
-            backgroundColor: color,
+            backgroundColor: color(),
             maskImage: 'url(assets/images/ethereal-shadow/ceBGguIpUU8luwByxuQz79t7To.png)',
-            maskSize: sizing === 'stretch' ? '100% 100%' : 'cover',
+            maskSize: sizing() === 'stretch' ? '100% 100%' : 'cover',
             maskRepeat: 'no-repeat',
             maskPosition: 'center',
             width: '100%',
             height: '100%',
             '-webkit-mask-image': 'url(assets/images/ethereal-shadow/ceBGguIpUU8luwByxuQz79t7To.png)',
-            '-webkit-mask-size': sizing === 'stretch' ? '100% 100%' : 'cover',
+            '-webkit-mask-size': sizing() === 'stretch' ? '100% 100%' : 'cover',
             '-webkit-mask-repeat': 'no-repeat',
             '-webkit-mask-position': 'center'
           }"
@@ -118,15 +118,15 @@ function mapRange(
         <ng-content></ng-content>
       </div>
 
-      @if (noise && noise.opacity > 0) {
+      @if (noise() && noise()!.opacity > 0) {
         <div
           [ngStyle]="{
             position: 'absolute',
             inset: 0,
             backgroundImage: 'url(assets/images/ethereal-shadow//g0QcWrxr87K0ufOxIUFBakwYA8.png)',
-            backgroundSize: (noise.scale * 200) + 'px',
+            backgroundSize: (noise()!.scale * 200) + 'px',
             backgroundRepeat: 'repeat',
-            opacity: noise.opacity / 2,
+            opacity: noise()!.opacity / 2,
             zIndex: 1
           }"
         ></div>
@@ -135,43 +135,44 @@ function mapRange(
   `
 })
 export class EtherealShadowComponent implements OnInit, OnDestroy {
-  @Input() sizing: 'fill' | 'stretch' = 'fill';
-  @Input() color: string = 'rgba(128, 128, 128, 1)';
-  @Input() animation?: AnimationConfig;
-  @Input() noise?: NoiseConfig;
-  @Input() style: { [klass: string]: string | number } = {};
-  @Input() className: string = '';
+  sizing = input<'fill' | 'stretch'>('fill');
+  color = input<string>('rgba(128, 128, 128, 1)');
+  animation = input<AnimationConfig | undefined>();
+  noise = input<NoiseConfig | undefined>();
+  style = input<{ [klass: string]: string | number }>({});
+  className = input<string>('');
 
   @ViewChild('feColorMatrix') feColorMatrixRef?: ElementRef<SVGFEColorMatrixElement>;
 
   public filterId = 'shadowoverlay-' + Math.random().toString(36).substr(2, 9);
   private animationFrameId: number | null = null;
+  private isMobile = false;
 
-  constructor(
-    private ngZone: NgZone,
-    @Inject(PLATFORM_ID) private platformId: object
-  ) {}
+  private ngZone = inject(NgZone);
+  private platformId = inject(PLATFORM_ID);
 
   get animationEnabled(): boolean {
-    return !!(this.animation && this.animation.scale > 0) && !this.isMobile;
+    const anim = this.animation();
+    return !!(anim && anim.scale > 0) && !this.isMobile;
   }
 
   get displacementScale(): number {
-    return this.animation ? mapRange(this.animation.scale, 1, 100, 20, 100) : 0;
+    const anim = this.animation();
+    return anim ? mapRange(anim.scale, 1, 100, 20, 100) : 0;
   }
 
   get animationDuration(): number {
-    return this.animation ? mapRange(this.animation.speed, 1, 100, 1000, 50) : 1;
+    const anim = this.animation();
+    return anim ? mapRange(anim.speed, 1, 100, 1000, 50) : 1;
   }
 
   get baseFrequency(): string {
-    if (!this.animation) return '0.001,0.004';
-    const freq1 = mapRange(this.animation.scale, 0, 100, 0.001, 0.0005);
-    const freq2 = mapRange(this.animation.scale, 0, 100, 0.004, 0.002);
+    const anim = this.animation();
+    if (!anim) return '0.001,0.004';
+    const freq1 = mapRange(anim.scale, 0, 100, 0.001, 0.0005);
+    const freq2 = mapRange(anim.scale, 0, 100, 0.004, 0.002);
     return `${freq1},${freq2}`;
   }
-
-  private isMobile = false;
 
   ngOnInit(): void {
     if (isPlatformBrowser(this.platformId)) {

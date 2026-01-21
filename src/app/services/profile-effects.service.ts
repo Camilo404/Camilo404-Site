@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
@@ -8,10 +8,9 @@ import { ProfileEffectsResponse, ProfileEffectConfig } from '../models/discord-p
   providedIn: 'root'
 })
 export class ProfileEffectsService {
+  private http = inject(HttpClient);
   private readonly EFFECTS_API_URL = 'https://discord.com/api/v9/user-profile-effects';
   private effectsCache: ProfileEffectConfig[] | null = null;
-
-  constructor(private http: HttpClient) { }
 
   getAllEffects(): Observable<ProfileEffectConfig[]> {
     if (this.effectsCache) {

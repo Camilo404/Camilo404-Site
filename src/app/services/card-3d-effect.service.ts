@@ -1,4 +1,4 @@
-import { Injectable, ElementRef, Renderer2, RendererFactory2 } from '@angular/core';
+import { Injectable, ElementRef, Renderer2, RendererFactory2, inject } from '@angular/core';
 
 export interface Card3DConfig {
   rotateX: number;
@@ -14,7 +14,9 @@ export interface Card3DConfig {
   providedIn: 'root'
 })
 export class Card3DEffectService {
-  private renderer: Renderer2;
+  private rendererFactory = inject(RendererFactory2);
+  private renderer: Renderer2 = this.rendererFactory.createRenderer(null, null);
+  
   private defaultConfig: Card3DConfig = {
     rotateX: 0,
     rotateY: 0,
@@ -24,10 +26,6 @@ export class Card3DEffectService {
     shadowIntensity: 0.3,
     maxRotation: 15
   };
-
-  constructor(private rendererFactory: RendererFactory2) {
-    this.renderer = this.rendererFactory.createRenderer(null, null);
-  }
 
   initCard3DEffect(element: ElementRef, config?: Partial<Card3DConfig>): void {
     // Si es un dispositivo móvil (ancho <= 768px), no aplicar el efecto inicial

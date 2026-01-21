@@ -1,5 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
-
+import { Component, input, output, signal, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faSearch, faTimes, faHashtag, faExclamationCircle, faInfoCircle } from '@fortawesome/free-solid-svg-icons';
@@ -8,7 +7,8 @@ import { faSearch, faTimes, faHashtag, faExclamationCircle, faInfoCircle } from 
     selector: 'app-search-modal',
     imports: [FormsModule, FontAwesomeModule],
     templateUrl: './search-modal.component.html',
-    styleUrl: './search-modal.component.scss'
+    styleUrl: './search-modal.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SearchModalComponent {
   
@@ -19,29 +19,29 @@ export class SearchModalComponent {
   faExclamationCircle = faExclamationCircle;
   faInfoCircle = faInfoCircle;
 
-  @Input() isOpen: boolean = false;
-  @Output() close = new EventEmitter<void>();
-  @Output() search = new EventEmitter<string>();
+  isOpen = input<boolean>(false);
+  close = output<void>();
+  search = output<string>();
 
-  public searchUserId: string = '';
-  public searchError: string = '';
+  searchUserId = signal<string>('');
+  searchError = signal<string>('');
 
   public closeModal(): void {
-    this.searchError = '';
-    this.searchUserId = '';
+    this.searchError.set('');
+    this.searchUserId.set('');
     this.close.emit();
   }
 
   public searchProfile(): void {
-    const trimmedId = this.searchUserId.trim();
+    const trimmedId = this.searchUserId().trim();
     
     if (!trimmedId) {
-      this.searchError = 'Please enter a Discord User ID';
+      this.searchError.set('Please enter a Discord User ID');
       return;
     }
 
     if (!/^\d{17,19}$/.test(trimmedId)) {
-      this.searchError = 'Invalid Discord ID format (must be 17-19 digits)';
+      this.searchError.set('Invalid Discord ID format (must be 17-19 digits)');
       return;
     }
 
