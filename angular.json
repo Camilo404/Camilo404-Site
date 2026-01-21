@@ -15,14 +15,14 @@
       "prefix": "app",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@angular-devkit/build-angular:application",
           "options": {
             "outputPath": "dist/camilo404-site",
             "index": "src/index.html",
-            "main": "src/main.ts",
+            "browser": "src/main.ts",
+            "polyfills": [],
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
-            "allowedCommonJsDependencies": [],
             "assets": [
               "src/favicon.ico",
               "src/assets",
@@ -49,11 +49,7 @@
               },
               "outputHashing": "all",
               "sourceMap": false,
-              "namedChunks": false,
-              "aot": true,
               "extractLicenses": true,
-              "vendorChunk": false,
-              "buildOptimizer": true,
               "budgets": [
                 {
                   "type": "initial",
@@ -64,12 +60,6 @@
                   "type": "anyComponentStyle",
                   "maximumWarning": "15kb",
                   "maximumError": "20kb"
-                },
-                {
-                  "type": "bundle",
-                  "name": "vendor",
-                  "maximumWarning": "500kb",
-                  "maximumError": "1mb"
                 }
               ],
               "fileReplacements": [
@@ -80,12 +70,9 @@
               ]
             },
             "development": {
-              "buildOptimizer": false,
               "optimization": false,
-              "vendorChunk": true,
               "extractLicenses": false,
               "sourceMap": true,
-              "namedChunks": true,
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",

@@ -1,21 +1,24 @@
-import { Component, OnInit, OnDestroy, Renderer2, signal, computed, effect, inject, DestroyRef, ChangeDetectionStrategy } from '@angular/core';
+import { Component, Renderer2, signal, computed, effect, inject, DestroyRef, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { environment } from 'src/environments/environment';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { interval } from 'rxjs';
 import { ClockComponent } from '../clock/clock.component';
 import { CardProfileComponent } from '../card-profile/card-profile.component';
 import { SearchModalComponent } from '../search-modal/search-modal.component';
+import { ColorUtilsService } from 'src/app/services/color-utils.service';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faUserAstronaut, faCircle, faBolt, faRocket, faSyncAlt, faShieldAlt, faFingerprint, faSearch } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
     selector: 'app-profile-viewer',
+    standalone: true,
     templateUrl: './profile-viewer.component.html',
     styleUrl: './profile-viewer.component.scss',
     imports: [RouterModule, ClockComponent, CardProfileComponent, SearchModalComponent, FontAwesomeModule],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ProfileViewerComponent implements OnInit, OnDestroy {
+export class ProfileViewerComponent {
 
   // FontAwesome Icons
   faUserAstronaut = faUserAstronaut;
@@ -31,6 +34,7 @@ export class ProfileViewerComponent implements OnInit, OnDestroy {
   private router = inject(Router);
   private renderer = inject(Renderer2);
   private destroyRef = inject(DestroyRef);
+  private colorUtils = inject(ColorUtilsService);
 
   profileId = signal<string>(environment.discordId);
   isModalOpen = signal<boolean>(false);
@@ -41,7 +45,6 @@ export class ProfileViewerComponent implements OnInit, OnDestroy {
   gradientColor3 = signal<string>('#1e293b'); // slate-900
   nameplateAsset = signal<string | null>(null);
   
-  private particleInterval: ReturnType<typeof setInterval> | undefined;
   private particleTypes = ['✨', '⭐', '💫', '✦', '◆', '●', '★', '◉'];
   private colors = ['#a78bfa', '#c084fc', '#e879f9', '#60a5fa', '#818cf8', '#f472b6', '#fb7185', '#fbbf24'];
 
@@ -52,28 +55,30 @@ export class ProfileViewerComponent implements OnInit, OnDestroy {
   });
 
   constructor() {
-    this.route.paramMap.pipe(
-      takeUntilDestroyed(this.destroyRef)
-    ).subscribe(params => {
+    // Detect mobile on initialization
+    this.isMobile.set(this.detectMobile());
+    
+    // Add keyframes for animations
+    this.addKeyframes();
+    
+    // Use effect to watch route parameter changes
+    effect(() => {
+      const params = this.route.snapshot.paramMap;
       const newId = params.get('id') || environment.discordId;
       if (this.profileId() !== newId) {
         this.profileId.set(newId);
       }
     });
-  }
-  
-  ngOnInit(): void {
-    this.isMobile.set(this.detectMobile());
     
-    this.addKeyframes();
+    // Create initial particles
+    const initialCount = this.isMobile() ? 5 : 15;
+    this.createInitialParticles(initialCount);
     
-    if (this.isMobile()) {
-      this.createInitialParticles(5);
-      this.particleInterval = setInterval(() => this.createParticle(), 500);
-    } else {
-      this.createInitialParticles(15);
-      this.particleInterval = setInterval(() => this.createParticle(), 150);
-    }
+    // Set up particle creation interval with RxJS
+    const particleDelay = this.isMobile() ? 500 : 150;
+    interval(particleDelay)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.createParticle());
   }
   
   private detectMobile(): boolean {
@@ -84,12 +89,6 @@ export class ProfileViewerComponent implements OnInit, OnDestroy {
     return isMobileWidth || isMobileUA || isTouchDevice;
   }
 
-  ngOnDestroy(): void {
-    if (this.particleInterval) {
-      clearInterval(this.particleInterval);
-    }
-  }
-
   onThemeColorsChange(colors: string[]): void {
     this.themeColors.set(colors);
     
@@ -97,17 +96,17 @@ export class ProfileViewerComponent implements OnInit, OnDestroy {
       const baseColor = colors[0];
       const accentColor = colors[1];
       
-      this.gradientColor1.set(this.generateDeepVariant(baseColor));
-      this.gradientColor2.set(this.generateVibranceVariant(accentColor, 0.7));
-      this.gradientColor3.set(this.generateComplementaryDark(baseColor));
+      this.gradientColor1.set(this.colorUtils.generateDeepVariant(baseColor));
+      this.gradientColor2.set(this.colorUtils.generateVibranceVariant(accentColor, 0.7));
+      this.gradientColor3.set(this.colorUtils.generateComplementaryDark(baseColor));
     } else if (colors.length === 1) {
       const baseColor = colors[0];
-      this.gradientColor1.set(this.generateDeepVariant(baseColor));
-      this.gradientColor2.set(this.generateVibranceVariant(baseColor, 0.8));
-      this.gradientColor3.set(this.generateComplementaryDark(baseColor));
+      this.gradientColor1.set(this.colorUtils.generateDeepVariant(baseColor));
+      this.gradientColor2.set(this.colorUtils.generateVibranceVariant(baseColor, 0.8));
+      this.gradientColor3.set(this.colorUtils.generateComplementaryDark(baseColor));
     }
     
-    this.colors = this.generateSophisticatedParticleColors(colors);
+    this.colors = this.colorUtils.generateSophisticatedParticleColors(colors);
     
     this.updateBackgroundColors();
   }
@@ -141,152 +140,6 @@ export class ProfileViewerComponent implements OnInit, OnDestroy {
       console.error('Error al cargar el video del nameplate:', video.error);
     }
   }
-
-  private generateDeepVariant(hex: string): string {
-    hex = hex.replace('#', '');
-    const r = parseInt(hex.substring(0, 2), 16);
-    const g = parseInt(hex.substring(2, 4), 16);
-    const b = parseInt(hex.substring(4, 6), 16);
-    
-    const newR = Math.floor(r * 0.15);
-    const newG = Math.floor(g * 0.15);
-    const newB = Math.floor(b * 0.15);
-    
-    return '#' + [newR, newG, newB]
-      .map(x => x.toString(16).padStart(2, '0'))
-      .join('');
-  }
-
-  private generateVibranceVariant(hex: string, intensity: number): string {
-    hex = hex.replace('#', '');
-    const r = parseInt(hex.substring(0, 2), 16);
-    const g = parseInt(hex.substring(2, 4), 16);
-    const b = parseInt(hex.substring(4, 6), 16);
-    
-    const { h, s, l } = this.rgbToHsl(r, g, b);
-    
-    const newS = Math.min(1, s * (1 + intensity * 0.3));
-    const newL = l * (0.5 + intensity * 0.2);
-    
-    const rgb = this.hslToRgb(h, newS, newL);
-    return '#' + rgb.map(x => Math.round(x).toString(16).padStart(2, '0')).join('');
-  }
-
-  private generateComplementaryDark(hex: string): string {
-    hex = hex.replace('#', '');
-    const r = parseInt(hex.substring(0, 2), 16);
-    const g = parseInt(hex.substring(2, 4), 16);
-    const b = parseInt(hex.substring(4, 6), 16);
-    
-    const { h, s } = this.rgbToHsl(r, g, b);
-    
-    const newH = (h + 0.15) % 1;
-    const newS = s * 0.8;
-    const newL = 0.12;
-    
-    const rgb = this.hslToRgb(newH, newS, newL);
-    return '#' + rgb.map(x => Math.round(x).toString(16).padStart(2, '0')).join('');
-  }
-
-  private rgbToHsl(r: number, g: number, b: number): { h: number; s: number; l: number } {
-    r /= 255;
-    g /= 255;
-    b /= 255;
-    
-    const max = Math.max(r, g, b);
-    const min = Math.min(r, g, b);
-    let h = 0, s = 0;
-    const l = (max + min) / 2;
-    
-    if (max !== min) {
-      const d = max - min;
-      s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-      
-      switch (max) {
-        case r: h = ((g - b) / d + (g < b ? 6 : 0)) / 6; break;
-        case g: h = ((b - r) / d + 2) / 6; break;
-        case b: h = ((r - g) / d + 4) / 6; break;
-      }
-    }
-    
-    return { h, s, l };
-  }
-
-  private hslToRgb(h: number, s: number, l: number): number[] {
-    let r, g, b;
-    
-    if (s === 0) {
-      r = g = b = l;
-    } else {
-      const hue2rgb = (p: number, q: number, t: number) => {
-        if (t < 0) t += 1;
-        if (t > 1) t -= 1;
-        if (t < 1/6) return p + (q - p) * 6 * t;
-        if (t < 1/2) return q;
-        if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
-        return p;
-      };
-      
-      const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
-      const p = 2 * l - q;
-      
-      r = hue2rgb(p, q, h + 1/3);
-      g = hue2rgb(p, q, h);
-      b = hue2rgb(p, q, h - 1/3);
-    }
-    
-    return [r * 255, g * 255, b * 255];
-  }
-
-  private generateSophisticatedParticleColors(themeColors: string[]): string[] {
-    if (themeColors.length === 0) {
-      return ['#a78bfa', '#c084fc', '#e879f9', '#60a5fa', '#818cf8', '#f472b6', '#fb7185', '#fbbf24'];
-    }
-    
-    const variations: string[] = [];
-    
-    themeColors.forEach(color => {
-      const baseRgb = this.hexToRgb(color);
-      const { h, s, l } = this.rgbToHsl(baseRgb.r, baseRgb.g, baseRgb.b);
-      
-      for (let i = 0; i < 5; i++) {
-        const hueShift = (h + (i * 0.05)) % 1;
-        const satVariation = Math.max(0.5, Math.min(1, s + (i - 2) * 0.1));
-        const lightVariation = Math.max(0.4, Math.min(0.8, l + (i - 2) * 0.1));
-        
-        const rgb = this.hslToRgb(hueShift, satVariation, lightVariation);
-        variations.push('#' + rgb.map(x => Math.round(x).toString(16).padStart(2, '0')).join(''));
-      }
-    });
-    
-    return variations;
-  }
-
-  private hexToRgb(hex: string): { r: number; g: number; b: number } {
-    hex = hex.replace('#', '');
-    return {
-      r: parseInt(hex.substring(0, 2), 16),
-      g: parseInt(hex.substring(2, 4), 16),
-      b: parseInt(hex.substring(4, 6), 16)
-    };
-  }
-
-  private darkenColor(hex: string, factor: number): string {
-    hex = hex.replace('#', '');
-    
-    const r = parseInt(hex.substring(0, 2), 16);
-    const g = parseInt(hex.substring(2, 4), 16);
-    const b = parseInt(hex.substring(4, 6), 16);
-    
-    const newR = Math.floor(r * factor);
-    const newG = Math.floor(g * factor);
-    const newB = Math.floor(b * factor);
-    
-    return '#' + [newR, newG, newB]
-      .map(x => x.toString(16).padStart(2, '0'))
-      .join('');
-  }
-
 
   private updateBackgroundColors(): void {
     document.documentElement.style.setProperty('--gradient-color-1', this.gradientColor1());

@@ -1,12 +1,17 @@
-import { Component, signal, effect } from '@angular/core';
+import { Component, signal, inject, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { interval } from 'rxjs';
 
 @Component({
     selector: 'app-clock',
+    standalone: true,
     templateUrl: './clock.component.html',
     styleUrls: ['./clock.component.scss'],
     imports: []
 })
 export class ClockComponent {
+  private destroyRef = inject(DestroyRef);
+
   hours = signal<string>('00');
   minutes = signal<string>('00');
   seconds = signal<string>('00');
@@ -14,19 +19,14 @@ export class ClockComponent {
   day = signal<string>('');
   fullDate = signal<string>('');
 
-  private intervalId?: ReturnType<typeof setInterval>;
-
   constructor() {
+    // Initial update
     this.updateTime();
-    this.intervalId = setInterval(() => {
-      this.updateTime();
-    }, 1000);
-  }
-
-  ngOnDestroy() {
-    if (this.intervalId) {
-      clearInterval(this.intervalId);
-    }
+    
+    // Update every second using RxJS interval with automatic cleanup
+    interval(1000)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.updateTime());
   }
 
   private updateTime(): void {
