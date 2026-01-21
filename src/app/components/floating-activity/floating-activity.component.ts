@@ -11,13 +11,12 @@ import { takeUntil } from 'rxjs/operators';
 import { FastAverageColor } from 'fast-average-color';
 
 @Component({
-  selector: 'app-floating-activity',
-  standalone: true,
-  imports: [CommonModule, FontAwesomeModule],
-  templateUrl: './floating-activity.component.html',
-  styleUrls: ['./floating-activity.component.scss'],
-  encapsulation: ViewEncapsulation.None,
-  styles: [`
+    selector: 'app-floating-activity',
+    imports: [CommonModule, FontAwesomeModule],
+    templateUrl: './floating-activity.component.html',
+    styleUrls: ['./floating-activity.component.scss'],
+    encapsulation: ViewEncapsulation.None,
+    styles: [`
     app-floating-activity {
       display: block;
       width: 100%;

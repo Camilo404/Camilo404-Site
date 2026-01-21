@@ -4,11 +4,10 @@ import { interval, Subscription } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 
 @Component({
-  selector: 'app-clock',
-  templateUrl: './clock.component.html',
-  styleUrls: ['./clock.component.scss'],
-  standalone: true,
-  imports: [CommonModule]
+    selector: 'app-clock',
+    templateUrl: './clock.component.html',
+    styleUrls: ['./clock.component.scss'],
+    imports: [CommonModule]
 })
 export class ClockComponent implements OnInit, OnDestroy {
 

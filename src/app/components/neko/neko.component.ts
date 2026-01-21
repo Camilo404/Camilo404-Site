@@ -3,13 +3,12 @@ import { Component, HostListener, OnDestroy, AfterViewInit, ViewChild, ElementRe
 type SpriteDirection = 'idle' | 'alert' | 'scratch' | 'tired' | 'sleeping' | 'N' | 'NE' | 'E' | 'SE' | 'S' | 'SW' | 'W' | 'NW';
 
 @Component({
-  selector: 'app-neko',
-  template: `
+    selector: 'app-neko',
+    template: `
     <div #oneko id="oneko" style="width: 32px; height: 32px; position: fixed; background-image: url(/assets/images/oneko.gif); image-rendering: pixelated; z-index: 5; left: 16px; top: 16px;"></div>
   `,
-  styles: [``],
-  standalone: true,
-  imports: []
+    styles: [``],
+    imports: []
 })
 export class NekoComponent implements AfterViewInit, OnDestroy {
   nekoPosX = 32;

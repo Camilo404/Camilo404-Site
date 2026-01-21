@@ -18,13 +18,12 @@ interface RenderedLayer {
 }
 
 @Component({
-  selector: 'app-card-profile',
-  templateUrl: './card-profile.component.html',
-  styleUrls: ['./card-profile.component.scss'],
-  standalone: true,
-  imports: [CommonModule, FormsModule, FloatingActivityComponent],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  encapsulation: ViewEncapsulation.None
+    selector: 'app-card-profile',
+    templateUrl: './card-profile.component.html',
+    styleUrls: ['./card-profile.component.scss'],
+    imports: [CommonModule, FormsModule, FloatingActivityComponent],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    encapsulation: ViewEncapsulation.None
 })
 export class CardProfileComponent implements OnInit, OnChanges, OnDestroy, AfterViewInit {
 

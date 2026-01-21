@@ -5,11 +5,10 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faSearch, faTimes, faHashtag, faExclamationCircle, faInfoCircle } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
-  selector: 'app-search-modal',
-  standalone: true,
-  imports: [CommonModule, FormsModule, FontAwesomeModule],
-  templateUrl: './search-modal.component.html',
-  styleUrl: './search-modal.component.scss'
+    selector: 'app-search-modal',
+    imports: [CommonModule, FormsModule, FontAwesomeModule],
+    templateUrl: './search-modal.component.html',
+    styleUrl: './search-modal.component.scss'
 })
 export class SearchModalComponent {
   

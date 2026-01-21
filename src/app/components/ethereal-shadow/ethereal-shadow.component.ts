@@ -27,11 +27,10 @@ function mapRange(
 }
 
 @Component({
-  selector: 'app-ethereal-shadow',
-  standalone: true,
-  imports: [CommonModule],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  template: `
+    selector: 'app-ethereal-shadow',
+    imports: [CommonModule],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    template: `
     <div
       [class]="className"
       [ngStyle]="{

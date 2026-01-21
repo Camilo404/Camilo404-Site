@@ -13,21 +13,20 @@ import { faTerminal, faCode, faSearch } from '@fortawesome/free-solid-svg-icons'
 import { faAngular, faReact, faBootstrap, faPython, faJs, faSass, faHtml5, faCss3Alt, faNodeJs, faGitAlt, faDocker, faGithub, faYoutube, faInstagram, faSteam } from '@fortawesome/free-brands-svg-icons';
 
 @Component({
-  selector: 'app-main',
-  templateUrl: './main.component.html',
-  styleUrls: ['./main.component.scss'],
-  standalone: true,
-  imports: [
-    CommonModule, 
-    RouterModule, 
-    NekoComponent, 
-    EtherealShadowComponent, 
-    CardProfileComponent, 
-    FloatingActivityComponent,
-    ClockComponent, 
-    SearchModalComponent,
-    FontAwesomeModule
-  ]
+    selector: 'app-main',
+    templateUrl: './main.component.html',
+    styleUrls: ['./main.component.scss'],
+    imports: [
+        CommonModule,
+        RouterModule,
+        NekoComponent,
+        EtherealShadowComponent,
+        CardProfileComponent,
+        FloatingActivityComponent,
+        ClockComponent,
+        SearchModalComponent,
+        FontAwesomeModule
+    ]
 })
 export class MainComponent implements OnInit, OnDestroy, AfterViewInit {
 

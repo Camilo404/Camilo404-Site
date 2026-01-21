@@ -11,11 +11,10 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faUserAstronaut, faCircle, faBolt, faRocket, faSyncAlt, faShieldAlt, faFingerprint, faSearch } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
-  selector: 'app-profile-viewer',
-  templateUrl: './profile-viewer.component.html',
-  styleUrl: './profile-viewer.component.scss',
-  standalone: true,
-  imports: [CommonModule, RouterModule, ClockComponent, CardProfileComponent, SearchModalComponent, FontAwesomeModule]
+    selector: 'app-profile-viewer',
+    templateUrl: './profile-viewer.component.html',
+    styleUrl: './profile-viewer.component.scss',
+    imports: [CommonModule, RouterModule, ClockComponent, CardProfileComponent, SearchModalComponent, FontAwesomeModule]
 })
 export class ProfileViewerComponent implements OnInit, OnDestroy {
 
