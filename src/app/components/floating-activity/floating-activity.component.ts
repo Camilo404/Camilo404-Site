@@ -1,4 +1,4 @@
-import { Component, OnDestroy, ViewEncapsulation, input, ViewChild, ElementRef, output, signal, computed, effect, inject, DestroyRef } from '@angular/core';
+import { Component, ViewEncapsulation, input, ViewChild, ElementRef, output, signal, computed, effect, inject, DestroyRef } from '@angular/core';
 
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faGamepad } from '@fortawesome/free-solid-svg-icons';
@@ -23,7 +23,7 @@ import { FastAverageColor } from 'fast-average-color';
     }
   `]
 })
-export class FloatingActivityComponent implements OnDestroy {
+export class FloatingActivityComponent {
   isMobileEmbedded = input<boolean>(false);
   visibilityChange = output<boolean>();
   
@@ -72,20 +72,18 @@ export class FloatingActivityComponent implements OnDestroy {
         const hasActivities = filtered.length > 0;
         this.visibilityChange.emit(hasActivities);
 
-        if (filtered.length === 0) {
+        if (filtered.length === 0 || this.currentIndex() >= filtered.length) {
           this.currentIndex.set(0);
-          this.processCurrentActivity();
-        } else {
-          if (this.currentIndex() >= filtered.length) {
-            this.currentIndex.set(0);
-          }
-          this.processCurrentActivity();
         }
       }
     });
+
+    effect(() => {
+      this.currentActivity();
+      this.processCurrentActivity();
+    });
   }
 
-  // Computed values
   currentActivity = computed(() => {
     const acts = this.activities();
     const idx = this.currentIndex();
@@ -361,8 +359,4 @@ export class FloatingActivityComponent implements OnDestroy {
     target.classList.add('icon-error');
   }
 
-  ngOnDestroy(): void {
-    this.activitiesSubscription.unsubscribe();
-    this.lyricsSyncSubscription.unsubscribe();
-  }
 }

@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Component, input, output, OnInit, OnDestroy, effect, ChangeDetectionStrategy, ElementRef, ViewChild, AfterViewInit, ViewEncapsulation, HostListener, signal, computed, inject, DestroyRef } from '@angular/core';
+import { Component, input, output, effect, ChangeDetectionStrategy, ElementRef, ViewChild, AfterViewInit, ViewEncapsulation, signal, computed, inject, DestroyRef } from '@angular/core';
 import { DiscordApiService } from 'src/app/services/discord-api.service';
 import { Profile, ProfileEffectConfig, ProfileEffectLayer } from 'src/app/models/discord-profile.model';
 import { LanyardService } from 'src/app/services/lanyard.service';
@@ -10,6 +10,8 @@ import { ProfileEffectsService } from 'src/app/services/profile-effects.service'
 import { FloatingActivityComponent } from '../floating-activity/floating-activity.component';
 import { environment } from 'src/environments/environment';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { fromEvent } from 'rxjs';
+import { debounceTime } from 'rxjs/operators';
 
 interface RenderedLayer {
   config: ProfileEffectLayer;
@@ -24,7 +26,7 @@ interface RenderedLayer {
     changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.None
 })
-export class CardProfileComponent implements OnInit, OnDestroy, AfterViewInit {
+export class CardProfileComponent implements AfterViewInit {
   ProfileId = input<string>(environment.discordId);
   themeColorsChange = output<string[]>();
   nameplateAssetChange = output<string | null>();
@@ -84,6 +86,15 @@ export class CardProfileComponent implements OnInit, OnDestroy, AfterViewInit {
   });
 
   constructor() {
+    this.checkScreenSize();
+    
+    fromEvent(window, 'resize')
+      .pipe(
+        debounceTime(150),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe(() => this.checkScreenSize());
+
     effect(() => {
       this.ProfileId();
       this.resetProfileData();
@@ -102,15 +113,6 @@ export class CardProfileComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
-  ngOnInit(): void {
-    this.checkScreenSize();
-  }
-
-  @HostListener('window:resize')
-  onResize() {
-    this.checkScreenSize();
-  }
-
   private checkScreenSize() {
     this.isMobile.set(window.innerWidth <= 768);
   }
@@ -125,12 +127,12 @@ export class CardProfileComponent implements OnInit, OnDestroy, AfterViewInit {
         transition: 'transform 0.4s cubic-bezier(0.23, 1, 0.32, 1)'
       });
     }
-  }
-
-  ngOnDestroy(): void {
-    if (this.cardElement) {
-      this.card3DService.destroyCard3DEffect(this.cardElement);
-    }
+    
+    this.destroyRef.onDestroy(() => {
+      if (this.cardElement) {
+        this.card3DService.destroyCard3DEffect(this.cardElement);
+      }
+    });
   }
 
   private resetProfileData(): void {

@@ -123,7 +123,7 @@ function mapRange(
           [ngStyle]="{
             position: 'absolute',
             inset: 0,
-            backgroundImage: 'url(assets/images/ethereal-shadow//g0QcWrxr87K0ufOxIUFBakwYA8.png)',
+            backgroundImage: 'url(assets/images/ethereal-shadow/g0QcWrxr87K0ufOxIUFBakwYA8.png)',
             backgroundSize: (noise()!.scale * 200) + 'px',
             backgroundRepeat: 'repeat',
             opacity: noise()!.opacity / 2,

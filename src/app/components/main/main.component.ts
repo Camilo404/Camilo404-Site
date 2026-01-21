@@ -225,7 +225,6 @@ export class MainComponent implements OnInit, OnDestroy, AfterViewInit {
     if (video.paused && this.nameplateVideoUrl) {
       video.play().catch((error) => {
         console.warn('Autoplay bloqueado por el navegador:', error);
-        console.log('El video se reproducirá cuando el usuario interactúe con la página');
       });
     }
   }
