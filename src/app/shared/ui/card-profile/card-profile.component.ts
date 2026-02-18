@@ -1,12 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Component, input, output, effect, ChangeDetectionStrategy, ElementRef, ViewChild, AfterViewInit, ViewEncapsulation, signal, computed, inject, DestroyRef } from '@angular/core';
-import { DiscordApiService } from 'src/app/services/discord-api.service';
-import { Profile, ProfileEffectConfig, ProfileEffectLayer } from 'src/app/models/discord-profile.model';
-import { LanyardService } from 'src/app/services/lanyard.service';
-import { Lanyard, Activity } from 'src/app/models/lanyard-profile.model';
-import { Card3DEffectService } from 'src/app/services/card-3d-effect.service';
-import { ProfileEffectsService } from 'src/app/services/profile-effects.service';
+import { DiscordApiService } from 'src/app/core/services/discord-api.service';
+import { Profile, ProfileEffectConfig, ProfileEffectLayer } from 'src/app/core/models/discord-profile.model';
+import { LanyardService } from 'src/app/core/services/lanyard.service';
+import { Lanyard, Activity } from 'src/app/core/models/lanyard-profile.model';
+import { Card3DEffectService } from 'src/app/core/services/card-3d-effect.service';
+import { ProfileEffectsService } from 'src/app/core/services/profile-effects.service';
 import { FloatingActivityComponent } from '../floating-activity/floating-activity.component';
 import { environment } from 'src/environments/environment';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -365,6 +365,6 @@ export class CardProfileComponent implements AfterViewInit {
 
   handleImageError(event: Event) {
     const target = event.target as HTMLImageElement;
-    target.src = '../../../assets/images/no-image-found.jpg';
+    target.src = 'assets/images/no-image-found.jpg';
   }
 }

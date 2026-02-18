@@ -3,11 +3,11 @@ import { Routes } from '@angular/router';
 export const routes: Routes = [
   {
     path: '',
-    loadComponent: () => import('./components/main/main.component').then(m => m.MainComponent)
+    loadComponent: () => import('./features/home/pages/home-page/home-page.component').then(m => m.HomePageComponent)
   },
   {
     path: 'profile/:id',
-    loadComponent: () => import('./components/profile-viewer/profile-viewer.component').then(m => m.ProfileViewerComponent)
+    loadComponent: () => import('./features/profile/pages/profile-viewer-page/profile-viewer-page.component').then(m => m.ProfileViewerPageComponent)
   },
   {
     path: '**',

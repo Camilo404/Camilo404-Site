@@ -2,10 +2,10 @@ import { Component, ViewEncapsulation, input, ViewChild, ElementRef, output, sig
 
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faGamepad } from '@fortawesome/free-solid-svg-icons';
-import { LanyardService } from 'src/app/services/lanyard.service';
-import { TimestampsService } from 'src/app/services/timestamps.service';
-import { LyricsService, LyricLine } from 'src/app/services/lyrics.service';
-import { Activity } from 'src/app/models/lanyard-profile.model';
+import { LanyardService } from 'src/app/core/services/lanyard.service';
+import { TimestampsService } from 'src/app/core/services/timestamps.service';
+import { LyricsService, LyricLine } from 'src/app/core/services/lyrics.service';
+import { Activity } from 'src/app/core/models/lanyard-profile.model';
 import { Subscription, timer } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FastAverageColor } from 'fast-average-color';

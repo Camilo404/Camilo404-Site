@@ -1,24 +1,24 @@
-import { Component, ElementRef, OnDestroy, AfterViewInit, Renderer2, signal, inject, effect } from '@angular/core';
+import { Component, ElementRef, OnDestroy, AfterViewInit, Renderer2, signal, inject } from '@angular/core';
 
 import { Router, RouterModule } from '@angular/router';
-import { Card3DEffectService } from '../../services/card-3d-effect.service';
-import { NekoComponent } from '../neko/neko.component';
-import { EtherealShadowComponent } from '../ethereal-shadow/ethereal-shadow.component';
-import { CardProfileComponent } from '../card-profile/card-profile.component';
-import { FloatingActivityComponent } from '../floating-activity/floating-activity.component';
-import { SearchModalComponent } from '../search-modal/search-modal.component';
+import { Card3DEffectService } from '../../../../core/services/card-3d-effect.service';
+import { NekoComponent } from '../../components/neko/neko.component';
+import { EtherealShadowComponent } from '../../components/ethereal-shadow/ethereal-shadow.component';
+import { CardProfileComponent } from '../../../../shared/ui/card-profile/card-profile.component';
+import { FloatingActivityComponent } from '../../../../shared/ui/floating-activity/floating-activity.component';
+import { SearchModalComponent } from '../../../../shared/ui/search-modal/search-modal.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
-import { ClockWidgetComponent } from '../widgets/clock-widget/clock-widget.component';
-import { ShadowWidgetComponent } from '../widgets/shadow-widget/shadow-widget.component';
-import { SocialWidgetComponent } from '../widgets/social-widget/social-widget.component';
-import { TechStackWidgetComponent } from '../widgets/tech-stack-widget/tech-stack-widget.component';
+import { ClockWidgetComponent } from '../../widgets/clock-widget/clock-widget.component';
+import { ShadowWidgetComponent } from '../../widgets/shadow-widget/shadow-widget.component';
+import { SocialWidgetComponent } from '../../widgets/social-widget/social-widget.component';
+import { TechStackWidgetComponent } from '../../widgets/tech-stack-widget/tech-stack-widget.component';
 
 @Component({
-    selector: 'app-main',
+    selector: 'app-home-page',
     standalone: true,
-    templateUrl: './main.component.html',
-    styleUrls: ['./main.component.scss'],
+    templateUrl: './home-page.component.html',
+    styleUrls: ['./home-page.component.scss'],
     imports: [
     RouterModule,
     NekoComponent,
@@ -33,7 +33,7 @@ import { TechStackWidgetComponent } from '../widgets/tech-stack-widget/tech-stac
     TechStackWidgetComponent
 ]
 })
-export class MainComponent implements OnDestroy, AfterViewInit {
+export class HomePageComponent implements OnDestroy, AfterViewInit {
   private router = inject(Router);
   private el = inject(ElementRef);
   private renderer = inject(Renderer2);

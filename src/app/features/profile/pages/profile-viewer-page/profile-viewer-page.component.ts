@@ -3,21 +3,21 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { environment } from 'src/environments/environment';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { interval } from 'rxjs';
-import { CardProfileComponent } from '../card-profile/card-profile.component';
-import { SearchModalComponent } from '../search-modal/search-modal.component';
-import { ColorUtilsService } from 'src/app/services/color-utils.service';
+import { CardProfileComponent } from '../../../../shared/ui/card-profile/card-profile.component';
+import { SearchModalComponent } from '../../../../shared/ui/search-modal/search-modal.component';
+import { ColorUtilsService } from 'src/app/core/services/color-utils.service';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faUserAstronaut, faCircle, faBolt, faRocket, faSyncAlt, faShieldAlt, faFingerprint, faSearch } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
-    selector: 'app-profile-viewer',
+    selector: 'app-profile-viewer-page',
     standalone: true,
-    templateUrl: './profile-viewer.component.html',
-    styleUrl: './profile-viewer.component.scss',
+    templateUrl: './profile-viewer-page.component.html',
+    styleUrl: './profile-viewer-page.component.scss',
     imports: [RouterModule, CardProfileComponent, SearchModalComponent, FontAwesomeModule],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ProfileViewerComponent {
+export class ProfileViewerPageComponent {
 
   // FontAwesome Icons
   faUserAstronaut = faUserAstronaut;
