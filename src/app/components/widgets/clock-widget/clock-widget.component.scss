@@ -1,12 +1,43 @@
-// Variables
-$text-color: #ffffff;
-$glow-color: rgba(255, 255, 255, 0.15);
+// ========================================
+// Clock Widget Card
+// ========================================
+.clock-card {
+  min-height: 150px;
+  display: flex;
+  flex-direction: column;
 
-:host {
-  display: block;
-  width: 100%;
-  height: 100%;
+  .clock-background-video {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.5;
+    z-index: 0;
+    transition: opacity 0.3s ease;
+
+    &.hidden {
+      opacity: 0;
+    }
+  }
+
+  .clock-content {
+    position: relative;
+    z-index: 1;
+    flex-grow: 1;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
 }
+
+// ========================================
+// Clock Display
+// ========================================
+$text-color: #ffffff;
 
 .clock-container {
   display: flex;
@@ -20,14 +51,13 @@ $glow-color: rgba(255, 255, 255, 0.15);
   cursor: default;
 }
 
-.clock-content {
+.clock-inner {
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 0.5rem;
-  
   transition: transform 0.3s ease;
-  
+
   &:hover {
     transform: scale(1.02);
   }
@@ -45,7 +75,7 @@ $glow-color: rgba(255, 255, 255, 0.15);
   font-size: 3.5rem;
   font-weight: 1rem;
   letter-spacing: -2px;
-  
+
   .digit {
     position: relative;
     display: inline-block;
@@ -63,7 +93,7 @@ $glow-color: rgba(255, 255, 255, 0.15);
   flex-direction: column;
   justify-content: center;
   margin-left: 0.5rem;
-  
+
   .seconds {
     font-size: 1.1rem;
     font-weight: 300;
@@ -104,19 +134,18 @@ $glow-color: rgba(255, 255, 255, 0.15);
   }
 }
 
-// Responsive adjustments
 @media (max-width: 768px) {
   .main-time {
     font-size: 2.5rem;
   }
-  
+
   .secondary-time {
     margin-left: 0.3rem;
-    
+
     .seconds {
       font-size: 0.9rem;
     }
-    
+
     .ampm {
       font-size: 0.6rem;
     }
@@ -125,10 +154,10 @@ $glow-color: rgba(255, 255, 255, 0.15);
   .date-section {
     font-size: 0.7rem;
     margin-top: 0.2rem;
-    flex-wrap: wrap; 
+    flex-wrap: wrap;
     justify-content: center;
     gap: 0.3rem;
-    
+
     .divider {
       display: inline-block;
     }

@@ -54,25 +54,24 @@
     </div>
   </div>
 
-  <div class="glass-container-minimal animate-fade-in animation-delay-200 clock-video-container" [class.glass-mobile]="isMobile()">
-    <video 
-      #nameplateVideo
-      class="clock-background-video" 
-      autoplay 
-      loop 
-      muted 
-      playsinline
-      preload="auto"
-      [class.hidden]="!nameplateVideoUrl()"
-      [src]="nameplateVideoUrl() || ''"
-      (loadeddata)="onVideoLoaded($event)"
-      (canplay)="onVideoCanPlay($event)"
-      (error)="onVideoError($event)">
-    </video>
-    <div class="clock-content">
-      <app-clock></app-clock>
+  @if (nameplateVideoUrl()) {
+    <div class="glass-container-minimal animate-fade-in animation-delay-200 clock-video-container" [class.glass-mobile]="isMobile()">
+      <video 
+        #nameplateVideo
+        class="clock-background-video" 
+        autoplay 
+        loop 
+        muted 
+        playsinline
+        preload="auto"
+        [class.hidden]="!nameplateVideoUrl()"
+        [src]="nameplateVideoUrl() || ''"
+        (loadeddata)="onVideoLoaded($event)"
+        (canplay)="onVideoCanPlay($event)"
+        (error)="onVideoError($event)">
+      </video>
     </div>
-  </div>
+  }
   
   <!-- Profile card -->
   <div class="profile-card-wrapper animate-fade-in-up animation-delay-400">

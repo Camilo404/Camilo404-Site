@@ -3,7 +3,6 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { environment } from 'src/environments/environment';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { interval } from 'rxjs';
-import { ClockComponent } from '../clock/clock.component';
 import { CardProfileComponent } from '../card-profile/card-profile.component';
 import { SearchModalComponent } from '../search-modal/search-modal.component';
 import { ColorUtilsService } from 'src/app/services/color-utils.service';
@@ -15,7 +14,7 @@ import { faUserAstronaut, faCircle, faBolt, faRocket, faSyncAlt, faShieldAlt, fa
     standalone: true,
     templateUrl: './profile-viewer.component.html',
     styleUrl: './profile-viewer.component.scss',
-    imports: [RouterModule, ClockComponent, CardProfileComponent, SearchModalComponent, FontAwesomeModule],
+    imports: [RouterModule, CardProfileComponent, SearchModalComponent, FontAwesomeModule],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ProfileViewerComponent {

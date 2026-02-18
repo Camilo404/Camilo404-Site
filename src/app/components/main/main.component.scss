@@ -37,8 +37,6 @@
   grid-template-columns: auto minmax(400px, 500px);
   gap: 1.5rem;
   width: auto;
-  width: auto;
-  // animation: fadeInUp 0.8s ease-out; // Removed in favor of staggered item animations
 
   @media (max-width: 1024px) {
     grid-template-columns: 1fr;
@@ -60,22 +58,20 @@
 
   @media (max-width: 1024px) {
     width: 100%;
-    max-width: 400px; // Match profile card max-width
+    max-width: 400px;
   }
 }
 
 // ========================================
 // Universal Widget Card Style
 // ========================================
-.widget-card {
+:host ::ng-deep .widget-card {
   position: relative;
   width: 100%;
-  transform-style: preserve-3d; // Crucial for 3D tilt effect logic to work visually
-  background: rgba(0, 0, 0, 0.4); // Static background that remains
+  transform-style: preserve-3d;
+  background: rgba(0, 0, 0, 0.4);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-
-  // Base border - matching social items slightly more
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 16px;
   overflow: hidden;
@@ -84,8 +80,6 @@
     0 0 0 1px rgba(255, 255, 255, 0.05) inset;
   transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.4s ease, border-color 0.4s ease;
 
-  // Spotlight Shine pseudo-element
-  // This element holds the gradient and fades in/out on hover
   &::before {
     content: "";
     position: absolute;
@@ -110,247 +104,6 @@
 
     &::before {
       opacity: 1;
-    }
-  }
-}
-
-// ========================================
-// Specific Card Styles
-// ========================================
-
-// --- Clock Card ---
-.clock-card {
-  min-height: 150px;
-  display: flex;
-  flex-direction: column;
-
-  .clock-background-video {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    opacity: 0.5;
-    z-index: 0;
-    transition: opacity 0.3s ease;
-
-    &.hidden {
-      opacity: 0;
-    }
-  }
-
-  .clock-content {
-    position: relative;
-    z-index: 1;
-    flex-grow: 1; // Ensures it fills the available height
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-}
-
-// --- Shadow Card ---
-.shadow-card {
-  min-height: 160px;
-
-  &:hover .shadow-bg {
-    transform: scale(1.05);
-    filter: brightness(0.8) blur(1px);
-  }
-
-  .shadow-bg {
-    position: absolute;
-    inset: 0;
-    background-image: url('../../../assets/images/shadow.webp');
-    background-size: cover;
-    background-position: center 55%;
-    filter: brightness(0.6);
-    transition: all 0.5s ease;
-    z-index: 0;
-
-    &::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(to right,
-          rgba(0, 0, 0, 0.9) 0%,
-          rgba(0, 0, 0, 0.6) 50%,
-          rgba(0, 0, 0, 0.4) 100%);
-    }
-  }
-
-  .shadow-content {
-    position: relative;
-    z-index: 1;
-    padding: 1.5rem 2rem;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    height: 100%;
-  }
-
-  .shadow-role {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    margin-bottom: 0.75rem;
-
-    fa-icon {
-      color: #ffffff;
-      font-size: 1.1rem;
-      filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.3));
-    }
-
-    span {
-      font-family: 'Cinzel', serif;
-      font-weight: 700;
-      font-size: 0.9rem;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: #ffffff;
-      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-    }
-  }
-
-  .shadow-quote {
-    font-family: 'Playfair Display', serif;
-    font-style: italic;
-    font-size: 1rem;
-    line-height: 1.5;
-    color: rgba(255, 255, 255, 0.9);
-    border-left: 3px solid rgba(255, 255, 255, 0.3);
-    padding-left: 1rem;
-    opacity: 0.95;
-    min-height: 4.5em;
-    display: flex;
-    align-items: center;
-  }
-
-  .typewriter-cursor {
-    display: inline;
-    color: #ffffff;
-    font-weight: 400;
-    margin-left: 2px;
-    animation: blink 1s step-end infinite;
-    text-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
-    vertical-align: baseline;
-  }
-
-  @keyframes blink {
-
-    0%,
-    100% {
-      opacity: 1;
-    }
-
-    50% {
-      opacity: 0;
-    }
-  }
-}
-
-// --- Social Connect Card ---
-.social-card-container {
-  padding: 1.5rem 2rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1.2rem;
-}
-
-.social-header {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  opacity: 0.8;
-  width: 100%;
-
-  .line {
-    flex-grow: 1;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-  }
-
-  .social-title {
-    font-family: 'Roboto', sans-serif;
-    font-size: 0.75rem;
-    text-transform: uppercase;
-    letter-spacing: 4px;
-    color: rgba(255, 255, 255, 0.8);
-    font-weight: 400;
-  }
-}
-
-.social-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 0.75rem;
-  width: 100%;
-}
-
-.social-item {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 0.8rem 1rem;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: 8px;
-  overflow: hidden;
-  text-decoration: none;
-  transition: all 0.2s ease;
-  cursor: url('../../../assets/images/cursor/link.png'), pointer;
-
-  .item-bg {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(90deg, rgba(255, 255, 255, 0.05), transparent);
-    opacity: 0;
-    transition: opacity 0.2s ease;
-  }
-
-  fa-icon {
-    font-size: 1.2rem;
-    color: rgba(255, 255, 255, 0.6);
-    transition: all 0.2s ease;
-    z-index: 1;
-    width: 24px;
-    text-align: center;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-
-  .item-name {
-    font-family: 'Roboto', sans-serif;
-    font-size: 0.8rem;
-    font-weight: 500;
-    color: rgba(255, 255, 255, 0.6);
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    transition: color 0.2s ease;
-    z-index: 1;
-  }
-
-    &:hover {
-    background: rgba(255, 255, 255, 0.08);
-    border-color: rgba(255, 255, 255, 0.15);
-    transform: translateX(2px);
-
-    .item-bg {
-      opacity: 1;
-    }
-
-    fa-icon {
-      color: #ffffff;
-      transform: scale(1.1);
-    }
-
-    .item-name {
-      color: #ffffff;
     }
   }
 }
@@ -428,72 +181,6 @@
   }
 }
 
-// ========================================
-// Tech Stack Marquee Widget
-// ========================================
-.tech-stack-card {
-  min-height: 70px;
-  padding: 0;
-  display: flex;
-  align-items: center;
-
-  .marquee-mask {
-    width: 100%;
-    overflow: hidden;
-    mask-image: linear-gradient(to right,
-        transparent,
-        black 10%,
-        black 90%,
-        transparent);
-    -webkit-mask-image: linear-gradient(to right,
-        transparent,
-        black 10%,
-        black 90%,
-        transparent);
-  }
-
-  .marquee-track {
-    display: flex;
-    gap: 3rem;
-    width: max-content;
-    animation: scroll 20s linear infinite;
-    padding: 0.5rem 0;
-
-    &:hover {
-      animation-play-state: paused;
-    }
-  }
-
-  .tech-item {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    fa-icon {
-      font-size: 1.8rem;
-      transition: all 0.3s ease;
-      filter: grayscale(100%) brightness(0.7);
-      opacity: 0.6;
-    }
-
-    &:hover fa-icon {
-      filter: grayscale(0%) brightness(1.2) drop-shadow(0 0 5px currentColor);
-      opacity: 1;
-      transform: scale(1.2);
-    }
-  }
-}
-
-@keyframes scroll {
-  0% {
-    transform: translateX(0);
-  }
-
-  100% {
-    transform: translateX(calc(-100% / 3));
-  }
-}
-
 @media screen and (max-width: 640px) {
   .floating-search-btn {
     bottom: 1rem;
@@ -563,11 +250,4 @@ app-neko {
 
 .delay-4 {
   animation-delay: 0.5s;
-}
-
-.clock-card,
-.shadow-card,
-.social-card-container,
-.tech-stack-card {
-  opacity: 1;
 }

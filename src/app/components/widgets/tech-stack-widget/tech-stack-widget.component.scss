@@ -1,0 +1,60 @@
+// ========================================
+// Tech Stack Marquee Widget
+// ========================================
+.tech-stack-card {
+  min-height: 70px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+
+  .marquee-mask {
+    width: 100%;
+    overflow: hidden;
+    mask-image: linear-gradient(to right,
+        transparent,
+        black 10%,
+        black 90%,
+        transparent);
+    -webkit-mask-image: linear-gradient(to right,
+        transparent,
+        black 10%,
+        black 90%,
+        transparent);
+  }
+
+  .marquee-track {
+    display: flex;
+    gap: 3rem;
+    width: max-content;
+    animation: scroll 20s linear infinite;
+    padding: 0.5rem 0;
+
+    &:hover {
+      animation-play-state: paused;
+    }
+  }
+
+  .tech-item {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    fa-icon {
+      font-size: 1.8rem;
+      transition: all 0.3s ease;
+      filter: grayscale(100%) brightness(0.7);
+      opacity: 0.6;
+    }
+
+    &:hover fa-icon {
+      filter: grayscale(0%) brightness(1.2) drop-shadow(0 0 5px currentColor);
+      opacity: 1;
+      transform: scale(1.2);
+    }
+  }
+}
+
+@keyframes scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(calc(-100% / 3)); }
+}

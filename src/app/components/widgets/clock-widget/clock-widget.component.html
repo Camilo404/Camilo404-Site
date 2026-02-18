@@ -1,0 +1,28 @@
+<article class="widget-card clock-card">
+  <video #nameplateVideo class="clock-background-video" autoplay loop muted playsinline preload="auto"
+    [class.hidden]="!nameplateVideoUrl" [src]="nameplateVideoUrl || ''" (loadeddata)="onVideoLoaded($event)"
+    (canplay)="onVideoCanPlay($event)" (error)="onVideoError($event)">
+  </video>
+  <div class="clock-content">
+    <div class="clock-container">
+      <div class="clock-inner">
+        <div class="time-section">
+          <div class="main-time">
+            <span class="digit">{{ hours() }}</span>
+            <span class="blink">:</span>
+            <span class="digit">{{ minutes() }}</span>
+          </div>
+          <div class="secondary-time">
+            <span class="seconds">{{ seconds() }}</span>
+            <span class="ampm">{{ ampm() }}</span>
+          </div>
+        </div>
+        <div class="date-section">
+          <span class="day">{{ day() }}</span>
+          <span class="divider">•</span>
+          <span class="date">{{ fullDate() }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</article>

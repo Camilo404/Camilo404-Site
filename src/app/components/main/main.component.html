@@ -20,94 +20,22 @@
 
       <!-- Clock Widget -->
       <div class="anim-wrapper delay-1">
-        <article class="widget-card clock-card">
-          <video #nameplateVideo class="clock-background-video" autoplay loop muted playsinline preload="auto"
-            [class.hidden]="!nameplateVideoUrl" [src]="nameplateVideoUrl || ''" (loadeddata)="onVideoLoaded($event)"
-            (canplay)="onVideoCanPlay($event)" (error)="onVideoError($event)">
-          </video>
-          <div class="clock-content">
-            <app-clock></app-clock>
-          </div>
-        </article>
+        <app-clock-widget [nameplateVideoUrl]="nameplateVideoUrl"></app-clock-widget>
       </div>
 
       <!-- Shadow Widget -->
       <div class="anim-wrapper delay-2">
-        <article class="widget-card shadow-card">
-          <div class="shadow-bg"></div>
-          <div class="shadow-content">
-            <div class="shadow-role">
-              <fa-icon [icon]="faTerminal"></fa-icon>
-              <span>Web Designer & Developer</span>
-            </div>
-            <div class="shadow-quote">
-              <span>"{{ currentQuote() }}<span class="typewriter-cursor">|</span>"</span>
-            </div>
-          </div>
-        </article>
+        <app-shadow-widget></app-shadow-widget>
       </div>
 
       <!-- Social Connect Widget -->
       <div class="anim-wrapper delay-3">
-        <nav class="widget-card social-card-container">
-          <div class="social-header">
-            <span class="line"></span>
-            <span class="social-title">Connect</span>
-            <span class="line"></span>
-          </div>
-          <div class="social-grid">
-            <a href="https://github.com/Camilo404" target="_blank" class="social-item" title="GitHub">
-              <div class="item-bg"></div>
-              <fa-icon [icon]="faGithub"></fa-icon>
-              <span class="item-name">GitHub</span>
-            </a>
-            <a href="https://www.youtube.com/channel/UChzlaSE1adSPVGYBBOQ1ibg" target="_blank" class="social-item"
-              title="YouTube">
-              <div class="item-bg"></div>
-              <fa-icon [icon]="faYoutube"></fa-icon>
-              <span class="item-name">YouTube</span>
-            </a>
-            <a href="https://www.instagram.com/camiloxtz/" target="_blank" class="social-item" title="Instagram">
-              <div class="item-bg"></div>
-              <fa-icon [icon]="faInstagram"></fa-icon>
-              <span class="item-name">Instagram</span>
-            </a>
-            <a href="https://steamcommunity.com/profiles/76561198832154348/" target="_blank" class="social-item"
-              title="Steam">
-              <div class="item-bg"></div>
-              <fa-icon [icon]="faSteam"></fa-icon>
-              <span class="item-name">Steam</span>
-            </a>
-          </div>
-        </nav>
+        <app-social-widget></app-social-widget>
       </div>
 
-      <!-- Tech Stack Infinite Marquee -->
+      <!-- Tech Stack Infinite Marquee Widget -->
       <div class="anim-wrapper delay-4">
-        <section class="widget-card tech-stack-card">
-          <div class="marquee-mask">
-            <div class="marquee-track">
-              <!-- Original Set -->
-              @for (tech of techStack; track tech) {
-                <div class="tech-item" [title]="tech.name">
-                  <fa-icon [icon]="tech.icon" [style.color]="tech.color"></fa-icon>
-                </div>
-              }
-              <!-- Duplicate Set for Infinite Loop -->
-              @for (tech of techStack; track tech) {
-                <div class="tech-item" [title]="tech.name">
-                  <fa-icon [icon]="tech.icon" [style.color]="tech.color"></fa-icon>
-                </div>
-              }
-              <!-- Triplicate Set (just to be safe with wide screens) -->
-              @for (tech of techStack; track tech) {
-                <div class="tech-item" [title]="tech.name">
-                  <fa-icon [icon]="tech.icon" [style.color]="tech.color"></fa-icon>
-                </div>
-              }
-            </div>
-          </div>
-        </section>
+        <app-tech-stack-widget></app-tech-stack-widget>
       </div>
 
     </div>
