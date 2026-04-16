@@ -16,7 +16,13 @@ export class ThemeService {
     return document.documentElement.classList.contains('dark');
   }
 
-  toggleTheme(): void {
+  toggleTheme(event?: MouseEvent): void {
+    const x = event ? `${(event.clientX / window.innerWidth) * 100}%` : '90%';
+    const y = event ? `${(event.clientY / window.innerHeight) * 100}%` : '5%';
+
+    document.documentElement.style.setProperty('--toggle-x', x);
+    document.documentElement.style.setProperty('--toggle-y', y);
+
     const switchTheme = () => {
       const newIsDark = !this.isDark();
       this.isDark.set(newIsDark);
