@@ -135,35 +135,33 @@ $font-decorative: 'Cinzel', serif;
 // View Transitions API - Circle with Blur
 // ========================================
 ::view-transition-group(root) {
-  animation-duration: 0.4s;
+  animation-timing-function: var(--expo-in);
 }
 
 ::view-transition-new(root) {
-  animation: circle-reveal 0.4s cubic-bezier(0.4, 0, 0.2, 1) both;
+  mask: url('https://media.tenor.com/cyORI7kwShQAAAAi/shigure-ui-dance.gif') center / 0 no-repeat;
+  animation: scale 3s;
+  animation-fill-mode: both;
 }
 
 ::view-transition-old(root),
 .dark::view-transition-old(root) {
-  animation: circle-hide 0.4s cubic-bezier(0.4, 0, 0.2, 1) both;
+  animation: scale 3s;
+  animation-fill-mode: both;
 }
 
-@keyframes circle-reveal {
-  from {
-    clip-path: circle(0% at var(--toggle-x, 90%) var(--toggle-y, 5%));
+@keyframes scale {
+  0% {
+    mask-size: 0;
   }
-  to {
-    clip-path: circle(150% at var(--toggle-x, 90%) var(--toggle-y, 5%));
+  10% {
+    mask-size: 50vmax;
   }
-}
-
-@keyframes circle-hide {
-  from {
-    clip-path: circle(150% at var(--toggle-x, 90%) var(--toggle-y, 5%));
-    opacity: 1;
+  90% {
+    mask-size: 50vmax;
   }
-  to {
-    clip-path: circle(0% at var(--toggle-x, 90%) var(--toggle-y, 5%));
-    opacity: 0;
+  100% {
+    mask-size: 2000vmax;
   }
 }
 

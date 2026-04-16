@@ -9,7 +9,7 @@ import { ThemeService } from '../../services/theme.service';
   template: `
     <button
       class="theme-toggle-btn"
-      (click)="themeService.toggleTheme($event)"
+      (click)="themeService.toggleTheme()"
       [attr.title]="themeService.isDark() ? 'Switch to light mode' : 'Switch to dark mode'"
       [attr.aria-label]="themeService.isDark() ? 'Switch to light mode' : 'Switch to dark mode'"
     >
