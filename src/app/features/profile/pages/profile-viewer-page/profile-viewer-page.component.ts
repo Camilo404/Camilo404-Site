@@ -5,6 +5,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { interval } from 'rxjs';
 import { CardProfileComponent } from '../../../../shared/ui/card-profile/card-profile.component';
 import { SearchModalComponent } from '../../../../shared/ui/search-modal/search-modal.component';
+import { ThemeToggleComponent } from '../../../../shared/ui/theme-toggle/theme-toggle.component';
 import { ColorUtilsService } from 'src/app/core/services/color-utils.service';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faUserAstronaut, faCircle, faBolt, faRocket, faSyncAlt, faShieldAlt, faFingerprint, faSearch } from '@fortawesome/free-solid-svg-icons';
@@ -14,7 +15,7 @@ import { faUserAstronaut, faCircle, faBolt, faRocket, faSyncAlt, faShieldAlt, fa
     standalone: true,
     templateUrl: './profile-viewer-page.component.html',
     styleUrl: './profile-viewer-page.component.scss',
-    imports: [RouterModule, CardProfileComponent, SearchModalComponent, FontAwesomeModule],
+    imports: [RouterModule, CardProfileComponent, SearchModalComponent, ThemeToggleComponent, FontAwesomeModule],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ProfileViewerPageComponent {

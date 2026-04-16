@@ -6,7 +6,7 @@
 
   &:hover .shadow-bg {
     transform: scale(1.05);
-    filter: brightness(0.8) blur(1px);
+    filter: brightness(var(--shadow-brightness-hover)) blur(1px);
   }
 
   .shadow-bg {
@@ -15,7 +15,7 @@
     background-image: url('../../../../../assets/images/shadow.webp');
     background-size: cover;
     background-position: center 55%;
-    filter: brightness(0.6);
+    filter: brightness(var(--shadow-brightness));
     transition: all 0.5s ease;
     z-index: 0;
 
@@ -23,10 +23,7 @@
       content: '';
       position: absolute;
       inset: 0;
-      background: linear-gradient(to right,
-          rgba(0, 0, 0, 0.9) 0%,
-          rgba(0, 0, 0, 0.6) 50%,
-          rgba(0, 0, 0, 0.4) 100%);
+      background: var(--shadow-overlay);
     }
   }
 
@@ -47,9 +44,9 @@
     margin-bottom: 0.75rem;
 
     fa-icon {
-      color: #ffffff;
+      color: var(--text-primary);
       font-size: 1.1rem;
-      filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.3));
+      filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.15));
     }
 
     span {
@@ -58,8 +55,8 @@
       font-size: 0.9rem;
       letter-spacing: 2px;
       text-transform: uppercase;
-      color: #ffffff;
-      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+      color: var(--text-primary);
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
     }
   }
 
@@ -68,8 +65,8 @@
     font-style: italic;
     font-size: 1rem;
     line-height: 1.5;
-    color: rgba(255, 255, 255, 0.9);
-    border-left: 3px solid rgba(255, 255, 255, 0.3);
+    color: var(--text-primary);
+    border-left: 3px solid var(--border-hover);
     padding-left: 1rem;
     opacity: 0.95;
     min-height: 4.5em;
@@ -79,11 +76,11 @@
 
   .typewriter-cursor {
     display: inline;
-    color: #ffffff;
+    color: var(--text-primary);
     font-weight: 400;
     margin-left: 2px;
     animation: blink 1s step-end infinite;
-    text-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
+    text-shadow: 0 0 8px var(--mouse-glow);
     vertical-align: baseline;
   }
 

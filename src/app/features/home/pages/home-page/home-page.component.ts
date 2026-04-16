@@ -7,6 +7,7 @@ import { EtherealShadowComponent } from '../../components/ethereal-shadow/ethere
 import { CardProfileComponent } from '../../../../shared/ui/card-profile/card-profile.component';
 import { FloatingActivityComponent } from '../../../../shared/ui/floating-activity/floating-activity.component';
 import { SearchModalComponent } from '../../../../shared/ui/search-modal/search-modal.component';
+import { ThemeToggleComponent } from '../../../../shared/ui/theme-toggle/theme-toggle.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import { ClockWidgetComponent } from '../../widgets/clock-widget/clock-widget.component';
@@ -26,6 +27,7 @@ import { TechStackWidgetComponent } from '../../widgets/tech-stack-widget/tech-s
     CardProfileComponent,
     FloatingActivityComponent,
     SearchModalComponent,
+    ThemeToggleComponent,
     FontAwesomeModule,
     ClockWidgetComponent,
     ShadowWidgetComponent,

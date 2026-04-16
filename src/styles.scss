@@ -9,9 +9,165 @@ $font-primary: 'Roboto', sans-serif;
 $font-secondary: 'Playfair Display', serif;
 $font-decorative: 'Cinzel', serif;
 
-$text-color: #ffffff;
-$bg-color: #1e1e1e;
+// ========================================
+// Theme CSS Custom Properties
+// ========================================
+:root {
+  --bg-primary: #f5f5f5;
+  --bg-secondary: #e8e8e8;
+  --bg-card: rgba(255, 255, 255, 0.75);
+  --bg-card-hover: rgba(255, 255, 255, 0.9);
+  --bg-card-solid: #ffffff;
+  --bg-glass: rgba(255, 255, 255, 0.6);
+  --bg-glass-strong: rgba(255, 255, 255, 0.9);
+  --bg-overlay: rgba(0, 0, 0, 0.5);
+  --bg-input: rgba(0, 0, 0, 0.04);
+  --bg-input-focus: rgba(0, 0, 0, 0.06);
+  --text-primary: #1a1a1a;
+  --text-secondary: #555555;
+  --text-muted: #888888;
+  --text-inverse: #ffffff;
+  --text-on-image: #ffffff;
+  --border-primary: rgba(0, 0, 0, 0.12);
+  --border-hover: rgba(0, 0, 0, 0.22);
+  --border-glass: rgba(0, 0, 0, 0.1);
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 4px 24px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.12);
+  --shadow-card: 0 4px 16px -1px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(0, 0, 0, 0.06) inset;
+  --shadow-card-hover: 0 20px 40px -5px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(0, 0, 0, 0.1) inset;
+  --accent-glow: rgba(139, 92, 246, 0.15);
+  --mouse-glow: rgba(0, 0, 0, 0.06);
+  --skeleton-base: #e0e0e0;
+  --skeleton-shine: #f0f0f0;
+  --code-bg: rgba(0, 0, 0, 0.06);
+  --blockquote-border: #cccccc;
+  --link-color: #2563eb;
+  --markdown-text: #333333;
+  --clan-tag-text: #4450c7;
+  --status-badge-bg: rgba(0, 0, 0, 0.4);
+  --connection-item-bg: rgba(0, 0, 0, 0.4);
+  --connection-item-bg-hover: rgba(0, 0, 0, 0.55);
+  --shadow-brightness: 0.9;
+  --shadow-brightness-hover: 1;
+  --shadow-overlay: linear-gradient(to right,
+      rgba(255, 255, 255, 0.5) 0%,
+      rgba(255, 255, 255, 0.2) 50%,
+      rgba(255, 255, 255, 0.1) 100%);
 
+  --toggle-bg: rgba(255, 255, 255, 0.8);
+  --toggle-border: rgba(0, 0, 0, 0.12);
+  --toggle-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  --toggle-thumb-bg: #ffffff;
+  --toggle-icon-color: #666666;
+
+  --expo-in: linear(
+    0 0%, 0.0085 31.26%, 0.0167 40.94%,
+    0.0289 48.86%, 0.0471 55.92%,
+    0.0717 61.99%, 0.1038 67.32%,
+    0.1443 72.07%, 0.1989 76.7%,
+    0.2659 80.89%, 0.3465 84.71%,
+    0.4419 88.22%, 0.554 91.48%,
+    0.6835 94.51%, 0.8316 97.34%, 1 100%
+  );
+  --expo-out: linear(
+    0 0%, 0.1684 2.66%, 0.3165 5.49%,
+    0.446 8.52%, 0.5581 11.78%,
+    0.6535 15.29%, 0.7341 19.11%,
+    0.8011 23.3%, 0.8557 27.93%,
+    0.8962 32.68%, 0.9283 38.01%,
+    0.9529 44.08%, 0.9711 51.14%,
+    0.9833 59.06%, 0.9915 68.74%, 1 100%
+  );
+}
+
+.dark {
+  --bg-primary: #1e1e1e;
+  --bg-secondary: #2a2a2a;
+  --bg-card: rgba(0, 0, 0, 0.4);
+  --bg-card-hover: rgba(255, 255, 255, 0.08);
+  --bg-card-solid: #1a1a1a;
+  --bg-glass: rgba(255, 255, 255, 0.05);
+  --bg-glass-strong: rgba(20, 20, 24, 0.85);
+  --bg-overlay: rgba(0, 0, 0, 0.7);
+  --bg-input: rgba(0, 0, 0, 0.3);
+  --bg-input-focus: rgba(0, 0, 0, 0.5);
+  --text-primary: #ffffff;
+  --text-secondary: rgba(255, 255, 255, 0.7);
+  --text-muted: rgba(255, 255, 255, 0.4);
+  --text-inverse: #1a1a1a;
+  --text-on-image: #ffffff;
+  --border-primary: rgba(255, 255, 255, 0.08);
+  --border-hover: rgba(255, 255, 255, 0.2);
+  --border-glass: rgba(255, 255, 255, 0.1);
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 24px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.4);
+  --shadow-card: 0 4px 24px -1px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+  --shadow-card-hover: 0 20px 40px -5px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.15) inset;
+  --accent-glow: rgba(139, 92, 246, 0.2);
+  --mouse-glow: rgba(255, 255, 255, 0.08);
+  --skeleton-base: #2f2f2f;
+  --skeleton-shine: #3a3a3a;
+  --code-bg: #48484869;
+  --blockquote-border: #3c3c3c;
+  --link-color: #42adf5;
+  --markdown-text: #dddddd;
+  --clan-tag-text: #DEE0FC;
+  --status-badge-bg: rgba(0, 0, 0, 0.3);
+  --connection-item-bg: rgba(255, 255, 255, 0.05);
+  --connection-item-bg-hover: rgba(255, 255, 255, 0.1);
+  --shadow-brightness: 0.6;
+  --shadow-brightness-hover: 0.8;
+  --shadow-overlay: linear-gradient(to right,
+      var(--bg-overlay) 0%,
+      rgba(0, 0, 0, 0.6) 50%,
+      rgba(0, 0, 0, 0.4) 100%);
+
+  --toggle-bg: rgba(0, 0, 0, 0.6);
+  --toggle-border: rgba(255, 255, 255, 0.15);
+  --toggle-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --toggle-thumb-bg: #333333;
+  --toggle-icon-color: #aaaaaa;
+}
+
+// ========================================
+// View Transitions API - Circle with Blur
+// ========================================
+::view-transition-group(root) {
+  animation-timing-function: var(--expo-in);
+}
+
+::view-transition-new(root) {
+  mask: url('https://media.tenor.com/cyORI7kwShQAAAAi/shigure-ui-dance.gif') center / 0 no-repeat;
+  animation: scale 3s;
+  animation-fill-mode: both;
+}
+
+::view-transition-old(root),
+.dark::view-transition-old(root) {
+  animation: scale 3s;
+  animation-fill-mode: both;
+}
+
+@keyframes scale {
+  0% {
+    mask-size: 0;
+  }
+  10% {
+    mask-size: 50vmax;
+  }
+  90% {
+    mask-size: 50vmax;
+  }
+  100% {
+    mask-size: 2000vmax;
+  }
+}
+
+// ========================================
+// Global Styles
+// ========================================
 * {
   margin: 0;
   padding: 0;
@@ -20,11 +176,11 @@ $bg-color: #1e1e1e;
 
 body {
   font-family: $font-primary;
-  background-color: $bg-color;
-  color: $text-color;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
   cursor: url('./assets/images/cursor/pointer.png'), auto;
+  transition: background-color 0.3s ease, color 0.3s ease;
   
-  // Performance optimizations
   font-display: swap;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -38,20 +194,18 @@ body {
 .font-secondary { font-family: $font-secondary; }
 .font-decorative { font-family: $font-decorative; }
 
-// Optimize image rendering
 img {
   max-width: 100%;
   height: auto;
   image-rendering: optimizeQuality;
 }
 
-// Optimize animations for better performance
 * {
   will-change: auto;
 }
 
 .markdown {
-  color: #dddddd;
+  color: var(--markdown-text);
   font-size: 0.9rem;
   line-height: 1.5;
   font-family: $font-primary;
@@ -60,18 +214,18 @@ img {
 .markdown code {
   width: auto;
   height: auto;
-  background: #48484869;
+  background: var(--code-bg);
   padding: 0 .2em;
   margin: -.2em 0;
   border-radius: 4px;
   text-indent: 0;
   white-space: pre-wrap;
-  border: 1px solid rgba(0, 0, 0, 0);
+  border: 1px solid var(--border-primary);
   font-family: monospace;
 }
 
 .markdown blockquote {
-  border-left: 4px solid #3c3c3c;
+  border-left: 4px solid var(--blockquote-border);
   padding-left: 12px;
   margin: 0;
   margin-top: -24px;
@@ -88,7 +242,7 @@ img {
 }
 
 .markdown a {
-  color: #42adf5;
+  color: var(--link-color);
   text-decoration: none;
   transition: text-decoration 0.2s ease-in-out;
 }

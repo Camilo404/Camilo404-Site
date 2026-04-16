@@ -1,8 +1,8 @@
 // CSS Variables with default values
 :root {
-  --gradient-color-1: #1e293b; // slate-900
-  --gradient-color-2: #7e22ce; // purple-700
-  --gradient-color-3: #1e293b; // slate-900
+  --gradient-color-1: #1e293b;
+  --gradient-color-2: #7e22ce;
+  --gradient-color-3: #1e293b;
 }
 
 // Dynamic gradient background
@@ -20,10 +20,10 @@
 // Mesh pattern overlay
 .mesh-pattern {
   background-image: 
-    linear-gradient(45deg, rgba(255,255,255,0.03) 25%, transparent 25%),
-    linear-gradient(-45deg, rgba(255,255,255,0.03) 25%, transparent 25%),
-    linear-gradient(45deg, transparent 75%, rgba(255,255,255,0.03) 75%),
-    linear-gradient(-45deg, transparent 75%, rgba(255,255,255,0.03) 75%);
+    linear-gradient(45deg, var(--border-primary) 25%, transparent 25%),
+    linear-gradient(-45deg, var(--border-primary) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, var(--border-primary) 75%),
+    linear-gradient(-45deg, transparent 75%, var(--border-primary) 75%);
   background-size: 60px 60px;
   background-position: 0 0, 0 30px, 30px -30px, -30px 0px;
   animation: meshMove 20s linear infinite;
@@ -45,7 +45,7 @@
   left: 0;
   width: 100%;
   height: 2px;
-  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.1), transparent);
+  background: linear-gradient(to bottom, var(--mouse-glow), transparent);
   animation: scanlineMove 4s linear infinite;
   pointer-events: none;
 }
@@ -64,15 +64,15 @@
 
 // Glassmorphism container
 .glass-container {
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--bg-card-solid);
   backdrop-filter: blur(20px) saturate(180%);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--border-glass);
   border-radius: 24px;
   padding: 2rem;
   box-shadow: 
-    0 8px 32px rgba(0, 0, 0, 0.3),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    var(--shadow-md),
+    inset 0 1px 0 var(--mouse-glow),
     0 0 60px rgba(var(--gradient-color-2-rgb), 0.1);
   position: relative;
   overflow: hidden;
@@ -88,7 +88,7 @@
     height: 1px;
     background: linear-gradient(90deg, 
       transparent,
-      rgba(255, 255, 255, 0.4),
+      var(--mouse-glow),
       transparent
     );
     animation: shimmer 3s ease-in-out infinite;
@@ -101,13 +101,13 @@
 }
 
 .glass-container-minimal {
-  background: rgba(255, 255, 255, 0.03);
+  background: var(--bg-card-solid);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--border-primary);
   border-radius: 16px;
   padding: 1.5rem 2rem;
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--shadow-sm);
   width: 600px;
   max-width: 100%;
 }
@@ -115,7 +115,7 @@
 .glass-mobile {
   backdrop-filter: blur(5px) !important;
   -webkit-backdrop-filter: blur(5px) !important;
-  background: rgba(255, 255, 255, 0.08) !important;
+  background: var(--bg-card-solid) !important;
 }
 
 .clock-video-container {
@@ -160,7 +160,7 @@
 }
 
 .header-icon-color {
-  color: rgba(255, 255, 255, 0.7);
+  color: var(--text-secondary);
   transition: all 0.3s ease;
 }
 
@@ -179,7 +179,7 @@
 .dynamic-title-gradient {
   background: linear-gradient(135deg, 
     var(--gradient-color-2) 0%, 
-    #ffffff 50%, 
+    var(--text-primary) 50%, 
     var(--gradient-color-2) 100%
   );
   background-size: 200% auto;
@@ -229,7 +229,7 @@
 
 .profile-card-wrapper {
   position: relative;
-  filter: drop-shadow(0 20px 60px rgba(0, 0, 0, 0.4));
+  filter: drop-shadow(0 20px 60px var(--shadow-lg));
   
   .card-glow-effect {
     position: absolute;
@@ -252,10 +252,10 @@
   align-items: center;
   gap: 1rem;
   padding: 1.25rem;
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--bg-card);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--border-primary);
   border-radius: 16px;
   transition: all 0.3s ease;
   cursor: pointer;
@@ -271,18 +271,18 @@
     height: 100%;
     background: linear-gradient(90deg, 
       transparent, 
-      rgba(255, 255, 255, 0.1), 
+      var(--mouse-glow), 
       transparent
     );
     transition: left 0.5s ease;
   }
   
   &:hover {
-    background: rgba(255, 255, 255, 0.08);
+    background: var(--bg-card-hover);
     border-color: var(--gradient-color-2);
     transform: translateY(-2px);
     box-shadow: 
-      0 8px 24px rgba(0, 0, 0, 0.3),
+      var(--shadow-md),
       0 0 40px rgba(var(--gradient-color-2-rgb), 0.2);
     
     &::before {
@@ -300,10 +300,10 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: rgba(255, 255, 255, 0.05);
+    background: var(--bg-glass);
     border-radius: 12px;
     font-size: 1.25rem;
-    color: rgba(255, 255, 255, 0.7);
+    color: var(--text-secondary);
     transition: all 0.3s ease;
   }
   
@@ -312,7 +312,7 @@
     
     .stat-label {
       font-size: 0.75rem;
-      color: rgba(255, 255, 255, 0.5);
+      color: var(--text-muted);
       text-transform: uppercase;
       letter-spacing: 0.05em;
       margin-bottom: 0.25rem;
@@ -321,7 +321,7 @@
     .stat-value {
       font-size: 1rem;
       font-weight: 600;
-      color: rgba(255, 255, 255, 0.9);
+      color: var(--text-primary);
     }
   }
 }
@@ -330,13 +330,13 @@
   display: inline-flex;
   align-items: center;
   padding: 0.6rem 1.2rem;
-  background: rgba(255, 255, 255, 0.03);
+  background: var(--bg-glass);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--border-glass);
   border-radius: 20px;
-  color: rgba(255, 255, 255, 0.7);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  color: var(--text-secondary);
+  box-shadow: var(--shadow-sm);
   animation: badge-float 3s ease-in-out infinite;
 }
 
@@ -520,7 +520,7 @@
   background: rgba(139, 92, 246, 0.9);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid var(--border-hover);
   border-radius: 50px;
   color: white;
   font-weight: 600;
