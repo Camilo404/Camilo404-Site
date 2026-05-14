@@ -19,6 +19,7 @@ export class LanyardService {
 
   private heartbeat_interval: number = 30000;
   private heartbeat: any;
+  private reconnectTimer: ReturnType<typeof setTimeout> | null = null;
   private reconnectAttempts = 0;
   private maxReconnectAttempts = 5;
   private baseReconnectDelay = 1000; // 1 second
@@ -85,11 +86,15 @@ export class LanyardService {
   }
 
   private reconnectWithBackoff(): void {
+    // Avoid concurrent reconnection timers
+    if (this.reconnectTimer !== null) return;
+
     // Exponential backoff: 1s, 2s, 4s, 8s, 16s
     const delay = this.baseReconnectDelay * Math.pow(2, this.reconnectAttempts);
     this.reconnectAttempts++;
 
-    setTimeout(() => {
+    this.reconnectTimer = setTimeout(() => {
+      this.reconnectTimer = null;
       if (this.reconnectAttempts <= this.maxReconnectAttempts) {
         this.setupWebSocket();
       }
@@ -97,6 +102,9 @@ export class LanyardService {
   }
 
   private cleanup(): void {
+    clearTimeout(this.reconnectTimer ?? undefined);
+    this.reconnectTimer = null;
+
     if (this.heartbeat) {
       clearInterval(this.heartbeat);
       this.heartbeat = null;
@@ -120,6 +128,8 @@ export class LanyardService {
   // Method to manually close the connection
   public disconnect(): void {
     this.reconnectAttempts = this.maxReconnectAttempts; // Prevent reconnection
+    clearTimeout(this.reconnectTimer ?? undefined);
+    this.reconnectTimer = null;
     this.cleanup();
   }
 }

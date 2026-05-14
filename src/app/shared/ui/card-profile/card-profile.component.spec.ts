@@ -9,8 +9,7 @@ describe('CardProfileComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-    declarations: [CardProfileComponent],
-    imports: [],
+    imports: [CardProfileComponent],
     providers: [provideHttpClient(withInterceptorsFromDi())]
 });
     fixture = TestBed.createComponent(CardProfileComponent);

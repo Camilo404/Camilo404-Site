@@ -17,6 +17,8 @@ export class Card3DEffectService {
   private rendererFactory = inject(RendererFactory2);
   private renderer: Renderer2 = this.rendererFactory.createRenderer(null, null);
   
+  private unlistenMap = new Map<HTMLElement, (() => void)[]>();
+
   private defaultConfig: Card3DConfig = {
     rotateX: 0,
     rotateY: 0,
@@ -48,31 +50,47 @@ export class Card3DEffectService {
   }
 
   private addEventListeners(element: HTMLElement, config: Card3DConfig): void {
+    const unlistens: (() => void)[] = [];
+
     // Mouse events
-    this.renderer.listen(element, 'mouseenter', () => {
-      this.onMouseEnter(element, config);
-    });
+    unlistens.push(
+      this.renderer.listen(element, 'mouseenter', () => {
+        this.onMouseEnter(element, config);
+      })
+    );
 
-    this.renderer.listen(element, 'mousemove', (event: MouseEvent) => {
-      this.onMouseMove(element, event, config);
-    });
+    unlistens.push(
+      this.renderer.listen(element, 'mousemove', (event: MouseEvent) => {
+        this.onMouseMove(element, event, config);
+      })
+    );
 
-    this.renderer.listen(element, 'mouseleave', () => {
-      this.onMouseLeave(element, config);
-    });
+    unlistens.push(
+      this.renderer.listen(element, 'mouseleave', () => {
+        this.onMouseLeave(element, config);
+      })
+    );
 
     // Touch events for mobile devices
-    this.renderer.listen(element, 'touchstart', (event: TouchEvent) => {
-      this.onTouchStart(element, event, config);
-    });
+    unlistens.push(
+      this.renderer.listen(element, 'touchstart', (event: TouchEvent) => {
+        this.onTouchStart(element, event, config);
+      })
+    );
 
-    this.renderer.listen(element, 'touchmove', (event: TouchEvent) => {
-      this.onTouchMove(element, event, config);
-    });
+    unlistens.push(
+      this.renderer.listen(element, 'touchmove', (event: TouchEvent) => {
+        this.onTouchMove(element, event, config);
+      })
+    );
 
-    this.renderer.listen(element, 'touchend', () => {
-      this.onTouchEnd(element, config);
-    });
+    unlistens.push(
+      this.renderer.listen(element, 'touchend', () => {
+        this.onTouchEnd(element, config);
+      })
+    );
+
+    this.unlistenMap.set(element, unlistens);
   }
 
   private onMouseEnter(element: HTMLElement, config: Card3DConfig): void {
@@ -207,10 +225,14 @@ export class Card3DEffectService {
   }
 
   destroyCard3DEffect(element: ElementRef): void {
-    const cardElement = element.nativeElement;
-    
-    this.renderer.removeStyle(cardElement, 'transform');
-    this.renderer.removeStyle(cardElement, 'transition');
-    this.renderer.removeStyle(cardElement, 'box-shadow');
+    const el = element.nativeElement as HTMLElement;
+    const unlistens = this.unlistenMap.get(el);
+    if (unlistens) {
+      unlistens.forEach(fn => fn());
+      this.unlistenMap.delete(el);
+    }
+    this.renderer.removeStyle(el, 'transform');
+    this.renderer.removeStyle(el, 'transition');
+    this.renderer.removeStyle(el, 'box-shadow');
   }
 }

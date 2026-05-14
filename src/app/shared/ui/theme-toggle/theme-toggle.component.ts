@@ -9,16 +9,15 @@ import { ThemeService } from '../../services/theme.service';
   template: `
     <button
       class="theme-toggle-btn"
+      [class.is-dark]="themeService.isDark()"
       (click)="themeService.toggleTheme()"
       [attr.title]="themeService.isDark() ? 'Switch to light mode' : 'Switch to dark mode'"
       [attr.aria-label]="themeService.isDark() ? 'Switch to light mode' : 'Switch to dark mode'"
     >
-      <div class="theme-toggle-track">
-        <div class="theme-toggle-icons">
-          <i class="fa-solid fa-moon" [class.active]="themeService.isDark()"></i>
-          <i class="fa-solid fa-sun" [class.active]="!themeService.isDark()"></i>
+      <div class="toggle-track">
+        <div class="toggle-thumb">
+          <i class="fa-solid" [class.fa-moon]="themeService.isDark()" [class.fa-sun]="!themeService.isDark()"></i>
         </div>
-        <div class="theme-toggle-thumb" [class.dark]="themeService.isDark()"></div>
       </div>
     </button>
   `,

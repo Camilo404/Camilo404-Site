@@ -45,15 +45,5 @@
   </div>
 </main>
 
-<!-- Search Button -->
-<button class="floating-search-btn" (click)="openSearchModal()" title="Search Discord Profile">
-  <fa-icon [icon]="faSearch" class="search-icon"></fa-icon>
-  <span class="btn-text">Search Profile</span>
-  <div class="btn-glow"></div>
-</button>
-
-<app-search-modal [isOpen]="isModalOpen()" (close)="closeSearchModal()" (search)="onSearchProfile($event)">
-</app-search-modal>
-
 <!-- Floating Spotify Activity -->
 <app-floating-activity (visibilityChange)="onActivityVisibilityChange($event)"></app-floating-activity>

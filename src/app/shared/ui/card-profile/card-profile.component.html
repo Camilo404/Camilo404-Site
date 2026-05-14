@@ -56,7 +56,10 @@
             class="status-badge"
             [ngClass]="lanyardData()?.d?.discord_status || 'offline'"
           >
-            <div class="status-dot"></div>
+            <div
+              class="status-dot"
+              [style.background-color]="lanyardData()?.d?.discord_status | statusColor"
+            ></div>
             <span class="status-text">{{
               lanyardData()?.d?.discord_status || "offline" | titlecase
             }}</span>
@@ -164,7 +167,7 @@
         @if (userData()?.user_profile?.bio!.length > 0) {
         <section class="section bio-section">
           <h3 class="section-title">About Me</h3>
-          <div class="markdown-content" [innerHTML]="userBioFormatted()"></div>
+          <div class="markdown-content" [innerHTML]="userData()?.user_profile?.bio | bioFormatter"></div>
         </section>
         }
 

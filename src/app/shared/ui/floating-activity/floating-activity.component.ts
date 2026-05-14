@@ -6,7 +6,7 @@ import { LanyardService } from 'src/app/core/services/lanyard.service';
 import { TimestampsService } from 'src/app/core/services/timestamps.service';
 import { LyricsService, LyricLine } from 'src/app/core/services/lyrics.service';
 import { Activity } from 'src/app/core/models/lanyard-profile.model';
-import { Subscription, timer } from 'rxjs';
+import { Subject, takeUntil, timer } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FastAverageColor } from 'fast-average-color';
 
@@ -58,9 +58,7 @@ export class FloatingActivityComponent {
   currentLineIndex = signal(-1);
   lyricsLoading = signal(false);
   private lastTrackId = signal<string | null>(null);
-  private lyricsSyncSubscription: Subscription = new Subscription();
-
-  private activitiesSubscription: Subscription = new Subscription();
+  private activityCancel$ = new Subject<void>();
 
   constructor() {
     effect(() => {
@@ -82,6 +80,11 @@ export class FloatingActivityComponent {
     effect(() => {
       this.currentActivity();
       this.processCurrentActivity();
+    });
+
+    this.destroyRef.onDestroy(() => {
+      this.activityCancel$.next();
+      this.activityCancel$.complete();
     });
   }
 
@@ -124,9 +127,7 @@ export class FloatingActivityComponent {
   }
 
   private processCurrentActivity(): void {
-    this.activitiesSubscription.unsubscribe();
-    this.activitiesSubscription = new Subscription();
-    this.lyricsSyncSubscription.unsubscribe();
+    this.activityCancel$.next();
 
     const activity = this.currentActivity();
 
@@ -159,26 +160,24 @@ export class FloatingActivityComponent {
     if (activity.timestamps) {
       const { start, end } = activity.timestamps;
 
-      if (end) {
-        const progressSub = this.timestampsService.getProgressPercentage(start, end)
-          .pipe(takeUntilDestroyed(this.destroyRef))
+      if (end != null) {
+        this.timestampsService.getProgressPercentage(start ?? 0, end)
+          .pipe(takeUntil(this.activityCancel$), takeUntilDestroyed(this.destroyRef))
           .subscribe(percentage => {
             this.percentage.set(percentage);
           });
-        this.activitiesSubscription.add(progressSub);
 
-        this.totalDuration.set(this.timestampsService.getTotalDuration(start, end));
+        this.totalDuration.set(this.timestampsService.getTotalDuration(start ?? 0, end));
       } else {
         this.percentage.set(0);
         this.totalDuration.set('');
       }
 
-      const elapsedSub = this.timestampsService.getElapsedTime(start)
-        .pipe(takeUntilDestroyed(this.destroyRef))
+      this.timestampsService.getElapsedTime(start ?? 0)
+        .pipe(takeUntil(this.activityCancel$), takeUntilDestroyed(this.destroyRef))
         .subscribe(time => {
           this.currentTime.set(time);
         });
-      this.activitiesSubscription.add(elapsedSub);
     }
   }
 
@@ -232,7 +231,7 @@ export class FloatingActivityComponent {
         this.lyricsLoading.set(true);
         
         const durationSeconds = activity.timestamps?.end 
-           ? Math.floor((activity.timestamps.end - activity.timestamps.start) / 1000) 
+           ? Math.floor((activity.timestamps.end - (activity.timestamps.start ?? 0)) / 1000) 
            : 0;
 
         this.lyricsService.getLyrics(
@@ -248,15 +247,15 @@ export class FloatingActivityComponent {
 
      // Start Sync Loop
      if (activity.timestamps?.start) {
-        this.lyricsSyncSubscription = timer(0, 200).pipe(
+        timer(0, 200).pipe(
+           takeUntil(this.activityCancel$),
            takeUntilDestroyed(this.destroyRef)
         ).subscribe(() => {
            if (!this.lyrics().length) return;
            
-           const elapsedMs = Date.now() - activity.timestamps!.start;
+           const elapsedMs = Date.now() - (activity.timestamps!.start ?? 0);
            this.updateCurrentLine(elapsedMs);
         });
-        this.activitiesSubscription.add(this.lyricsSyncSubscription);
      }
   }
 

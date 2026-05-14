@@ -1,107 +1,120 @@
+// ── Wrapper button ──────────────────────────────────────────────
 .theme-toggle-btn {
   position: fixed;
-  top: 1.5rem;
-  right: 1.5rem;
+  top: 1.25rem;
+  right: 1.25rem;
   z-index: 999;
   background: none;
   border: none;
   padding: 0;
   cursor: pointer;
   outline: none;
+
+  // Hover ring
+  &::after {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    border-radius: 9999px;
+    border: 2px solid transparent;
+    transition: border-color 0.25s ease;
+    pointer-events: none;
+  }
+
+  &:hover::after {
+    border-color: var(--toggle-ring);
+  }
+
+  &:focus-visible::after {
+    border-color: var(--toggle-ring);
+  }
 }
 
-.theme-toggle-track {
+// ── Track ────────────────────────────────────────────────────────
+.toggle-track {
   position: relative;
-  width: 56px;
+  width: 52px;
   height: 28px;
   border-radius: 9999px;
   background: var(--toggle-bg);
   border: 1px solid var(--toggle-border);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   box-shadow: var(--toggle-shadow);
-  transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+  transition:
+    background 0.3s ease,
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
   overflow: hidden;
 }
 
-.theme-toggle-icons {
+// ── Thumb ────────────────────────────────────────────────────────
+.toggle-thumb {
   position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 7px;
-  z-index: 1;
-  pointer-events: none;
-
-  i {
-    font-size: 0.75rem;
-    color: var(--toggle-icon-color);
-    transition: opacity 0.3s ease, transform 0.3s ease;
-    opacity: 0.4;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 14px;
-    height: 14px;
-
-    &.active {
-      opacity: 1;
-    }
-  }
-
-  .fa-moon.active {
-    transform: rotate(-15deg) scale(1.1);
-  }
-
-  .fa-sun.active {
-    transform: rotate(90deg) scale(1.1);
-  }
-}
-
-.theme-toggle-thumb {
-  position: absolute;
-  top: 2px;
-  left: 2px;
+  top: 3px;
+  left: 3px;
   width: 22px;
   height: 22px;
   border-radius: 50%;
   background: var(--toggle-thumb-bg);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), background 0.3s ease;
+  box-shadow: var(--toggle-thumb-shadow);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition:
+    transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
+    background 0.3s ease,
+    box-shadow 0.3s ease;
 
-  &.dark {
-    transform: translateX(28px);
+  i {
+    font-size: 0.65rem;
+    color: var(--toggle-icon-color);
+    transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.2s ease;
+    line-height: 1;
   }
 }
 
+// Dark state — slide thumb right + spin icon
+.theme-toggle-btn.is-dark .toggle-thumb {
+  transform: translateX(24px);
+
+  i {
+    transform: rotate(-20deg);
+  }
+}
+
+// Light state — sun spins on entry
+.theme-toggle-btn:not(.is-dark) .toggle-thumb i {
+  transform: rotate(45deg);
+}
+
+// ── Hover: slight thumb scale ────────────────────────────────────
+.theme-toggle-btn:hover .toggle-thumb {
+  box-shadow: var(--toggle-thumb-shadow-hover);
+}
+
+// ── Mobile ───────────────────────────────────────────────────────
 @media screen and (max-width: 640px) {
   .theme-toggle-btn {
-    top: 1rem;
-    right: 1rem;
+    top: 0.875rem;
+    right: 0.875rem;
   }
 
-  .theme-toggle-track {
-    width: 48px;
-    height: 24px;
+  .toggle-track {
+    width: 46px;
+    height: 26px;
   }
 
-  .theme-toggle-thumb {
-    width: 18px;
-    height: 18px;
-
-    &.dark {
-      transform: translateX(24px);
-    }
-  }
-
-  .theme-toggle-icons {
-    padding: 0 6px;
+  .toggle-thumb {
+    width: 20px;
+    height: 20px;
 
     i {
-      font-size: 0.65rem;
-      width: 12px;
-      height: 12px;
+      font-size: 0.6rem;
     }
+  }
+
+  .theme-toggle-btn.is-dark .toggle-thumb {
+    transform: translateX(20px);
   }
 }

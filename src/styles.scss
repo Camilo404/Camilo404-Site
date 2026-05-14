@@ -55,11 +55,14 @@ $font-decorative: 'Cinzel', serif;
       rgba(255, 255, 255, 0.2) 50%,
       rgba(255, 255, 255, 0.1) 100%);
 
-  --toggle-bg: rgba(255, 255, 255, 0.8);
-  --toggle-border: rgba(0, 0, 0, 0.12);
-  --toggle-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  --toggle-bg: rgba(220, 220, 220, 0.75);
+  --toggle-border: rgba(0, 0, 0, 0.1);
+  --toggle-shadow: 0 2px 12px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255,255,255,0.6);
   --toggle-thumb-bg: #ffffff;
-  --toggle-icon-color: #666666;
+  --toggle-thumb-shadow: 0 1px 4px rgba(0, 0, 0, 0.18), 0 0 0 1px rgba(0,0,0,0.06);
+  --toggle-thumb-shadow-hover: 0 2px 8px rgba(0, 0, 0, 0.22), 0 0 0 1px rgba(0,0,0,0.08);
+  --toggle-icon-color: #f59e0b;
+  --toggle-ring: rgba(0, 0, 0, 0.15);
 
   --expo-in: linear(
     0 0%, 0.0085 31.26%, 0.0167 40.94%,
@@ -124,11 +127,14 @@ $font-decorative: 'Cinzel', serif;
       rgba(0, 0, 0, 0.6) 50%,
       rgba(0, 0, 0, 0.4) 100%);
 
-  --toggle-bg: rgba(0, 0, 0, 0.6);
-  --toggle-border: rgba(255, 255, 255, 0.15);
-  --toggle-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-  --toggle-thumb-bg: #333333;
-  --toggle-icon-color: #aaaaaa;
+  --toggle-bg: rgba(30, 30, 40, 0.75);
+  --toggle-border: rgba(255, 255, 255, 0.12);
+  --toggle-shadow: 0 2px 12px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255,255,255,0.06);
+  --toggle-thumb-bg: #2a2a3a;
+  --toggle-thumb-shadow: 0 1px 4px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255,255,255,0.08);
+  --toggle-thumb-shadow-hover: 0 2px 8px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255,255,255,0.12);
+  --toggle-icon-color: #c4b5fd;
+  --toggle-ring: rgba(255, 255, 255, 0.2);
 }
 
 // ========================================
