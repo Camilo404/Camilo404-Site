@@ -1,6 +1,7 @@
-import { Component, ElementRef, OnDestroy, AfterViewInit, Renderer2, signal, inject } from '@angular/core';
+import { Component, ElementRef, OnDestroy, AfterViewInit, Renderer2, signal, computed, inject } from '@angular/core';
 
 import { Card3DEffectService } from '../../../../core/services/card-3d-effect.service';
+import { ThemeService } from '../../../../shared/services/theme.service';
 import { NekoComponent } from '../../components/neko/neko.component';
 import { EtherealShadowComponent } from '../../components/ethereal-shadow/ethereal-shadow.component';
 import { CardProfileComponent } from '../../../../shared/ui/card-profile/card-profile.component';
@@ -32,9 +33,20 @@ export class HomePageComponent implements OnDestroy, AfterViewInit {
   private el = inject(ElementRef);
   private renderer = inject(Renderer2);
   private card3DService = inject(Card3DEffectService);
+  private themeService = inject(ThemeService);
 
   isActivityVisible = signal(false);
   nameplateAsset = signal<string | null>(null);
+
+  // The full-strength noise texture overwhelms the light background
+  shadowNoise = computed(() => ({
+    opacity: this.themeService.isDark() ? 1 : 0.35,
+    scale: 1.2
+  }));
+
+  shadowColor = computed(() =>
+    this.themeService.isDark() ? 'rgba(128, 128, 128, 1)' : 'rgba(170, 170, 170, 1)'
+  );
 
   private unlistenFunctions: (() => void)[] = [];
   private widgetCardRefs: ElementRef[] = [];

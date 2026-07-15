@@ -36,13 +36,16 @@ $font-decorative: 'Cinzel', serif;
   --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.12);
   --shadow-card: 0 4px 16px -1px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(0, 0, 0, 0.06) inset;
   --shadow-card-hover: 0 20px 40px -5px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(0, 0, 0, 0.1) inset;
+  --accent: #7c3aed;
+  --accent-soft: rgba(124, 58, 237, 0.1);
+  --accent-border: rgba(124, 58, 237, 0.35);
   --accent-glow: rgba(139, 92, 246, 0.15);
-  --mouse-glow: rgba(0, 0, 0, 0.06);
+  --mouse-glow: rgba(124, 58, 237, 0.07);
   --skeleton-base: #e0e0e0;
   --skeleton-shine: #f0f0f0;
   --code-bg: rgba(0, 0, 0, 0.06);
   --blockquote-border: #cccccc;
-  --link-color: #2563eb;
+  --link-color: #7c3aed;
   --markdown-text: #333333;
   --clan-tag-text: #4450c7;
   --status-badge-bg: rgba(0, 0, 0, 0.4);
@@ -51,9 +54,9 @@ $font-decorative: 'Cinzel', serif;
   --shadow-brightness: 0.9;
   --shadow-brightness-hover: 1;
   --shadow-overlay: linear-gradient(to right,
-      rgba(255, 255, 255, 0.5) 0%,
-      rgba(255, 255, 255, 0.2) 50%,
-      rgba(255, 255, 255, 0.1) 100%);
+      rgba(255, 255, 255, 0.88) 0%,
+      rgba(255, 255, 255, 0.68) 50%,
+      rgba(255, 255, 255, 0.45) 100%);
 
   --toggle-bg: rgba(220, 220, 220, 0.75);
   --toggle-border: rgba(0, 0, 0, 0.1);
@@ -108,13 +111,16 @@ $font-decorative: 'Cinzel', serif;
   --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.4);
   --shadow-card: 0 4px 24px -1px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(255, 255, 255, 0.05) inset;
   --shadow-card-hover: 0 20px 40px -5px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.15) inset;
+  --accent: #a78bfa;
+  --accent-soft: rgba(167, 139, 250, 0.12);
+  --accent-border: rgba(167, 139, 250, 0.4);
   --accent-glow: rgba(139, 92, 246, 0.2);
-  --mouse-glow: rgba(255, 255, 255, 0.08);
+  --mouse-glow: rgba(167, 139, 250, 0.1);
   --skeleton-base: #2f2f2f;
   --skeleton-shine: #3a3a3a;
   --code-bg: #48484869;
   --blockquote-border: #3c3c3c;
-  --link-color: #42adf5;
+  --link-color: #a78bfa;
   --markdown-text: #dddddd;
   --clan-tag-text: #DEE0FC;
   --status-badge-bg: rgba(0, 0, 0, 0.3);
@@ -191,6 +197,11 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 
 // ========================================

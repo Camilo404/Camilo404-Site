@@ -66,7 +66,7 @@
     font-size: 1rem;
     line-height: 1.5;
     color: var(--text-primary);
-    border-left: 3px solid var(--border-hover);
+    border-left: 3px solid var(--accent-border);
     padding-left: 1rem;
     opacity: 0.95;
     min-height: 4.5em;
@@ -76,7 +76,7 @@
 
   .typewriter-cursor {
     display: inline;
-    color: var(--text-primary);
+    color: var(--accent);
     font-weight: 400;
     margin-left: 2px;
     animation: blink 1s step-end infinite;

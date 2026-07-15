@@ -55,7 +55,7 @@
   .item-bg {
     position: absolute;
     inset: 0;
-    background: linear-gradient(90deg, var(--bg-card-hover), transparent);
+    background: linear-gradient(90deg, var(--accent-soft), transparent);
     opacity: 0;
     transition: opacity 0.2s ease;
   }
@@ -85,7 +85,7 @@
 
   &:hover {
     background: var(--bg-card-hover);
-    border-color: var(--border-hover);
+    border-color: var(--accent-border);
     transform: translateX(2px);
 
     .item-bg {
@@ -93,7 +93,7 @@
     }
 
     fa-icon {
-      color: var(--text-primary);
+      color: var(--accent);
       transform: scale(1.1);
     }
 

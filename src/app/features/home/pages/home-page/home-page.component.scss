@@ -95,7 +95,7 @@
   &:hover {
     transform: translateY(-4px) scale(1.005);
     box-shadow: var(--shadow-card-hover);
-    border-color: var(--border-hover);
+    border-color: var(--accent-border);
     z-index: 10;
 
     &::before {

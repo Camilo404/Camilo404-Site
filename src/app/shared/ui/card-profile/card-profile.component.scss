@@ -454,7 +454,7 @@
     color: var(--text-secondary);
 
     a {
-      color: #00aff4;
+      color: var(--link-color);
       text-decoration: none;
 
       &:hover {

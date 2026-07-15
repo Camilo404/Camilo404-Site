@@ -6,8 +6,8 @@
 
 <!-- Background Ethereal Shadow -->
 <div class="ethereal-background-container">
-  <app-ethereal-shadow [sizing]="'fill'" [color]="'rgba(128, 128, 128, 1)'" [animation]="{ scale: 100, speed: 90 }"
-  [noise]="{ opacity: 1, scale: 1.2 }" class="w-full h-full"></app-ethereal-shadow>
+  <app-ethereal-shadow [sizing]="'fill'" [color]="shadowColor()" [animation]="{ scale: 100, speed: 90 }"
+  [noise]="shadowNoise()" class="w-full h-full"></app-ethereal-shadow>
 </div>
 
 <main class="main-container" [class.has-floating-activity]="isActivityVisible()">
