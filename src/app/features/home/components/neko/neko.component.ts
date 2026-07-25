@@ -76,13 +76,30 @@ export class NekoComponent implements AfterViewInit, OnDestroy {
   };
 
 
+  private readonly onVisibilityChange = () => this.syncInterval();
+
   ngAfterViewInit(): void {
-    this.onekoInterval = setInterval(() => this.frame(), 100);
+    this.syncInterval();
+    document.addEventListener('visibilitychange', this.onVisibilityChange, false);
   }
 
   ngOnDestroy(): void {
+    this.stopInterval();
+    document.removeEventListener('visibilitychange', this.onVisibilityChange, false);
+  }
+
+  private syncInterval(): void {
+    if (document.hidden) {
+      this.stopInterval();
+    } else if (!this.onekoInterval) {
+      this.onekoInterval = setInterval(() => this.frame(), 100);
+    }
+  }
+
+  private stopInterval(): void {
     if (this.onekoInterval) {
       clearInterval(this.onekoInterval);
+      this.onekoInterval = null;
     }
   }
 

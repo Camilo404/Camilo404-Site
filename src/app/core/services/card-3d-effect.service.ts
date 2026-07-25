@@ -18,6 +18,9 @@ export class Card3DEffectService {
   private renderer: Renderer2 = this.rendererFactory.createRenderer(null, null);
   
   private unlistenMap = new Map<HTMLElement, (() => void)[]>();
+  private rectMap = new Map<HTMLElement, DOMRect>();
+  private rafMap = new Map<HTMLElement, number>();
+  private pointerMap = new Map<HTMLElement, { x: number; y: number }>();
 
   private defaultConfig: Card3DConfig = {
     rotateX: 0,
@@ -96,33 +99,60 @@ export class Card3DEffectService {
   private onMouseEnter(element: HTMLElement, config: Card3DConfig): void {
     this.renderer.setStyle(element, 'transition', 'transform 0.2s ease-out');
     this.renderer.setStyle(element, 'perspective', `${config.perspective}px`);
+    this.rectMap.set(element, element.getBoundingClientRect());
   }
 
   private onMouseMove(element: HTMLElement, event: MouseEvent, config: Card3DConfig): void {
-    const rect = element.getBoundingClientRect();
-    const centerX = rect.left + rect.width / 2;
-    const centerY = rect.top + rect.height / 2;
+    this.pointerMap.set(element, { x: event.clientX, y: event.clientY });
+    this.scheduleTransform(element, config);
+  }
 
-    const mouseX = event.clientX - centerX;
-    const mouseY = event.clientY - centerY;
+  private scheduleTransform(element: HTMLElement, config: Card3DConfig): void {
+    if (this.rafMap.has(element)) return;
 
-    const rotateY = (mouseX / (rect.width / 2)) * config.maxRotation;
-    const rotateX = -(mouseY / (rect.height / 2)) * config.maxRotation;
+    const rafId = requestAnimationFrame(() => {
+      this.rafMap.delete(element);
 
-    // Aplicar la transformación
-    const transform = `
-      perspective(${config.perspective}px)
-      rotateX(${rotateX}deg)
-      rotateY(${rotateY}deg)
-      scale(${config.scale})
-    `;
+      const pointer = this.pointerMap.get(element);
+      const rect = this.rectMap.get(element);
+      if (!pointer || !rect) return;
 
-    this.renderer.setStyle(element, 'transform', transform);
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
 
-    this.applyChildrenEffects(element, rotateX, rotateY);
+      const mouseX = pointer.x - centerX;
+      const mouseY = pointer.y - centerY;
+
+      const rotateY = (mouseX / (rect.width / 2)) * config.maxRotation;
+      const rotateX = -(mouseY / (rect.height / 2)) * config.maxRotation;
+
+      const transform = `
+        perspective(${config.perspective}px)
+        rotateX(${rotateX}deg)
+        rotateY(${rotateY}deg)
+        scale(${config.scale})
+      `;
+
+      this.renderer.setStyle(element, 'transform', transform);
+      this.applyChildrenEffects(element, rotateX, rotateY);
+    });
+
+    this.rafMap.set(element, rafId);
+  }
+
+  private cancelScheduled(element: HTMLElement): void {
+    const rafId = this.rafMap.get(element);
+    if (rafId !== undefined) {
+      cancelAnimationFrame(rafId);
+      this.rafMap.delete(element);
+    }
   }
 
   private onMouseLeave(element: HTMLElement, config: Card3DConfig): void {
+    this.cancelScheduled(element);
+    this.rectMap.delete(element);
+    this.pointerMap.delete(element);
+
     this.renderer.setStyle(element, 'transition', 'transform 0.4s cubic-bezier(0.23, 1, 0.32, 1)');
     this.renderer.setStyle(element, 'transform', `perspective(${config.perspective}px) rotateX(0deg) rotateY(0deg) scale(1)`);
 
@@ -132,44 +162,30 @@ export class Card3DEffectService {
   // Touch event handlers for mobile devices
   private onTouchStart(element: HTMLElement, event: TouchEvent, config: Card3DConfig): void {
     if (window.innerWidth <= 768) return;
-    
+
     event.preventDefault();
     this.renderer.setStyle(element, 'transition', 'transform 0.2s ease-out');
     this.renderer.setStyle(element, 'perspective', `${config.perspective}px`);
+    this.rectMap.set(element, element.getBoundingClientRect());
   }
 
   private onTouchMove(element: HTMLElement, event: TouchEvent, config: Card3DConfig): void {
     if (window.innerWidth <= 768) return;
 
     event.preventDefault();
-    
+
     // Get the first touch point
     const touch = event.touches[0];
     if (!touch) return;
 
-    const rect = element.getBoundingClientRect();
-    const centerX = rect.left + rect.width / 2;
-    const centerY = rect.top + rect.height / 2;
-
-    const touchX = touch.clientX - centerX;
-    const touchY = touch.clientY - centerY;
-
-    const rotateY = (touchX / (rect.width / 2)) * config.maxRotation;
-    const rotateX = -(touchY / (rect.height / 2)) * config.maxRotation;
-
-    // Apply the transformation
-    const transform = `
-      perspective(${config.perspective}px)
-      rotateX(${rotateX}deg)
-      rotateY(${rotateY}deg)
-      scale(${config.scale})
-    `;
-
-    this.renderer.setStyle(element, 'transform', transform);
-    this.applyChildrenEffects(element, rotateX, rotateY);
+    this.pointerMap.set(element, { x: touch.clientX, y: touch.clientY });
+    this.scheduleTransform(element, config);
   }
 
   private onTouchEnd(element: HTMLElement, config: Card3DConfig): void {
+    this.cancelScheduled(element);
+    this.rectMap.delete(element);
+    this.pointerMap.delete(element);
     this.renderer.setStyle(element, 'transition', 'transform 0.4s cubic-bezier(0.23, 1, 0.32, 1)');
     this.renderer.setStyle(element, 'transform', `perspective(${config.perspective}px) rotateX(0deg) rotateY(0deg) scale(1)`);
 
@@ -231,6 +247,9 @@ export class Card3DEffectService {
       unlistens.forEach(fn => fn());
       this.unlistenMap.delete(el);
     }
+    this.cancelScheduled(el);
+    this.rectMap.delete(el);
+    this.pointerMap.delete(el);
     this.renderer.removeStyle(el, 'transform');
     this.renderer.removeStyle(el, 'transition');
     this.renderer.removeStyle(el, 'box-shadow');

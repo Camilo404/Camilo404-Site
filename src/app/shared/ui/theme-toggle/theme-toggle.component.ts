@@ -1,11 +1,13 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { faMoon, faSun } from '@fortawesome/free-solid-svg-icons';
 import { ThemeService } from '../../services/theme.service';
 
 @Component({
   selector: 'app-theme-toggle',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FontAwesomeModule],
   template: `
     <button
       class="theme-toggle-btn"
@@ -16,7 +18,7 @@ import { ThemeService } from '../../services/theme.service';
     >
       <div class="toggle-track">
         <div class="toggle-thumb">
-          <i class="fa-solid" [class.fa-moon]="themeService.isDark()" [class.fa-sun]="!themeService.isDark()"></i>
+          <fa-icon [icon]="themeService.isDark() ? faMoon : faSun"></fa-icon>
         </div>
       </div>
     </button>
@@ -25,4 +27,6 @@ import { ThemeService } from '../../services/theme.service';
 })
 export class ThemeToggleComponent {
   themeService = inject(ThemeService);
+  readonly faMoon = faMoon;
+  readonly faSun = faSun;
 }

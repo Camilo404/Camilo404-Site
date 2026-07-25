@@ -66,7 +66,7 @@
     background 0.3s ease,
     box-shadow 0.3s ease;
 
-  i {
+  fa-icon {
     font-size: 0.65rem;
     color: var(--toggle-icon-color);
     transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.2s ease;
@@ -78,13 +78,13 @@
 .theme-toggle-btn.is-dark .toggle-thumb {
   transform: translateX(24px);
 
-  i {
+  fa-icon {
     transform: rotate(-20deg);
   }
 }
 
 // Light state — sun spins on entry
-.theme-toggle-btn:not(.is-dark) .toggle-thumb i {
+.theme-toggle-btn:not(.is-dark) .toggle-thumb fa-icon {
   transform: rotate(45deg);
 }
 
@@ -109,7 +109,7 @@
     width: 20px;
     height: 20px;
 
-    i {
+    fa-icon {
       font-size: 0.6rem;
     }
   }

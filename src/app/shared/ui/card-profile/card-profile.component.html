@@ -155,6 +155,7 @@
             class="status-emoji"
             (error)="handleImageError($event)"
             alt="Status Emoji"
+            loading="lazy"
           />
           } @else if (custom_status()!.emoji!.name) {
           <span class="status-emoji-text">{{ custom_status()!.emoji!.name }}</span>
