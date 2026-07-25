@@ -1,4 +1,4 @@
-<div class="card-3d-container" #cardElement>
+<div class="card-3d-container" appCard3d [card3dConfig]="card3dConfig">
   @if (userDataStatus()) {
   <div
     class="aesthetic-card animate-scale-in"
@@ -33,13 +33,9 @@
       <div class="header-section">
         <div class="avatar-wrapper">
           <div class="avatar-container">
-            @if (userData()?.user?.avatar_decoration_data?.asset) {
+            @if (avatarDecorationUrl(); as decorationUrl) {
             <img
-              [src]="
-                'https://cdn.discordapp.com/avatar-decoration-presets/' +
-                userData()?.user?.avatar_decoration_data?.asset +
-                '.png'
-              "
+              [src]="decorationUrl"
               alt="Avatar Decoration"
               class="avatar-decoration"
             />
@@ -144,14 +140,9 @@
         <!-- Custom Status -->
         @if (custom_status() && custom_status()!.state) {
         <div class="custom-status-card">
-          @if (custom_status()!.emoji) { @if (custom_status()!.emoji!.id) {
+          @if (custom_status()!.emoji) { @if (statusEmojiUrl(); as emojiUrl) {
           <img
-            [src]="
-              'https://cdn.discordapp.com/emojis/' +
-              custom_status()!.emoji!.id +
-              (custom_status()!.emoji!.animated ? '.gif' : '.png') +
-              '?size=24&quality=lossless'
-            "
+            [src]="emojiUrl"
             class="status-emoji"
             (error)="handleImageError($event)"
             alt="Status Emoji"

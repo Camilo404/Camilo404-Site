@@ -2,13 +2,14 @@ import { Component } from '@angular/core';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faCode } from '@fortawesome/free-solid-svg-icons';
 import { faAngular, faReact, faBootstrap, faPython, faJs, faSass, faHtml5, faCss3Alt, faNodeJs, faGitAlt, faDocker } from '@fortawesome/free-brands-svg-icons';
+import { Card3dDirective } from '../../../../shared/directives/card-3d.directive';
 
 @Component({
   selector: 'app-tech-stack-widget',
   standalone: true,
   templateUrl: './tech-stack-widget.component.html',
   styleUrls: ['./tech-stack-widget.component.scss'],
-  imports: [FontAwesomeModule]
+  imports: [FontAwesomeModule, Card3dDirective]
 })
 export class TechStackWidgetComponent {
   techStack = [

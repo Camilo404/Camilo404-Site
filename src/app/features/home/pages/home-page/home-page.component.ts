@@ -1,7 +1,7 @@
-import { Component, ElementRef, OnDestroy, AfterViewInit, Renderer2, signal, computed, inject } from '@angular/core';
+import { Component, signal, computed, inject } from '@angular/core';
 
-import { Card3DEffectService } from '../../../../core/services/card-3d-effect.service';
 import { ThemeService } from '../../../../shared/services/theme.service';
+import { DiscordCdn } from '../../../../core/utils/discord-cdn';
 import { NekoComponent } from '../../components/neko/neko.component';
 import { EtherealShadowComponent } from '../../components/ethereal-shadow/ethereal-shadow.component';
 import { CardProfileComponent } from '../../../../shared/ui/card-profile/card-profile.component';
@@ -29,11 +29,8 @@ import { TechStackWidgetComponent } from '../../widgets/tech-stack-widget/tech-s
     TechStackWidgetComponent
 ]
 })
-export class HomePageComponent implements OnDestroy, AfterViewInit {
-  private el = inject(ElementRef);
-  private renderer = inject(Renderer2);
-  private card3DService = inject(Card3DEffectService);
-  private themeService = inject(ThemeService);
+export class HomePageComponent {
+  private readonly themeService = inject(ThemeService);
 
   isActivityVisible = signal(false);
   nameplateAsset = signal<string | null>(null);
@@ -48,38 +45,6 @@ export class HomePageComponent implements OnDestroy, AfterViewInit {
     this.themeService.isDark() ? 'rgba(128, 128, 128, 1)' : 'rgba(170, 170, 170, 1)'
   );
 
-  private unlistenFunctions: (() => void)[] = [];
-  private widgetCardRefs: ElementRef[] = [];
-
-  ngAfterViewInit(): void {
-    const cards = this.el.nativeElement.querySelectorAll('.widget-card');
-    cards.forEach((card: HTMLElement) => {
-      const unlistenMove = this.renderer.listen(card, 'mousemove', (e: MouseEvent) => {
-        const rect = card.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-        card.style.setProperty('--mouse-x', `${x}px`);
-        card.style.setProperty('--mouse-y', `${y}px`);
-      });
-      this.unlistenFunctions.push(unlistenMove);
-
-      const ref = new ElementRef(card);
-      this.widgetCardRefs.push(ref);
-      this.card3DService.initCard3DEffect(ref, {
-        maxRotation: 5,
-        scale: 1.02
-      });
-    });
-  }
-
-  ngOnDestroy(): void {
-    this.unlistenFunctions.forEach(unlisten => unlisten());
-    this.unlistenFunctions = [];
-
-    this.widgetCardRefs.forEach(ref => this.card3DService.destroyCard3DEffect(ref));
-    this.widgetCardRefs = [];
-  }
-
   onActivityVisibilityChange(isVisible: boolean): void {
     this.isActivityVisible.set(isVisible);
   }
@@ -93,6 +58,6 @@ export class HomePageComponent implements OnDestroy, AfterViewInit {
     if (!asset) {
       return null;
     }
-    return `https://cdn.discordapp.com/assets/collectibles/${asset}asset.webm`;
+    return DiscordCdn.nameplate(asset);
   }
 }

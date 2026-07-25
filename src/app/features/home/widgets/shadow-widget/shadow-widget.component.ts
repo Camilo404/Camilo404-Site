@@ -1,13 +1,14 @@
 import { Component, OnInit, OnDestroy, signal } from '@angular/core';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faTerminal } from '@fortawesome/free-solid-svg-icons';
+import { Card3dDirective } from '../../../../shared/directives/card-3d.directive';
 
 @Component({
   selector: 'app-shadow-widget',
   standalone: true,
   templateUrl: './shadow-widget.component.html',
   styleUrls: ['./shadow-widget.component.scss'],
-  imports: [FontAwesomeModule]
+  imports: [FontAwesomeModule, Card3dDirective]
 })
 export class ShadowWidgetComponent implements OnInit, OnDestroy {
   faTerminal = faTerminal;

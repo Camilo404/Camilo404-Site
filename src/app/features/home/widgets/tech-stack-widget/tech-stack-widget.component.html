@@ -1,4 +1,4 @@
-<section class="widget-card tech-stack-card">
+<section class="widget-card tech-stack-card" appCard3d [card3dConfig]="{ maxRotation: 5, scale: 1.02 }" [card3dSpotlight]="true">
   <div class="marquee-mask">
     <div class="marquee-track">
       @for (tech of techStack; track tech) {

@@ -24,7 +24,7 @@ export class NekoComponent implements AfterViewInit, OnDestroy {
   
   nekoSpeed = 10;
   nekoEl: HTMLElement | null = null;
-  onekoInterval: any;
+  onekoInterval: ReturnType<typeof setInterval> | null = null;
 
   @ViewChild('oneko') oneko!: ElementRef;
 

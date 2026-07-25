@@ -1,4 +1,4 @@
-<article class="widget-card clock-card">
+<article class="widget-card clock-card" appCard3d [card3dConfig]="{ maxRotation: 5, scale: 1.02 }" [card3dSpotlight]="true">
   <video #nameplateVideo class="clock-background-video" autoplay loop muted playsinline preload="auto"
     [class.hidden]="!nameplateVideoUrl" [src]="nameplateVideoUrl || ''" (loadeddata)="onVideoLoaded($event)"
     (canplay)="onVideoCanPlay($event)" (error)="onVideoError($event)">

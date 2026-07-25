@@ -1,13 +1,14 @@
 import { Component, Input, ViewChild, ElementRef, signal, inject, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { interval } from 'rxjs';
+import { Card3dDirective } from '../../../../shared/directives/card-3d.directive';
 
 @Component({
   selector: 'app-clock-widget',
   standalone: true,
   templateUrl: './clock-widget.component.html',
   styleUrls: ['./clock-widget.component.scss'],
-  imports: []
+  imports: [Card3dDirective]
 })
 export class ClockWidgetComponent {
   @Input() nameplateVideoUrl: string | null = null;

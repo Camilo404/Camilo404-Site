@@ -18,7 +18,7 @@ export class LanyardService {
   };
 
   private heartbeat_interval: number = 30000;
-  private heartbeat: any;
+  private heartbeat: ReturnType<typeof setInterval> | null = null;
   private reconnectTimer: ReturnType<typeof setTimeout> | null = null;
   private reconnectAttempts = 0;
   private maxReconnectAttempts = 5;

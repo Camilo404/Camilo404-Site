@@ -1,4 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
+import { DiscordCdn } from '../../core/utils/discord-cdn';
 
 @Pipe({ name: 'bioFormatter', standalone: true, pure: true })
 export class BioFormatterPipe implements PipeTransform {
@@ -70,9 +71,8 @@ export class BioFormatterPipe implements PipeTransform {
     const emojiRegex = /(&lt;|<)(a?):([a-zA-Z0-9_]+):(\d+)(&gt;|>)/g;
 
     html = html.replace(emojiRegex, (match, left, animated, name, id) => {
-      const isAnimated = animated === 'a';
-      const ext = isAnimated ? 'gif' : 'png';
-      return `<img src="https://cdn.discordapp.com/emojis/${id}.${ext}" alt=":${name}:" title=":${name}:" class="discord-emoji">`;
+      const src = DiscordCdn.emoji(id, animated === 'a');
+      return `<img src="${src}" alt=":${name}:" title=":${name}:" class="discord-emoji">`;
     });
 
     return html;

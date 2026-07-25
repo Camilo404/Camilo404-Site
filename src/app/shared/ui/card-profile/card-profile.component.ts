@@ -1,16 +1,18 @@
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Component, input, output, effect, ChangeDetectionStrategy, ElementRef, ViewChild, AfterViewInit, ViewEncapsulation, signal, computed, inject, DestroyRef } from '@angular/core';
+import { Component, input, output, effect, ChangeDetectionStrategy, ViewEncapsulation, signal, computed, inject, DestroyRef } from '@angular/core';
 import { DiscordApiService } from 'src/app/core/services/discord-api.service';
 import { Profile, ProfileEffectConfig } from 'src/app/core/models/discord-profile.model';
 import { LanyardService } from 'src/app/core/services/lanyard.service';
 import { Lanyard, Activity } from 'src/app/core/models/lanyard-profile.model';
-import { Card3DEffectService } from 'src/app/core/services/card-3d-effect.service';
 import { ProfileEffectsService } from 'src/app/core/services/profile-effects.service';
 import { ProfileEffectAnimationService, RenderedLayer } from 'src/app/core/services/profile-effect-animation.service';
+import { Card3dDirective } from '../../directives/card-3d.directive';
 import { FloatingActivityComponent } from '../floating-activity/floating-activity.component';
 import { StatusColorPipe } from '../../pipes/status-color.pipe';
 import { BioFormatterPipe } from '../../pipes/bio-formatter.pipe';
+import { DiscordCdn } from 'src/app/core/utils/discord-cdn';
+import { MOBILE_MAX_WIDTH } from 'src/app/core/constants';
 import { environment } from 'src/environments/environment';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { fromEvent } from 'rxjs';
@@ -21,23 +23,28 @@ import { debounceTime } from 'rxjs/operators';
     standalone: true,
     templateUrl: './card-profile.component.html',
     styleUrls: ['./card-profile.component.scss'],
-    imports: [CommonModule, FormsModule, FloatingActivityComponent, StatusColorPipe, BioFormatterPipe],
+    imports: [CommonModule, FormsModule, Card3dDirective, FloatingActivityComponent, StatusColorPipe, BioFormatterPipe],
     changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.None
 })
-export class CardProfileComponent implements AfterViewInit {
+export class CardProfileComponent {
   ProfileId = input<string>(environment.discordId);
   themeColorsChange = output<string[]>();
   nameplateAssetChange = output<string | null>();
-  
-  @ViewChild('cardElement', { static: false }) cardElement!: ElementRef;
-  
-  private discordApiService = inject(DiscordApiService);
-  private lanyardService = inject(LanyardService);
-  private card3DService = inject(Card3DEffectService);
-  private profileEffectsService = inject(ProfileEffectsService);
-  private profileEffectAnimService = inject(ProfileEffectAnimationService);
-  private destroyRef = inject(DestroyRef);
+
+  private readonly discordApiService = inject(DiscordApiService);
+  private readonly lanyardService = inject(LanyardService);
+  private readonly profileEffectsService = inject(ProfileEffectsService);
+  private readonly profileEffectAnimService = inject(ProfileEffectAnimationService);
+  private readonly destroyRef = inject(DestroyRef);
+
+  readonly card3dConfig = {
+    maxRotation: 12,
+    scale: 1.03,
+    perspective: 1200,
+    shadowIntensity: 0.25,
+    transition: 'transform 0.4s cubic-bezier(0.23, 1, 0.32, 1)',
+  };
   
   userId = environment.discordId;
   apiUrl = environment.apiUrl;
@@ -53,26 +60,31 @@ export class CardProfileComponent implements AfterViewInit {
   renderedLayers = signal<RenderedLayer[]>([]);
   custom_status = signal<Activity | null>(null);
 
-  clanTag = computed(() => {
-    const data = this.userData();
-    return data?.user?.clan?.tag || data?.user?.primary_guild?.tag || null;
+  private readonly clanSource = computed(() => {
+    const user = this.userData()?.user;
+    return user?.clan ?? user?.primary_guild ?? null;
   });
 
-  clanBadge = computed(() => {
-    const data = this.userData();
-    return data?.user?.clan?.badge || data?.user?.primary_guild?.badge || null;
-  });
-
-  clanGuildId = computed(() => {
-    const data = this.userData();
-    return data?.user?.clan?.identity_guild_id || data?.user?.primary_guild?.identity_guild_id || null;
-  });
+  clanTag = computed(() => this.clanSource()?.tag || null);
+  clanBadge = computed(() => this.clanSource()?.badge || null);
+  clanGuildId = computed(() => this.clanSource()?.identity_guild_id || null);
 
   clanBadgeUrl = computed(() => {
     const badge = this.clanBadge();
     const guildId = this.clanGuildId();
     if (!badge || !guildId) return null;
-    return `https://cdn.discordapp.com/clan-badges/${guildId}/${badge}.png?size=32`;
+    return DiscordCdn.clanBadge(guildId, badge);
+  });
+
+  avatarDecorationUrl = computed(() => {
+    const asset = this.userData()?.user?.avatar_decoration_data?.asset;
+    return asset ? DiscordCdn.avatarDecoration(asset) : null;
+  });
+
+  statusEmojiUrl = computed(() => {
+    const emoji = this.custom_status()?.emoji;
+    if (!emoji?.id) return null;
+    return DiscordCdn.emoji(emoji.id, !!emoji.animated, '?size=24&quality=lossless');
   });
 
   hasProfileEffect = computed(() => {
@@ -108,29 +120,12 @@ export class CardProfileComponent implements AfterViewInit {
         this.custom_status.set(customStatus);
       }
     });
+
+    this.destroyRef.onDestroy(() => this.profileEffectAnimService.destroyLayers());
   }
 
   private checkScreenSize() {
-    this.isMobile.set(window.innerWidth <= 768);
-  }
-
-  ngAfterViewInit(): void {
-    if (this.cardElement) {
-      this.card3DService.initCard3DEffect(this.cardElement, {
-        maxRotation: 12,
-        scale: 1.03,
-        perspective: 1200,
-        shadowIntensity: 0.25,
-        transition: 'transform 0.4s cubic-bezier(0.23, 1, 0.32, 1)'
-      });
-    }
-    
-    this.destroyRef.onDestroy(() => {
-      if (this.cardElement) {
-        this.card3DService.destroyCard3DEffect(this.cardElement);
-      }
-      this.profileEffectAnimService.destroyLayers();
-    });
+    this.isMobile.set(window.innerWidth <= MOBILE_MAX_WIDTH);
   }
 
   private resetProfileData(): void {

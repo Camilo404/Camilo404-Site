@@ -6,6 +6,7 @@ import { LanyardService } from 'src/app/core/services/lanyard.service';
 import { TimestampsService } from 'src/app/core/services/timestamps.service';
 import { LyricsService, LyricLine } from 'src/app/core/services/lyrics.service';
 import { Activity } from 'src/app/core/models/lanyard-profile.model';
+import { DiscordCdn } from 'src/app/core/utils/discord-cdn';
 import { Subject, takeUntil, timer } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FastAverageColor } from 'fast-average-color';
@@ -298,31 +299,23 @@ export class FloatingActivityComponent {
   }
 
   getActivityImage(activity: Activity): string {
-    if (!activity || !activity.assets) return '';
-
-    if (activity.assets.large_image) {
-      if (activity.assets.large_image.startsWith('spotify:')) {
-        return `https://i.scdn.co/image/${activity.assets.large_image.split(':')[1]}`;
-      }
-      if (activity.assets.large_image.startsWith('mp:external/')) {
-         return activity.assets.large_image.replace('mp:external/', 'https://media.discordapp.net/external/');
-      }
-      return `https://cdn.discordapp.com/app-assets/${activity.application_id}/${activity.assets.large_image}.png`;
-    }
-    
-    return '';
+    return this.resolveAssetImage(activity, activity?.assets?.large_image);
   }
-  
+
   getSmallActivityImage(activity: Activity): string {
-     if (!activity || !activity.assets || !activity.assets.small_image) return '';
-     
-     if (activity.assets.small_image.startsWith('spotify:')) {
-        return `https://i.scdn.co/image/${activity.assets.small_image.split(':')[1]}`;
-     }
-     if (activity.assets.small_image.startsWith('mp:external/')) {
-        return activity.assets.small_image.replace('mp:external/', 'https://media.discordapp.net/external/');
-     }
-     return `https://cdn.discordapp.com/app-assets/${activity.application_id}/${activity.assets.small_image}.png`;
+    return this.resolveAssetImage(activity, activity?.assets?.small_image);
+  }
+
+  /** Resolves a Discord activity asset ref (spotify / mp:external / app-asset) to a URL. */
+  private resolveAssetImage(activity: Activity, image: string | undefined): string {
+    if (!activity || !image) return '';
+    if (image.startsWith('spotify:')) {
+      return `https://i.scdn.co/image/${image.split(':')[1]}`;
+    }
+    if (image.startsWith('mp:external/')) {
+      return DiscordCdn.externalMedia(image);
+    }
+    return DiscordCdn.appAsset(activity.application_id ?? '', image);
   }
 
   getServiceIcon(activity: Activity): string {
