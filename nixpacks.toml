@@ -3,3 +3,12 @@ NIXPACKS_NODE_VERSION = "22"
 
 [phases.setup]
 nixPkgs = ["nodejs_22"]
+
+[phases.install]
+cmds = ["npm ci"]
+
+[phases.build]
+cmds = ["npm run build"]
+
+[start]
+cmd = "npx http-server dist/camilo404-site -p 4200 -a 0.0.0.0 --cors"
