@@ -11,4 +11,4 @@ cmds = ["npm ci"]
 cmds = ["npm run build"]
 
 [start]
-cmd = "npx http-server dist/camilo404-site -p 4200 -a 0.0.0.0 --cors"
+cmd = "npx http-server dist/camilo404-site/browser -p 4200 -a 0.0.0.0 --cors --gzip -c-1"
