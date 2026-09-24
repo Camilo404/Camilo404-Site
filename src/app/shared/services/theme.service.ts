@@ -10,10 +10,18 @@ export class ThemeService {
   isLight = computed(() => !this.isDark());
 
   private getInitialTheme(): boolean {
-    if (typeof localStorage === 'undefined') return true;
-    const stored = localStorage.getItem(this.STORAGE_KEY);
+    const stored = this.readStoredTheme();
     if (stored) return stored === 'dark';
     return document.documentElement.classList.contains('dark');
+  }
+
+  // Storage access throws in some private/blocked-cookie modes
+  private readStoredTheme(): string | null {
+    try {
+      return localStorage.getItem(this.STORAGE_KEY);
+    } catch {
+      return null;
+    }
   }
 
   toggleTheme(): void {
@@ -28,7 +36,11 @@ export class ThemeService {
         htmlEl.classList.remove('dark');
       }
 
-      localStorage.setItem(this.STORAGE_KEY, newIsDark ? 'dark' : 'light');
+      try {
+        localStorage.setItem(this.STORAGE_KEY, newIsDark ? 'dark' : 'light');
+      } catch {
+        // Theme still applies for this visit, it just won't persist
+      }
 
       const themeColorMeta = document.querySelector('meta[name="theme-color"]');
       if (themeColorMeta) {

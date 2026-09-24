@@ -8,26 +8,29 @@
 }
 
 .main-container {
-
   min-height: 100vh;
+  min-height: 100dvh;
   width: 100%;
-  padding: 2rem;
+  padding: 2.5rem 2rem;
   display: flex;
   justify-content: center;
   align-items: center;
   overflow-x: hidden;
-  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  transition: padding-bottom 0.6s cubic-bezier(0.22, 1, 0.36, 1);
 
+  // Reserve room for the fixed activity player instead of translating the
+  // whole layout up, which clipped the top of the cards on short viewports.
   &.has-floating-activity {
-    transform: translateY(-120px);
+    padding-bottom: 13rem;
   }
 
   @media (max-width: 1024px) {
-    padding: 2rem 1rem 5rem 1rem;
+    // Top padding keeps the fixed theme toggle clear of the profile card
+    padding: 4.5rem 1rem 3rem;
     align-items: flex-start;
-    
+
     &.has-floating-activity {
-      transform: translateY(0);
+      padding-bottom: 3rem;
     }
   }
 }
@@ -39,8 +42,11 @@
   width: auto;
 
   @media (max-width: 1024px) {
-    grid-template-columns: 1fr;
+    // minmax(0, …) stops the tech-stack marquee's max-content track from
+    // widening the column past the viewport on phones
+    grid-template-columns: minmax(0, 1fr);
     justify-items: center;
+    width: 100%;
   }
 }
 
@@ -48,6 +54,16 @@
   display: flex;
   justify-content: center;
   align-items: flex-start;
+  width: 100%;
+  min-width: 0;
+}
+
+// Let the 400px profile card shrink on narrow phones instead of overflowing
+.bento-col-profile app-card-profile {
+  display: block;
+  width: 100%;
+  max-width: 400px;
+  min-width: 0;
 }
 
 .bento-col-widgets {
@@ -105,93 +121,6 @@
 }
 
 // ========================================
-// Floating Search Button
-// ========================================
-.floating-search-btn {
-  position: fixed;
-  bottom: 1.5rem;
-  right: 1.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.75rem;
-  padding: 0.875rem 1.25rem;
-  background: var(--bg-card-solid);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid var(--border-hover);
-  border-radius: 9999px;
-  color: var(--text-primary);
-  font-weight: 600;
-  font-size: 0.95rem;
-  cursor: pointer;
-  z-index: 998;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: var(--shadow-md);
-  overflow: hidden;
-  max-width: calc(100vw - 3rem);
-  white-space: nowrap;
-
-  .btn-glow {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(45deg, transparent, var(--mouse-glow), transparent);
-    transform: translateX(-100%);
-    transition: transform 0.6s;
-    pointer-events: none;
-  }
-
-  .search-icon {
-    font-size: 1.125rem;
-    transition: transform 0.3s;
-    flex-shrink: 0;
-  }
-
-  .btn-text {
-    font-size: 0.9rem;
-    letter-spacing: 0.02em;
-    line-height: 1;
-  }
-
-  &:hover {
-    transform: translateY(-2px) scale(1.03);
-    box-shadow: var(--shadow-lg);
-    background: var(--bg-card-hover);
-    border-color: var(--border-hover);
-
-    .btn-glow {
-      transform: translateX(100%);
-    }
-
-    .search-icon {
-      transform: rotate(90deg);
-    }
-  }
-
-  &:active {
-    transform: translateY(-1px) scale(1);
-  }
-}
-
-@media screen and (max-width: 640px) {
-  .floating-search-btn {
-    bottom: 1rem;
-    right: 1rem;
-    padding: 0.75rem;
-    width: 52px;
-    height: 52px;
-
-    .btn-text {
-      display: none;
-    }
-
-    .search-icon {
-      font-size: 1.25rem;
-    }
-  }
-}
-
-// ========================================
 // Animations & Wrappers
 // ========================================
 @keyframes fadeInUp {
@@ -242,4 +171,12 @@ app-neko {
 
 .delay-4 {
   animation-delay: 0.5s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .anim-wrapper,
+  .bento-col-profile {
+    opacity: 1;
+    animation: none;
+  }
 }

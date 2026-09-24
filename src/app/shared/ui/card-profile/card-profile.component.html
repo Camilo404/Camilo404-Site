@@ -120,8 +120,9 @@
           <div class="badges-list">
             @for (badge of userData()?.badges; track $index) {
             <a
-              [href]="badge.link || ''"
+              [attr.href]="badge.link || null"
               target="_blank"
+              rel="noopener noreferrer"
               class="badge-item"
               [title]="badge.description"
             >
@@ -178,8 +179,11 @@
             @for (account of userData()?.connected_accounts; track $index) {
             <a
               class="connection-item"
-              [href]="'#'"
+              [attr.href]="connectionUrl(account)"
+              target="_blank"
+              rel="noopener noreferrer"
               [title]="account.name + ' (' + account.type + ')'"
+              [attr.aria-label]="account.type + ': ' + account.name"
             >
               <img
                 src="assets/images/connections/{{ account.type }}.svg"
@@ -197,9 +201,10 @@
           <input
             type="text"
             placeholder="Send a message..."
-            [ngModel]="message()"
-            (ngModelChange)="message.set($event)"
+            [value]="message()"
+            (input)="onMessageInput($event)"
             name="message"
+            aria-label="Send a message on Discord"
             (keyup.enter)="sendMessage()"
             class="aesthetic-input"
           />

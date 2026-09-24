@@ -5,12 +5,13 @@
     "ng": "ng",
     "start": "ng serve --host 0.0.0.0 --port 4200",
     "build": "ng build",
+    "postbuild": "node scripts/compress.mjs",
     "build:prod": "ng build --configuration production",
     "build:analyze": "ng build --configuration production --stats-json && npx webpack-bundle-analyzer dist/camilo404-site/stats.json",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "lint": "ng lint",
-    "serve:prod": "ng build --configuration production && npx http-server dist/camilo404-site -p 4200"
+    "serve:prod": "ng build --configuration production && node scripts/compress.mjs && npx http-server dist/camilo404-site/browser -p 4200 --gzip --brotli"
   },
   "private": true,
   "dependencies": {

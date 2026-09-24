@@ -1,8 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 import { Component, input, output, effect, ChangeDetectionStrategy, ViewEncapsulation, signal, computed, inject, DestroyRef } from '@angular/core';
 import { DiscordApiService } from 'src/app/core/services/discord-api.service';
-import { Profile, ProfileEffectConfig } from 'src/app/core/models/discord-profile.model';
+import { ConnectedAccount, Profile, ProfileEffectConfig } from 'src/app/core/models/discord-profile.model';
 import { LanyardService } from 'src/app/core/services/lanyard.service';
 import { Lanyard, Activity } from 'src/app/core/models/lanyard-profile.model';
 import { ProfileEffectsService } from 'src/app/core/services/profile-effects.service';
@@ -23,7 +22,7 @@ import { debounceTime } from 'rxjs/operators';
     standalone: true,
     templateUrl: './card-profile.component.html',
     styleUrls: ['./card-profile.component.scss'],
-    imports: [CommonModule, FormsModule, Card3dDirective, FloatingActivityComponent, StatusColorPipe, BioFormatterPipe],
+    imports: [CommonModule, Card3dDirective, FloatingActivityComponent, StatusColorPipe, BioFormatterPipe],
     changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.None
 })
@@ -201,6 +200,32 @@ export class CardProfileComponent {
   public sendMessage(): void {
     window.open(`https://discord.com/users/${this.userId}`, '_blank');
     this.message.set('');
+  }
+
+  connectionUrl(account: ConnectedAccount): string | null {
+    const { type, id, name } = account;
+    if (!type) return null;
+    const byName: Record<string, string> = {
+      github: 'https://github.com/',
+      twitch: 'https://www.twitch.tv/',
+      reddit: 'https://www.reddit.com/user/',
+      twitter: 'https://x.com/',
+      instagram: 'https://www.instagram.com/',
+      tiktok: 'https://www.tiktok.com/@',
+      domain: 'https://',
+    };
+    const byId: Record<string, string> = {
+      steam: 'https://steamcommunity.com/profiles/',
+      spotify: 'https://open.spotify.com/user/',
+      youtube: 'https://www.youtube.com/channel/',
+    };
+    if (byName[type] && name) return byName[type] + name;
+    if (byId[type] && id) return byId[type] + id;
+    return null;
+  }
+
+  onMessageInput(event: Event): void {
+    this.message.set((event.target as HTMLInputElement).value);
   }
 
   handleImageError(event: Event) {
