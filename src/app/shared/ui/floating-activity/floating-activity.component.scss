@@ -11,6 +11,21 @@
   flex-direction: column;
   align-items: center;
 
+  // The floating player always sits on a dark, album-tinted panel, so pin the
+  // dark palette here regardless of the page theme (light mode was
+  // rendering dark text on a dark background).
+  &:not(.mobile-embedded) {
+    --text-primary: #ffffff;
+    --text-secondary: rgba(255, 255, 255, 0.72);
+    --text-muted: rgba(255, 255, 255, 0.5);
+    --border-primary: rgba(255, 255, 255, 0.08);
+    --border-hover: rgba(255, 255, 255, 0.2);
+    --bg-overlay: rgba(0, 0, 0, 0.6);
+    --bg-glass-strong: rgba(20, 20, 24, 0.85);
+    --bg-card-solid: #1a1a1a;
+    --bg-card: rgba(0, 0, 0, 0.4);
+  }
+
   &.animate-slide-up {
     animation: slideUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
   }

@@ -95,7 +95,7 @@
               <!-- External Link Button (Spotify) -->
               @if (isSpotify() && currentActivity().sync_id) {
                   <a [href]="'https://open.spotify.com/track/' + currentActivity().sync_id" 
-                     target="_blank" 
+                     target="_blank" rel="noopener noreferrer"
                      class="action-btn external-link"
                      (click)="$event.stopPropagation()"
                      title="Open in Spotify">

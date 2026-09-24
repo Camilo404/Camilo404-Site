@@ -21,6 +21,7 @@
 .skeleton-card {
   position: relative;
   width: 400px;
+  max-width: 100%;
   min-height: 500px;
   background: var(--bg-card-solid);
   backdrop-filter: blur(20px);
@@ -101,6 +102,7 @@
 .aesthetic-card {
   position: relative;
   width: 400px;
+  max-width: 100%;
   background: var(--bg-card-solid);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
@@ -284,6 +286,15 @@
       background: transparent;
     }
   }
+}
+
+// Discord's status hues are tuned for dark UIs; darken the label text so it
+// stays readable on the light badge background.
+html:not(.dark) .status-badge {
+  &.online { color: #23855a; }
+  &.idle { color: #b8740b; }
+  &.dnd { color: #c9302c; }
+  &.offline { color: #5d6570; }
 }
 
 .platform-indicators {

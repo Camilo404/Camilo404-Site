@@ -1,4 +1,4 @@
-import { Component, ElementRef, input, OnDestroy, OnInit, ViewChild, NgZone, inject, PLATFORM_ID, ChangeDetectionStrategy, computed } from '@angular/core';
+import { Component, ElementRef, input, OnDestroy, OnInit, ViewChild, NgZone, inject, PLATFORM_ID, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 
 export interface AnimationConfig {
@@ -145,16 +145,17 @@ export class EtherealShadowComponent implements OnInit, OnDestroy {
 
   @ViewChild('feColorMatrix') feColorMatrixRef?: ElementRef<SVGFEColorMatrixElement>;
 
-  public filterId = 'shadowoverlay-' + Math.random().toString(36).substr(2, 9);
+  public filterId = 'shadowoverlay-' + Math.random().toString(36).slice(2, 11);
   private animationFrameId: number | null = null;
   private isMobile = false;
+  private prefersReducedMotion = false;
 
   private ngZone = inject(NgZone);
   private platformId = inject(PLATFORM_ID);
 
   get animationEnabled(): boolean {
     const anim = this.animation();
-    return !!(anim && anim.scale > 0) && !this.isMobile;
+    return !!(anim && anim.scale > 0) && !this.isMobile && !this.prefersReducedMotion;
   }
 
   get displacementScale(): number {
@@ -186,6 +187,8 @@ export class EtherealShadowComponent implements OnInit, OnDestroy {
     // Detect mobile devices to save battery/performance
     const userAgent = window.navigator.userAgent.toLowerCase();
     this.isMobile = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent) || window.innerWidth < 768;
+    // The full-viewport SVG displacement filter is the most expensive thing on the page
+    this.prefersReducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
   }
 
   ngOnDestroy(): void {
