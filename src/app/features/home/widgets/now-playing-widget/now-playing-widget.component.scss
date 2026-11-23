@@ -98,6 +98,26 @@
   &:hover { transform: rotate(-12deg) scale(1.1); }
 }
 
+// Expand button: a real <button>, so reset its native look
+.np-expand {
+  border: 0;
+  padding: 0;
+  font: inherit;
+  font-size: 0.75rem;
+
+  &.solo { margin-left: auto; }
+  &:hover { transform: scale(1.12); }
+}
+
+// ---------- View transition names (tile ⇄ expanded dialog) ----------
+// Only one element may carry each name at a time: the tile drops them while
+// the dialog is open, and the dialog's copies only exist while it's open.
+.np-card.vt-live {
+  view-transition-name: np-surface;
+
+  .np-art { view-transition-name: np-art; }
+}
+
 // ---------- Body ----------
 .np-body {
   display: grid;
@@ -447,4 +467,192 @@
 @media (max-width: 480px) {
   .np-art-wrap { width: 84px; }
   .np-title { font-size: 1.1rem; }
+}
+
+// ========================================
+// Expanded player (modal <dialog>)
+// ========================================
+.np-dialog {
+  --np-accent: oklch(from var(--np-seed, #b79cf7) clamp(0.72, l, 0.82) clamp(0.08, c, 0.15) h);
+  --np-ink: oklch(from var(--np-seed, #b79cf7) 0.42 clamp(0.08, c, 0.16) h);
+
+  // The panel is the visible surface; the dialog itself is just a positioner
+  width: min(920px, calc(100vw - 32px));
+  max-width: none;
+  max-height: calc(100dvh - 32px);
+  padding: 0;
+  margin: auto;
+  border: 0;
+  background: transparent;
+  overflow: visible;
+
+  &::backdrop {
+    background: color-mix(in oklch, var(--np-accent) 22%, rgba(250, 245, 255, 0.55));
+    backdrop-filter: blur(10px) saturate(1.2);
+  }
+}
+
+.npx-panel {
+  view-transition-name: np-surface;
+
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.75rem;
+  padding: 2rem;
+  max-height: calc(100dvh - 32px);
+  // clip (not auto): the oversized blurred backdrop must not create scroll overflow
+  overflow: clip;
+  border-radius: 28px;
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  box-shadow:
+    0 40px 80px -30px color-mix(in oklch, var(--np-ink) 55%, transparent),
+    inset 0 1px 0 #fff;
+
+  &.has-lyrics {
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    align-items: center;
+  }
+}
+
+// Blurred album art as an ambient wash behind the panel
+.npx-backdrop {
+  position: absolute;
+  inset: -20%;
+  z-index: -1;
+  width: 140%;
+  height: 140%;
+  object-fit: cover;
+  filter: blur(60px) saturate(1.4);
+  opacity: 0.45;
+  pointer-events: none;
+  animation: npx-drift 18s ease-in-out infinite alternate;
+}
+
+@keyframes npx-drift {
+  to { transform: rotate(8deg) scale(1.1); }
+}
+
+.npx-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.8);
+  color: var(--np-ink);
+  font-size: 0.95rem;
+  cursor: url('../../../../../assets/images/cursor/link.png'), pointer;
+  transition: transform 0.45s var(--spring);
+
+  &:hover,
+  &:focus-visible { transform: rotate(90deg) scale(1.08); }
+}
+
+.npx-main {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  min-width: 0;
+}
+
+.npx-art-wrap {
+  width: min(100%, 320px);
+  aspect-ratio: 1;
+}
+
+.npx-art {
+  view-transition-name: np-art;
+
+  border-radius: 22px;
+  box-shadow: 0 30px 50px -24px color-mix(in oklch, var(--np-ink) 70%, transparent);
+}
+
+.npx-info {
+  min-width: 0;
+
+  .tile-label { margin-bottom: 0.5rem; }
+
+  .np-sub,
+  .np-meta { white-space: normal; }
+}
+
+.npx-title {
+  font-size: clamp(1.4rem, 2.6vw, 2rem);
+  text-wrap: balance;
+}
+
+.npx-spotify {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1.1rem;
+  padding: 0.55rem 1rem;
+  border-radius: 999px;
+  background: #1db954;
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: none;
+  box-shadow: 0 10px 20px -10px rgba(29, 185, 84, 0.7);
+  transition: transform 0.45s var(--spring);
+  cursor: url('../../../../../assets/images/cursor/link.png'), pointer;
+
+  &:hover,
+  &:focus-visible { transform: translateY(-2px); }
+}
+
+// Bigger karaoke: taller box, larger lines
+.npx-lyrics {
+  min-width: 0;
+  align-self: stretch;
+  display: flex;
+
+  .np-lyrics {
+    flex: 1;
+    min-height: 0;
+  }
+
+  .lyrics-box {
+    height: clamp(260px, 52dvh, 440px);
+    padding: 0 1.5rem;
+    mask-image: linear-gradient(to bottom, transparent 0%, #000 22%, #000 78%, transparent 100%);
+  }
+
+  .lyric {
+    padding: 0.4rem 0;
+    font-size: clamp(1.1rem, 1.8vw, 1.45rem);
+  }
+
+  .gap { height: 44px; }
+}
+
+@media (max-width: 720px) {
+  .npx-panel,
+  .npx-panel.has-lyrics {
+    grid-template-columns: 1fr;
+    padding: 1.4rem;
+    gap: 1.25rem;
+  }
+
+  .npx-main {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .npx-art-wrap { width: 112px; flex-shrink: 0; }
+
+  .npx-lyrics .lyrics-box { height: clamp(200px, 40dvh, 320px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .npx-backdrop { animation: none; }
 }

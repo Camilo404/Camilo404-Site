@@ -1,5 +1,6 @@
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   DestroyRef,
   ElementRef,
@@ -10,12 +11,14 @@ import {
   signal,
   untracked,
   viewChild,
+  viewChildren,
 } from '@angular/core';
+import { NgTemplateOutlet } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { interval } from 'rxjs';
 import { FastAverageColor } from 'fast-average-color';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { faGamepad, faArrowUpRightFromSquare, faMusic } from '@fortawesome/free-solid-svg-icons';
+import { faGamepad, faArrowUpRightFromSquare, faMusic, faExpand, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { faSpotify } from '@fortawesome/free-brands-svg-icons';
 
 import { LanyardService } from '../../../../core/services/lanyard.service';
@@ -56,21 +59,28 @@ function formatTime(ms: number): string {
   standalone: true,
   templateUrl: './now-playing-widget.component.html',
   styleUrls: ['./now-playing-widget.component.scss'],
-  imports: [FontAwesomeModule, Card3dDirective, TooltipDirective, TileSparklesComponent],
+  imports: [NgTemplateOutlet, FontAwesomeModule, Card3dDirective, TooltipDirective, TileSparklesComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NowPlayingWidgetComponent {
   private readonly lanyard = inject(LanyardService);
   private readonly lyricsService = inject(LyricsService);
   private readonly destroyRef = inject(DestroyRef);
-  private readonly lyricsBox = viewChild<ElementRef<HTMLElement>>('lyricsBox');
-  private readonly lyricsTrack = viewChild<ElementRef<HTMLElement>>('lyricsTrack');
+  private readonly cdr = inject(ChangeDetectorRef);
+  /** One lyrics view in the tile, a second one while the expanded dialog is open. */
+  private readonly lyricsBoxes = viewChildren<ElementRef<HTMLElement>>('lyricsBox');
+  private readonly dialog = viewChild<ElementRef<HTMLDialogElement>>('npDialog');
   private readonly fac = new FastAverageColor();
 
   readonly faGamepad = faGamepad;
   readonly faMusic = faMusic;
   readonly faSpotify = faSpotify;
   readonly faExternal = faArrowUpRightFromSquare;
+  readonly faExpand = faExpand;
+  readonly faXmark = faXmark;
+
+  /** Expanded "full player" dialog; morphs from the tile via a view transition. */
+  readonly expanded = signal(false);
 
   /** Ticks every 100ms while something with timestamps is playing. */
   readonly now = signal(Date.now());
@@ -237,16 +247,35 @@ export class NowPlayingWidgetComponent {
       this.activeLine();
       this.interludeAfter();
       this.lyrics();
+      this.lyricsBoxes();
       this.positionTrack();
     });
 
-    // Line heights change when the tile resizes → re-centre
+    // Line heights change when the tile (or the dialog) resizes → re-centre
     afterRenderEffect((onCleanup) => {
-      const box = this.lyricsBox()?.nativeElement;
-      if (!box || typeof ResizeObserver === 'undefined') return;
+      const boxes = this.lyricsBoxes();
+      if (!boxes.length || typeof ResizeObserver === 'undefined') return;
       const ro = new ResizeObserver(() => this.positionTrack());
-      ro.observe(box);
+      boxes.forEach((b) => ro.observe(b.nativeElement));
       onCleanup(() => ro.disconnect());
+    });
+
+    // Clicks on the ::backdrop land on the <dialog> itself → close.
+    // (Wired here rather than in the template: the dialog is keyboard-closable
+    // via Esc already, a template (click) would trip the a11y lint rules.)
+    effect((onCleanup) => {
+      const dialog = this.dialog()?.nativeElement;
+      if (!dialog) return;
+      const onClick = (e: MouseEvent) => {
+        if (e.target === dialog) this.collapse();
+      };
+      dialog.addEventListener('click', onClick);
+      onCleanup(() => dialog.removeEventListener('click', onClick));
+    });
+
+    // Nothing left to show (activity ended) → close the expanded view
+    effect(() => {
+      if (this.expanded() && !this.main()) untracked(() => this.collapse());
     });
   }
 
@@ -289,11 +318,50 @@ export class NowPlayingWidgetComponent {
       .catch(() => this.seed.set(DEFAULT_SEED));
   }
 
-  private positionTrack(): void {
-    const box = this.lyricsBox()?.nativeElement;
-    const track = this.lyricsTrack()?.nativeElement;
-    if (!box || !track) return;
+  // ---- Expanded view ----
+  expand(): void {
+    if (this.expanded() || !this.main()) return;
+    this.withViewTransition(() => {
+      this.expanded.set(true);
+      this.cdr.detectChanges();
+      this.dialog()?.nativeElement.showModal();
+    });
+  }
 
+  collapse(): void {
+    if (!this.expanded()) return;
+    this.withViewTransition(() => {
+      this.dialog()?.nativeElement.close();
+      this.expanded.set(false);
+      this.cdr.detectChanges();
+    });
+  }
+
+  /** Esc: run our animated close instead of the dialog's instant one. */
+  onDialogCancel(event: Event): void {
+    event.preventDefault();
+    this.collapse();
+  }
+
+  /** Morph tile ⇄ dialog where supported; plain toggle otherwise or with reduced motion. */
+  private withViewTransition(update: () => void): void {
+    const reduce = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    if (reduce || typeof document.startViewTransition !== 'function') {
+      update();
+      return;
+    }
+    document.startViewTransition(update);
+  }
+
+  private positionTrack(): void {
+    for (const ref of untracked(() => this.lyricsBoxes())) {
+      const box = ref.nativeElement;
+      const track = box.querySelector<HTMLElement>('.lyrics-track');
+      if (track) this.centreTrack(box, track);
+    }
+  }
+
+  private centreTrack(box: HTMLElement, track: HTMLElement): void {
     const gapAfter = untracked(() => this.interludeAfter());
     const active = untracked(() => this.activeLine());
     let centre: number;
