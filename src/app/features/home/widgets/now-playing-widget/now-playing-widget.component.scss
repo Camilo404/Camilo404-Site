@@ -486,6 +486,13 @@
   background: transparent;
   overflow: visible;
 
+  // No lyrics column → a compact card instead of a mostly empty wide panel
+  &:has(.npx-panel:not(.has-lyrics)) {
+    width: min(400px, calc(100vw - 32px));
+
+    .npx-art-wrap { width: 100%; }
+  }
+
   &::backdrop {
     background: color-mix(in oklch, var(--np-accent) 22%, rgba(250, 245, 255, 0.55));
     backdrop-filter: blur(10px) saturate(1.2);

@@ -164,7 +164,7 @@
   (close)="expanded.set(false)"
 >
   @if (expanded() && main(); as act) {
-    <div class="npx-panel" [class.has-lyrics]="isSpotify()">
+    <div class="npx-panel" [class.has-lyrics]="isSpotify() && synced()">
       @if (art()) {
         <img class="npx-backdrop" [src]="art()" alt="" aria-hidden="true" crossorigin="anonymous" />
       }
@@ -210,7 +210,8 @@
         </div>
       </div>
 
-      @if (isSpotify()) {
+      <!-- Only synced lyrics get the big column; otherwise the art + info stand alone -->
+      @if (isSpotify() && synced()) {
         <div class="npx-lyrics">
           <ng-container [ngTemplateOutlet]="lyricsTpl" />
         </div>
