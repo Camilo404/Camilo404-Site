@@ -7,7 +7,9 @@ import { Lanyard, Activity } from 'src/app/core/models/lanyard-profile.model';
 import { ProfileEffectsService } from 'src/app/core/services/profile-effects.service';
 import { ProfileEffectAnimationService, RenderedLayer } from 'src/app/core/services/profile-effect-animation.service';
 import { Card3dDirective } from '../../directives/card-3d.directive';
-import { FloatingActivityComponent } from '../floating-activity/floating-activity.component';
+import { TooltipDirective } from '../../directives/tooltip.directive';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { faDiscord } from '@fortawesome/free-brands-svg-icons';
 import { StatusColorPipe } from '../../pipes/status-color.pipe';
 import { BioFormatterPipe } from '../../pipes/bio-formatter.pipe';
 import { DiscordCdn } from 'src/app/core/utils/discord-cdn';
@@ -22,7 +24,7 @@ import { debounceTime } from 'rxjs/operators';
     standalone: true,
     templateUrl: './card-profile.component.html',
     styleUrls: ['./card-profile.component.scss'],
-    imports: [CommonModule, Card3dDirective, FloatingActivityComponent, StatusColorPipe, BioFormatterPipe],
+    imports: [CommonModule, Card3dDirective, TooltipDirective, FontAwesomeModule, StatusColorPipe, BioFormatterPipe],
     changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.None
 })
@@ -51,13 +53,22 @@ export class CardProfileComponent {
   userData = signal<Profile | undefined>(undefined);
   themesColor = signal<string[]>([]);
   isMobile = signal(false);
-  message = signal('');
+  readonly faDiscord = faDiscord;
   lanyardData = signal<Lanyard | null>(null);
 
   // Profile Effect properties
   profileEffectConfig = signal<ProfileEffectConfig | null>(null);
   renderedLayers = signal<RenderedLayer[]>([]);
   custom_status = signal<Activity | null>(null);
+
+  /** Discord returns `banner: null` when the profile has none (the banner endpoint 404s). */
+  hasBanner = computed(() => !!this.userData()?.user?.banner);
+
+  /** Discord nameplate video; shown small behind the name, like the member list does. */
+  nameplateUrl = computed(() => {
+    const asset = this.userData()?.user?.collectibles?.nameplate?.asset;
+    return asset ? DiscordCdn.nameplate(asset) : null;
+  });
 
   private readonly clanSource = computed(() => {
     const user = this.userData()?.user;
@@ -197,9 +208,30 @@ export class CardProfileComponent {
     this.lanyardService.setupWebSocket();
   }
 
-  public sendMessage(): void {
-    window.open(`https://discord.com/users/${this.userId}`, '_blank');
-    this.message.set('');
+  /** Brand colour for a connection icon (painted through a CSS mask). */
+  brandColor(type: string | undefined): string {
+    const colors: Record<string, string> = {
+      github: '#24292f',
+      spotify: '#1db954',
+      steam: '#1b2838',
+      xbox: '#107c10',
+      twitch: '#9146ff',
+      youtube: '#ff0000',
+      reddit: '#ff4500',
+      twitter: '#14171a',
+      instagram: '#d62976',
+      tiktok: '#111111',
+      playstation: '#003791',
+      battlenet: '#148eff',
+      epicgames: '#313131',
+      leagueoflegends: '#c28f2c',
+      riot: '#d13639',
+      crunchyroll: '#f47521',
+      paypal: '#003087',
+      facebook: '#1877f2',
+      ebay: '#e53238',
+    };
+    return (type && colors[type]) || '#6f52c9';
   }
 
   connectionUrl(account: ConnectedAccount): string | null {
@@ -222,10 +254,6 @@ export class CardProfileComponent {
     if (byName[type] && name) return byName[type] + name;
     if (byId[type] && id) return byId[type] + id;
     return null;
-  }
-
-  onMessageInput(event: Event): void {
-    this.message.set((event.target as HTMLInputElement).value);
   }
 
   handleImageError(event: Event) {
