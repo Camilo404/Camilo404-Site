@@ -1,0 +1,144 @@
+<section
+  class="widget-card np-card"
+  [class.is-playing]="isSpotify()"
+  [class.is-idle]="!main()"
+  [style.--np-seed]="seed()"
+  appCard3d
+  [card3dConfig]="{ maxRotation: 4, scale: 1.015 }"
+  [card3dSpotlight]="true"
+  aria-live="polite"
+>
+  <div class="np-tint" aria-hidden="true"></div>
+  <app-tile-sparkles [variant]="2"></app-tile-sparkles>
+
+  <header class="np-header">
+    @if (isSpotify()) {
+      <span class="tile-label">Now playing</span>
+      <span class="np-source">
+        <fa-icon [icon]="faSpotify"></fa-icon> Spotify
+        <span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+      </span>
+      @if (trackUrl(); as url) {
+        <a class="np-open" [href]="url" target="_blank" rel="noopener noreferrer" appTooltip="Open in Spotify" aria-label="Open in Spotify">
+          <fa-icon [icon]="faExternal"></fa-icon>
+        </a>
+      }
+    } @else if (main(); as act) {
+      <span class="tile-label">{{ activityVerb(act) }}</span>
+    } @else {
+      <span class="tile-label">Now playing</span>
+    }
+  </header>
+
+  @if (!loaded()) {
+    <!-- Skeleton while the live presence connects -->
+    <div class="np-body np-skeleton" aria-busy="true" aria-label="Loading activity">
+      <div class="sk sk-art"></div>
+      <div class="sk-lines">
+        <div class="sk sk-title"></div>
+        <div class="sk sk-sub"></div>
+        <div class="sk sk-bar"></div>
+      </div>
+    </div>
+  } @else if (main(); as act) {
+    <div class="np-body">
+      <!-- Artwork -->
+      <div class="np-art-wrap">
+        @if (art()) {
+          <img class="np-art" [src]="art()" [alt]="act.assets?.large_text || act.name" crossorigin="anonymous" (error)="hideBrokenImage($event)" />
+        } @else {
+          <div class="np-art np-art-fallback"><fa-icon [icon]="faGamepad"></fa-icon></div>
+        }
+        @if (!isSpotify() && smallArt()) {
+          <img class="np-small-art" [src]="smallArt()" alt="" [appTooltip]="act.assets?.small_text" (error)="hideBrokenImage($event)" />
+        }
+      </div>
+
+      <div class="np-info">
+        <h3 class="np-title">{{ isSpotify() ? act.details : act.name }}</h3>
+        @if (isSpotify()) {
+          <p class="np-sub">{{ artist(act) }}</p>
+          @if (act.assets?.large_text) {
+            <p class="np-meta">{{ act.assets?.large_text }}</p>
+          }
+        } @else {
+          @if (act.details) { <p class="np-sub">{{ act.details }}</p> }
+          @if (act.state) { <p class="np-meta">{{ act.state }}</p> }
+        }
+
+        @if (durationMs()) {
+          <div class="np-progress">
+            <span class="np-time">{{ elapsedLabel() }}</span>
+            <div class="np-bar"><i [style.width.%]="progress()"></i></div>
+            <span class="np-time">{{ durationLabel() }}</span>
+          </div>
+        } @else if (act.timestamps?.start) {
+          <p class="np-time np-elapsed">{{ elapsedLabel() }} elapsed</p>
+        }
+      </div>
+    </div>
+
+    <!-- Karaoke lyrics -->
+    @if (isSpotify()) {
+      <div class="np-lyrics" [class.is-loading]="lyricsState() === 'loading'">
+        @switch (lyricsState()) {
+          @case ('loading') {
+            <p class="lyrics-note">Finding lyrics…</p>
+          }
+          @case ('none') {
+            <p class="lyrics-note">♪ No lyrics for this one — just vibes ♪</p>
+          }
+          @default {
+            @if (synced()) {
+              <div class="lyrics-box" #lyricsBox aria-hidden="true">
+                <!-- The track slides (transform) to centre the focus; layout never reflows -->
+                <div class="lyrics-track" #lyricsTrack>
+                  @if (gapSlots().has(-1)) {
+                    <div class="gap" data-gap="-1" [class.playing]="interludeAfter() === -1" [style.--dist]="lineDistance(-0.5)">
+                      <i></i><i></i><i></i>
+                    </div>
+                  }
+                  @for (line of lyrics(); track $index) {
+                    <p
+                      class="lyric"
+                      [attr.data-line]="$index"
+                      [class.active]="$index === activeLine() && interludeAfter() !== $index"
+                      [class.past]="$index < activeLine() || interludeAfter() === $index"
+                      [style.--dist]="lineDistance($index)"
+                      [style.--line-dur]="$index === activeLine() ? activeLineDuration() + 'ms' : null"
+                      [style.--line-offset]="$index === activeLine() ? activeLineOffset() + 'ms' : null"
+                    ><span class="lyric-text">{{ line.text }}</span></p>
+                    @if (gapSlots().has($index)) {
+                      <div class="gap" [attr.data-gap]="$index" [class.playing]="interludeAfter() === $index" [style.--dist]="lineDistance($index + 0.5)">
+                        <i></i><i></i><i></i>
+                      </div>
+                    }
+                  }
+                </div>
+              </div>
+            } @else {
+              <p class="lyrics-note">♪ Lyrics aren't synced for this track ♪</p>
+            }
+          }
+        }
+      </div>
+    }
+
+    @if (others().length) {
+      <ul class="np-others">
+        @for (o of others(); track $index) {
+          <li [appTooltip]="o.details || o.state || o.name">{{ activityVerb(o) }} <strong>{{ o.name }}</strong></li>
+        }
+      </ul>
+    }
+  } @else {
+    <!-- Idle -->
+    <div class="np-idle">
+      <div class="idle-note" aria-hidden="true"><fa-icon [icon]="faMusic"></fa-icon></div>
+      <div>
+        <h3 class="np-title">Nothing playing right now</h3>
+        <p class="np-sub">When I'm on Spotify it shows up here with live lyrics ✦</p>
+      </div>
+    </div>
+  }
+</section>
