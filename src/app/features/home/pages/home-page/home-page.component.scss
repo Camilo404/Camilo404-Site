@@ -30,6 +30,30 @@
     color: var(--ink-pink);
     font-size: 0.7rem;
   }
+
+  // Discoverability for the ⌘K palette
+  .palette-hint {
+    display: inline-flex;
+    gap: 0.2rem;
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: url('../../../../../assets/images/cursor/link.png'), pointer;
+    transition: transform 0.4s var(--spring);
+
+    &:hover,
+    &:focus-visible { transform: translateY(-2px); }
+
+    kbd {
+      padding: 0.1rem 0.4rem;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.8);
+      box-shadow: 0 0 0 1px rgba(183, 156, 247, 0.35), 0 2px 0 rgba(183, 156, 247, 0.35);
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      color: var(--text-secondary);
+    }
+  }
 }
 
 // ========================================

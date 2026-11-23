@@ -7,6 +7,9 @@
 <!-- Sparkle burst on click -->
 <app-click-sparkles></app-click-sparkles>
 
+<!-- ⌘K / Ctrl+K / "/" -->
+<app-command-palette [commands]="commands()"></app-command-palette>
+
 <main class="main-container">
   <!-- Bento: tile size follows importance (see grid-template-areas in the SCSS) -->
   <div class="bento">
@@ -41,5 +44,9 @@
     <span>© {{ year }} Camilo404</span>
     <span class="dot" aria-hidden="true">✦</span>
     <span>Made with love in Medellín</span>
+    <span class="dot" aria-hidden="true">✦</span>
+    <button type="button" class="palette-hint" (click)="palette()?.open()" aria-label="Open command palette">
+      <kbd>{{ isMac ? '⌘' : 'Ctrl' }}</kbd><kbd>K</kbd>
+    </button>
   </footer>
 </main>

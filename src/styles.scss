@@ -152,6 +152,28 @@ body {
 
 }
 
+// Now Playing tile ⇄ expanded player morph (see NowPlayingWidgetComponent).
+// The pseudo-elements hang off <html>, so they can't live in component styles.
+::view-transition-group(np-surface),
+::view-transition-group(np-art) {
+  animation-duration: 0.55s;
+  animation-timing-function: cubic-bezier(0.22, 1.1, 0.36, 1);
+}
+
+// Surface: fill the morphing box (cropping, not stretching) while the two
+// snapshots cross-fade; the default keeps aspect ratio and leaves gaps
+::view-transition-old(np-surface),
+::view-transition-new(np-surface) {
+  height: 100%;
+  object-fit: cover;
+  animation-duration: 0.3s;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.35s;
+}
+
 // Shared tile label: small caps with a sparkle, used by every widget header
 .tile-label {
   display: inline-flex;

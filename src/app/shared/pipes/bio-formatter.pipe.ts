@@ -58,6 +58,10 @@ export class BioFormatterPipe implements PipeTransform {
     // Newlines to <br>
     html = html.replace(/\n/g, '<br>');
 
+    // Blank lines (Discord bios use them as spacers) become a half-line gap
+    // instead of a full empty row
+    html = html.replace(/(?:<br>\s*){2,}/g, '<span class="bio-gap"></span>');
+
     return html;
   }
 

@@ -1,5 +1,6 @@
 <section
   class="widget-card np-card"
+  [class.vt-live]="!expanded()"
   [class.is-playing]="isSpotify()"
   [class.is-idle]="!main()"
   [style.--np-seed]="seed()"
@@ -27,6 +28,11 @@
       <span class="tile-label">{{ activityVerb(act) }}</span>
     } @else {
       <span class="tile-label">Now playing</span>
+    }
+    @if (main()) {
+      <button type="button" class="np-open np-expand" [class.solo]="!isSpotify()" (click)="expand()" appTooltip="Expand" aria-label="Expand player" aria-haspopup="dialog">
+        <fa-icon [icon]="faExpand"></fa-icon>
+      </button>
     }
   </header>
 
@@ -80,48 +86,7 @@
 
     <!-- Karaoke lyrics -->
     @if (isSpotify()) {
-      <div class="np-lyrics" [class.is-loading]="lyricsState() === 'loading'">
-        @switch (lyricsState()) {
-          @case ('loading') {
-            <p class="lyrics-note">Finding lyrics…</p>
-          }
-          @case ('none') {
-            <p class="lyrics-note">♪ No lyrics for this one — just vibes ♪</p>
-          }
-          @default {
-            @if (synced()) {
-              <div class="lyrics-box" #lyricsBox aria-hidden="true">
-                <!-- The track slides (transform) to centre the focus; layout never reflows -->
-                <div class="lyrics-track" #lyricsTrack>
-                  @if (gapSlots().has(-1)) {
-                    <div class="gap" data-gap="-1" [class.playing]="interludeAfter() === -1" [style.--dist]="lineDistance(-0.5)">
-                      <i></i><i></i><i></i>
-                    </div>
-                  }
-                  @for (line of lyrics(); track $index) {
-                    <p
-                      class="lyric"
-                      [attr.data-line]="$index"
-                      [class.active]="$index === activeLine() && interludeAfter() !== $index"
-                      [class.past]="$index < activeLine() || interludeAfter() === $index"
-                      [style.--dist]="lineDistance($index)"
-                      [style.--line-dur]="$index === activeLine() ? activeLineDuration() + 'ms' : null"
-                      [style.--line-offset]="$index === activeLine() ? activeLineOffset() + 'ms' : null"
-                    ><span class="lyric-text">{{ line.text }}</span></p>
-                    @if (gapSlots().has($index)) {
-                      <div class="gap" [attr.data-gap]="$index" [class.playing]="interludeAfter() === $index" [style.--dist]="lineDistance($index + 0.5)">
-                        <i></i><i></i><i></i>
-                      </div>
-                    }
-                  }
-                </div>
-              </div>
-            } @else {
-              <p class="lyrics-note">♪ Lyrics aren't synced for this track ♪</p>
-            }
-          }
-        }
-      </div>
+      <ng-container [ngTemplateOutlet]="lyricsTpl" />
     }
 
     @if (others().length) {
@@ -142,3 +107,115 @@
     </div>
   }
 </section>
+
+<!-- Shared karaoke lyrics: rendered in the tile and, larger, in the expanded view -->
+<ng-template #lyricsTpl>
+  <div class="np-lyrics" [class.is-loading]="lyricsState() === 'loading'">
+    @switch (lyricsState()) {
+      @case ('loading') {
+        <p class="lyrics-note">Finding lyrics…</p>
+      }
+      @case ('none') {
+        <p class="lyrics-note">♪ No lyrics for this one — just vibes ♪</p>
+      }
+      @default {
+        @if (synced()) {
+          <div class="lyrics-box" #lyricsBox aria-hidden="true">
+            <!-- The track slides (transform) to centre the focus; layout never reflows -->
+            <div class="lyrics-track">
+              @if (gapSlots().has(-1)) {
+                <div class="gap" data-gap="-1" [class.playing]="interludeAfter() === -1" [style.--dist]="lineDistance(-0.5)">
+                  <i></i><i></i><i></i>
+                </div>
+              }
+              @for (line of lyrics(); track $index) {
+                <p
+                  class="lyric"
+                  [attr.data-line]="$index"
+                  [class.active]="$index === activeLine() && interludeAfter() !== $index"
+                  [class.past]="$index < activeLine() || interludeAfter() === $index"
+                  [style.--dist]="lineDistance($index)"
+                  [style.--line-dur]="$index === activeLine() ? activeLineDuration() + 'ms' : null"
+                  [style.--line-offset]="$index === activeLine() ? activeLineOffset() + 'ms' : null"
+                ><span class="lyric-text">{{ line.text }}</span></p>
+                @if (gapSlots().has($index)) {
+                  <div class="gap" [attr.data-gap]="$index" [class.playing]="interludeAfter() === $index" [style.--dist]="lineDistance($index + 0.5)">
+                    <i></i><i></i><i></i>
+                  </div>
+                }
+              }
+            </div>
+          </div>
+        } @else {
+          <p class="lyrics-note">♪ Lyrics aren't synced for this track ♪</p>
+        }
+      }
+    }
+  </div>
+</ng-template>
+
+<!-- Expanded player: a modal <dialog> in the top layer; the tile morphs into it -->
+<dialog
+  #npDialog
+  class="np-dialog"
+  [style.--np-seed]="seed()"
+  aria-label="Now playing"
+  (cancel)="onDialogCancel($event)"
+  (close)="expanded.set(false)"
+>
+  @if (expanded() && main(); as act) {
+    <div class="npx-panel" [class.has-lyrics]="isSpotify() && synced()">
+      @if (art()) {
+        <img class="npx-backdrop" [src]="art()" alt="" aria-hidden="true" crossorigin="anonymous" />
+      }
+      <button type="button" class="npx-close" (click)="collapse()" aria-label="Close player">
+        <fa-icon [icon]="faXmark"></fa-icon>
+      </button>
+
+      <div class="npx-main">
+        <div class="npx-art-wrap">
+          @if (art()) {
+            <img class="np-art npx-art" [src]="art()" [alt]="act.assets?.large_text || act.name" crossorigin="anonymous" (error)="hideBrokenImage($event)" />
+          } @else {
+            <div class="np-art npx-art np-art-fallback"><fa-icon [icon]="faGamepad"></fa-icon></div>
+          }
+        </div>
+
+        <div class="npx-info">
+          <span class="tile-label">{{ isSpotify() ? 'Now playing' : activityVerb(act) }}</span>
+          <h2 class="np-title npx-title">{{ isSpotify() ? act.details : act.name }}</h2>
+          @if (isSpotify()) {
+            <p class="np-sub">{{ artist(act) }}</p>
+            @if (act.assets?.large_text) { <p class="np-meta">{{ act.assets?.large_text }}</p> }
+          } @else {
+            @if (act.details) { <p class="np-sub">{{ act.details }}</p> }
+            @if (act.state) { <p class="np-meta">{{ act.state }}</p> }
+          }
+
+          @if (durationMs()) {
+            <div class="np-progress">
+              <span class="np-time">{{ elapsedLabel() }}</span>
+              <div class="np-bar"><i [style.width.%]="progress()"></i></div>
+              <span class="np-time">{{ durationLabel() }}</span>
+            </div>
+          } @else if (act.timestamps?.start) {
+            <p class="np-time np-elapsed">{{ elapsedLabel() }} elapsed</p>
+          }
+
+          @if (trackUrl(); as url) {
+            <a class="npx-spotify" [href]="url" target="_blank" rel="noopener noreferrer">
+              <fa-icon [icon]="faSpotify"></fa-icon> Open in Spotify
+            </a>
+          }
+        </div>
+      </div>
+
+      <!-- Only synced lyrics get the big column; otherwise the art + info stand alone -->
+      @if (isSpotify() && synced()) {
+        <div class="npx-lyrics">
+          <ng-container [ngTemplateOutlet]="lyricsTpl" />
+        </div>
+      }
+    </div>
+  }
+</dialog>

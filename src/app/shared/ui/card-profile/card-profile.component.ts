@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, input, output, effect, ChangeDetectionStrategy, ViewEncapsulation, signal, computed, inject, DestroyRef } from '@angular/core';
 import { DiscordApiService } from 'src/app/core/services/discord-api.service';
-import { ConnectedAccount, Profile, ProfileEffectConfig } from 'src/app/core/models/discord-profile.model';
+import { Profile, ProfileEffectConfig } from 'src/app/core/models/discord-profile.model';
 import { LanyardService } from 'src/app/core/services/lanyard.service';
 import { Lanyard, Activity } from 'src/app/core/models/lanyard-profile.model';
 import { ProfileEffectsService } from 'src/app/core/services/profile-effects.service';
@@ -10,8 +10,10 @@ import { Card3dDirective } from '../../directives/card-3d.directive';
 import { TooltipDirective } from '../../directives/tooltip.directive';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faDiscord } from '@fortawesome/free-brands-svg-icons';
+import { faGem } from '@fortawesome/free-solid-svg-icons';
 import { StatusColorPipe } from '../../pipes/status-color.pipe';
 import { BioFormatterPipe } from '../../pipes/bio-formatter.pipe';
+import { GithubHeatmapComponent } from '../github-heatmap/github-heatmap.component';
 import { DiscordCdn } from 'src/app/core/utils/discord-cdn';
 import { MOBILE_MAX_WIDTH } from 'src/app/core/constants';
 import { environment } from 'src/environments/environment';
@@ -19,12 +21,17 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { fromEvent } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 
+const dateFmt = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+const monthFmt = new Intl.DateTimeFormat('en-US', { month: 'short', year: 'numeric' });
+const formatDate = (d: Date) => dateFmt.format(d);
+const formatMonth = (d: Date) => monthFmt.format(d);
+
 @Component({
     selector: 'app-card-profile',
     standalone: true,
     templateUrl: './card-profile.component.html',
     styleUrls: ['./card-profile.component.scss'],
-    imports: [CommonModule, Card3dDirective, TooltipDirective, FontAwesomeModule, StatusColorPipe, BioFormatterPipe],
+    imports: [CommonModule, Card3dDirective, TooltipDirective, FontAwesomeModule, StatusColorPipe, BioFormatterPipe, GithubHeatmapComponent],
     changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.None
 })
@@ -54,12 +61,29 @@ export class CardProfileComponent {
   themesColor = signal<string[]>([]);
   isMobile = signal(false);
   readonly faDiscord = faDiscord;
+  readonly faGem = faGem;
+  readonly githubUser = 'Camilo404';
   lanyardData = signal<Lanyard | null>(null);
 
   // Profile Effect properties
   profileEffectConfig = signal<ProfileEffectConfig | null>(null);
   renderedLayers = signal<RenderedLayer[]>([]);
   custom_status = signal<Activity | null>(null);
+
+  /** Account creation date, decoded from the snowflake ID (ms since the Discord epoch). */
+  memberSince = computed(() => {
+    try {
+      const ms = Number((BigInt(this.ProfileId()) >> 22n) + 1420070400000n);
+      return formatMonth(new Date(ms));
+    } catch {
+      return null;
+    }
+  });
+
+  nitroSince = computed(() => {
+    const since = this.userData()?.premium_since;
+    return since ? formatDate(new Date(since)) : null;
+  });
 
   /** Discord returns `banner: null` when the profile has none (the banner endpoint 404s). */
   hasBanner = computed(() => !!this.userData()?.user?.banner);
@@ -206,54 +230,6 @@ export class CardProfileComponent {
   public getLanyardData(): void {
     this.lanyardService.setInitialData(this.ProfileId());
     this.lanyardService.setupWebSocket();
-  }
-
-  /** Brand colour for a connection icon (painted through a CSS mask). */
-  brandColor(type: string | undefined): string {
-    const colors: Record<string, string> = {
-      github: '#24292f',
-      spotify: '#1db954',
-      steam: '#1b2838',
-      xbox: '#107c10',
-      twitch: '#9146ff',
-      youtube: '#ff0000',
-      reddit: '#ff4500',
-      twitter: '#14171a',
-      instagram: '#d62976',
-      tiktok: '#111111',
-      playstation: '#003791',
-      battlenet: '#148eff',
-      epicgames: '#313131',
-      leagueoflegends: '#c28f2c',
-      riot: '#d13639',
-      crunchyroll: '#f47521',
-      paypal: '#003087',
-      facebook: '#1877f2',
-      ebay: '#e53238',
-    };
-    return (type && colors[type]) || '#6f52c9';
-  }
-
-  connectionUrl(account: ConnectedAccount): string | null {
-    const { type, id, name } = account;
-    if (!type) return null;
-    const byName: Record<string, string> = {
-      github: 'https://github.com/',
-      twitch: 'https://www.twitch.tv/',
-      reddit: 'https://www.reddit.com/user/',
-      twitter: 'https://x.com/',
-      instagram: 'https://www.instagram.com/',
-      tiktok: 'https://www.tiktok.com/@',
-      domain: 'https://',
-    };
-    const byId: Record<string, string> = {
-      steam: 'https://steamcommunity.com/profiles/',
-      spotify: 'https://open.spotify.com/user/',
-      youtube: 'https://www.youtube.com/channel/',
-    };
-    if (byName[type] && name) return byName[type] + name;
-    if (byId[type] && id) return byId[type] + id;
-    return null;
   }
 
   handleImageError(event: Event) {
