@@ -4,11 +4,17 @@ import { Observable, of, timer } from 'rxjs';
 import { catchError, map, shareReplay, switchMap } from 'rxjs/operators';
 
 /** Medellín; the API resolves the nearest grid cell. */
-const LAT = 6.2442;
-const LON = -75.5812;
+const LAT = 6.2529;
+const LON = -75.5646;
 const TIME_ZONE = 'America/Bogota';
 /** Open-Meteo refreshes "current" every 15 min. */
 const REFRESH_MS = 15 * 60 * 1000;
+/**
+ * Models flag 0.1 mm as "drizzle" (code 51) all the time over the valley's
+ * mountain clouds. Below this, ignore the precipitation and describe the sky
+ * from cloud cover instead.
+ */
+const MIN_RAIN_MM = 0.2;
 
 export type WeatherKind = 'clear' | 'partly' | 'cloudy' | 'fog' | 'drizzle' | 'rain' | 'storm' | 'snow';
 
@@ -22,7 +28,7 @@ export interface Weather {
 }
 
 interface ApiResponse {
-  current: { temperature_2m: number; weather_code: number };
+  current: { temperature_2m: number; weather_code: number; precipitation: number; cloud_cover: number };
   daily: { sunrise: string[]; sunset: string[] };
 }
 
@@ -38,6 +44,17 @@ function describe(code: number): { kind: WeatherKind; label: string } {
   if ((code >= 71 && code <= 77) || code === 85 || code === 86) return { kind: 'snow', label: 'Snow' };
   if (code >= 95) return { kind: 'storm', label: 'Thunderstorm' };
   return { kind: 'partly', label: 'Fair' };
+}
+
+/** Codes that only mean "it's wet": drizzle, rain, showers. */
+const isWetCode = (code: number) => (code >= 51 && code <= 67) || (code >= 80 && code <= 82);
+
+/** Trace precipitation → read the sky from cloud cover instead of the wet code. */
+function effectiveCode(code: number, precipitation: number, cloudCover: number): number {
+  if (!isWetCode(code) || precipitation >= MIN_RAIN_MM) return code;
+  if (cloudCover < 20) return 0;
+  if (cloudCover < 60) return 2;
+  return 3;
 }
 
 /** "2026-11-23T05:54" → 354 */
@@ -57,7 +74,7 @@ export class WeatherService {
   private readonly url =
     'https://api.open-meteo.com/v1/forecast' +
     `?latitude=${LAT}&longitude=${LON}` +
-    '&current=temperature_2m,weather_code&daily=sunrise,sunset&forecast_days=1' +
+    '&current=temperature_2m,weather_code,precipitation,cloud_cover&daily=sunrise,sunset&forecast_days=1' +
     `&timezone=${encodeURIComponent(TIME_ZONE)}`;
 
   readonly weather$: Observable<Weather | null> = timer(0, REFRESH_MS).pipe(
@@ -65,7 +82,7 @@ export class WeatherService {
       this.http.get<ApiResponse>(this.url).pipe(
         map((r): Weather => ({
           tempC: Math.round(r.current.temperature_2m),
-          ...describe(r.current.weather_code),
+          ...describe(effectiveCode(r.current.weather_code, r.current.precipitation ?? 0, r.current.cloud_cover ?? 0)),
           sunrise: minutesOf(r.daily?.sunrise?.[0], 6 * 60),
           sunset: minutesOf(r.daily?.sunset?.[0], 18 * 60),
         })),
