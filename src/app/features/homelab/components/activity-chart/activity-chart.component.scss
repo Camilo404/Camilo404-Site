@@ -1,0 +1,241 @@
+:host {
+  display: block;
+  min-width: 0;
+}
+
+.chart-card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  padding: 1.2rem 1.4rem 1rem;
+
+  > * {
+    position: relative;
+    z-index: 1;
+  }
+}
+
+.chart-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.chart-tabs {
+  display: inline-flex;
+  gap: 0.2rem;
+  padding: 0.2rem;
+  border-radius: 999px;
+  background: rgba(120, 90, 170, 0.07);
+}
+
+.chart-tab {
+  padding: 0.3rem 0.75rem;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  font-family: var(--font-display);
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: url('../../../../../assets/images/cursor/link.png'), pointer;
+  transition: background 0.25s ease, color 0.25s ease, box-shadow 0.25s ease;
+
+  &:hover { color: var(--ink-lilac); }
+
+  &.active {
+    background: #fff;
+    color: var(--ink-lilac);
+    box-shadow: 0 2px 8px -3px rgba(110, 80, 160, 0.35);
+  }
+}
+
+// ---------- Now / avg / peak ----------
+.chart-stats {
+  display: flex;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 1.6rem;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+}
+
+.stat-label {
+  font-size: 0.62rem;
+  font-weight: 650;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--label-color);
+}
+
+.stat-value {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+  color: #2d2640;
+}
+
+.legend {
+  display: flex;
+  gap: 0.9rem;
+  margin-left: auto;
+  font-size: 0.74rem;
+  color: var(--text-secondary);
+}
+
+.legend-item::before {
+  content: '';
+  display: inline-block;
+  width: 14px;
+  height: 0;
+  margin-right: 0.35rem;
+  vertical-align: middle;
+  border-top: 2px solid var(--c);
+}
+
+.legend-item.dashed::before { border-top-style: dashed; }
+
+// ---------- Plot ----------
+.plot {
+  position: relative;
+  flex: 1;
+  min-height: 220px;
+  margin-left: 3.4rem;
+  touch-action: pan-y;
+
+  svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+
+  .area { transition: d 0.6s ease; }
+
+  .line {
+    fill: none;
+    stroke-width: 2;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+    vector-effect: non-scaling-stroke;
+    transition: d 0.6s ease;
+
+    &.dashed { stroke-dasharray: 5 4; }
+  }
+}
+
+.grid-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  border-top: 1px dashed rgba(120, 90, 170, 0.15);
+
+  span {
+    position: absolute;
+    right: calc(100% + 0.5rem);
+    translate: 0 -50%;
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    color: var(--text-muted);
+    white-space: nowrap;
+  }
+}
+
+.plot-empty {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+// ---------- Hover crosshair ----------
+.cross {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 0;
+  border-left: 1px solid rgba(120, 90, 170, 0.35);
+  pointer-events: none;
+}
+
+.cross-dot {
+  position: absolute;
+  left: 0;
+  width: 10px;
+  height: 10px;
+  translate: -50% -50%;
+  border-radius: 50%;
+  background: #fff;
+  border: 2.5px solid var(--c);
+  box-shadow: 0 0 0 4px color-mix(in oklch, var(--c) 20%, transparent);
+}
+
+.bubble {
+  position: absolute;
+  top: -0.4rem;
+  left: 0;
+  translate: -50% -100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding: 0.4rem 0.65rem;
+  border-radius: 10px;
+  background: #2d2640;
+  color: #fff;
+  font-size: 0.74rem;
+  white-space: nowrap;
+  box-shadow: 0 10px 24px -8px rgba(45, 38, 64, 0.45);
+
+  &[data-align='start'] { translate: -12px -100%; }
+  &[data-align='end'] { translate: calc(-100% + 12px) -100%; }
+}
+
+.bubble-time {
+  font-family: var(--font-mono);
+  font-size: 0.64rem;
+  opacity: 0.7;
+}
+
+.bubble-row {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+
+  i {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--c);
+  }
+
+  b {
+    margin-left: auto;
+    padding-left: 0.6rem;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+.chart-foot {
+  display: flex;
+  justify-content: space-between;
+  margin-left: 3.4rem;
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  color: var(--text-muted);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .plot .area,
+  .plot .line { transition: none; }
+}

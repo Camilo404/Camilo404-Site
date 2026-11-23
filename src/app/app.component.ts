@@ -1,13 +1,15 @@
 import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { TitleAnimatorService } from './core/services/title-animator.service';
+import { NekoComponent } from './features/home/components/neko/neko.component';
+import { SparkleBackgroundComponent } from './features/home/components/sparkle-background/sparkle-background.component';
 
 @Component({
     selector: 'app-root',
     standalone: true,
     templateUrl: './app.component.html',
     styleUrls: ['./app.component.scss'],
-    imports: [RouterOutlet]
+    imports: [RouterOutlet, NekoComponent, SparkleBackgroundComponent]
 })
 export class AppComponent implements OnInit, OnDestroy {
   private readonly titleAnimator = inject(TitleAnimatorService);

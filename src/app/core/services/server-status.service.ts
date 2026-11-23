@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { EMPTY, Observable, concat, defer, from, interval, of, throwError } from 'rxjs';
-import { catchError, concatWith, map, retry, shareReplay, tap } from 'rxjs/operators';
+import { catchError, concatWith, map, retry, scan, shareReplay, tap } from 'rxjs/operators';
 import { webSocket } from 'rxjs/webSocket';
 import { environment } from 'src/environments/environment';
 
 /**
- * Public, sanitised snapshot pushed by rust-server-status over `/ws`:
+ * Public, sanitised snapshot pushed by go-server-status over `/ws`:
  * aggregates only — no process names, mount paths or interface names.
  */
 export interface ServerStatus {
@@ -33,6 +34,8 @@ const TICK_MS = 2000;
 const RECONNECT_MS = 5000;
 const GiB = 1024 ** 3;
 const MOCK_CORES = 12;
+/** Snapshots kept client-side for the charts (× 2 s = 10 minutes). */
+export const HISTORY_MAX = 300;
 
 /** Random walk that stays inside [min, max]. */
 function drift(value: number, step: number, min: number, max: number): number {
@@ -42,8 +45,11 @@ function drift(value: number, step: number, min: number, max: number): number {
 /**
  * Live server stats for the Homelab tile.
  *
- * Connects to `environment.serverStatusUrl` (rust-server-status, `wss://…/ws`).
+ * Connects to `environment.serverStatusUrl` (go-server-status, `wss://…/ws`).
  * While it is empty this emits simulated data instead.
+ *
+ * The server doesn't replay history, so the service keeps a rolling buffer
+ * itself; it lives at the root, so charts survive moving between pages.
  */
 @Injectable({ providedIn: 'root' })
 export class ServerStatusService {
@@ -51,12 +57,18 @@ export class ServerStatusService {
   readonly isDemo = !environment.serverStatusUrl;
 
   readonly status$: Observable<ServerStatus> = (this.isDemo ? this.mock() : this.live()).pipe(
-    shareReplay({ bufferSize: 1, refCount: true }),
+    // Stay connected once started: the history below must keep filling
+    shareReplay({ bufferSize: 1, refCount: false }),
+  );
+
+  /** Rolling window of snapshots, oldest first (at most HISTORY_MAX). */
+  readonly history = toSignal(
+    this.status$.pipe(scan((acc: ServerStatus[], s) => (acc.length >= HISTORY_MAX ? [...acc.slice(1), s] : [...acc, s]), [])),
+    { initialValue: [] as ServerStatus[] },
   );
 
   /**
-   * WebSocket stream. The server replays its recent snapshots on connect, so the
-   * sparkline fills right away. When the socket drops, the last snapshot is
+   * WebSocket stream. When the socket drops, the last snapshot is
    * emitted once with `online: false`, then it reconnects every RECONNECT_MS.
    */
   private live(): Observable<ServerStatus> {

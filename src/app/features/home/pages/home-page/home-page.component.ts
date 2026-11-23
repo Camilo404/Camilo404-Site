@@ -1,12 +1,11 @@
-import { Component, computed, viewChild } from '@angular/core';
+import { Component, computed, inject, viewChild } from '@angular/core';
+import { Router } from '@angular/router';
 import { faGithub, faYoutube, faInstagram, faSteam, faDiscord, faSpotify } from '@fortawesome/free-brands-svg-icons';
-import { faCopy, faLink, faExpand, faQuoteLeft } from '@fortawesome/free-solid-svg-icons';
+import { faCopy, faLink, faExpand, faQuoteLeft, faServer } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { CommandPaletteComponent, PaletteCommand } from '../../components/command-palette/command-palette.component';
 import { environment } from 'src/environments/environment';
 
-import { NekoComponent } from '../../components/neko/neko.component';
-import { SparkleBackgroundComponent } from '../../components/sparkle-background/sparkle-background.component';
 import { ClickSparklesComponent } from '../../components/click-sparkles/click-sparkles.component';
 import { NowPlayingWidgetComponent } from '../../widgets/now-playing-widget/now-playing-widget.component';
 import { CardProfileComponent } from '../../../../shared/ui/card-profile/card-profile.component';
@@ -14,7 +13,10 @@ import { ClockWidgetComponent } from '../../widgets/clock-widget/clock-widget.co
 import { ShadowWidgetComponent } from '../../widgets/shadow-widget/shadow-widget.component';
 import { SocialWidgetComponent } from '../../widgets/social-widget/social-widget.component';
 import { TechStackWidgetComponent } from '../../widgets/tech-stack-widget/tech-stack-widget.component';
-import { ServerWidgetComponent } from '../../widgets/server-widget/server-widget.component';
+import { HomelabMiniWidgetComponent } from '../../widgets/homelab-mini-widget/homelab-mini-widget.component';
+
+/** The staggered entrance runs once per visit, not again when coming back from /homelab. */
+let introPlayed = false;
 
 @Component({
     selector: 'app-home-page',
@@ -22,8 +24,6 @@ import { ServerWidgetComponent } from '../../widgets/server-widget/server-widget
     templateUrl: './home-page.component.html',
     styleUrls: ['./home-page.component.scss'],
     imports: [
-    NekoComponent,
-    SparkleBackgroundComponent,
     ClickSparklesComponent,
     NowPlayingWidgetComponent,
     CardProfileComponent,
@@ -31,12 +31,17 @@ import { ServerWidgetComponent } from '../../widgets/server-widget/server-widget
     ShadowWidgetComponent,
     SocialWidgetComponent,
     TechStackWidgetComponent,
-    ServerWidgetComponent,
+    HomelabMiniWidgetComponent,
     CommandPaletteComponent,
     FontAwesomeModule
 ]
 })
 export class HomePageComponent {
+  private readonly router = inject(Router);
+  readonly skipIntro = introPlayed;
+  constructor() {
+    introPlayed = true;
+  }
   readonly year = new Date().getFullYear();
 
   private readonly nowPlaying = viewChild(NowPlayingWidgetComponent);
@@ -56,6 +61,7 @@ export class HomePageComponent {
       { id: 'youtube', group: 'Go to', label: 'YouTube', hint: 'Channel', icon: faYoutube, keywords: 'videos', href: 'https://www.youtube.com/channel/UChzlaSE1adSPVGYBBOQ1ibg' },
       { id: 'instagram', group: 'Go to', label: 'Instagram', hint: '@camiloxtz', icon: faInstagram, keywords: 'photos ig', href: 'https://www.instagram.com/camiloxtz/' },
       { id: 'steam', group: 'Go to', label: 'Steam', hint: 'Profile', icon: faSteam, keywords: 'games', href: 'https://steamcommunity.com/profiles/76561198832154348/' },
+      { id: 'homelab', group: 'Go to', label: 'Homelab', hint: 'Server stats', icon: faServer, keywords: 'server cpu ram stats dashboard', run: () => void this.router.navigateByUrl('/homelab') },
       { id: 'discord', group: 'Go to', label: 'Discord profile', hint: '@camilo404', icon: faDiscord, keywords: 'message dm chat', href: `https://discord.com/users/${environment.discordId}` },
     ];
 
