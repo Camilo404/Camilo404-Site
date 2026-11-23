@@ -4,6 +4,7 @@ import { interval } from 'rxjs';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faSun, faMoon } from '@fortawesome/free-solid-svg-icons';
 import { Card3dDirective } from '../../../../shared/directives/card-3d.directive';
+import { SkyWindowComponent } from './sky-window/sky-window.component';
 
 /** The site owner's time zone (Medellín uses Bogotá's zone) — the clock shows *my* time, not the visitor's. */
 const MY_TIME_ZONE = 'America/Bogota';
@@ -25,7 +26,7 @@ const partsFormatter = new Intl.DateTimeFormat('en-US', {
   standalone: true,
   templateUrl: './clock-widget.component.html',
   styleUrls: ['./clock-widget.component.scss'],
-  imports: [Card3dDirective, FontAwesomeModule]
+  imports: [Card3dDirective, FontAwesomeModule, SkyWindowComponent]
 })
 export class ClockWidgetComponent {
   private destroyRef = inject(DestroyRef);
@@ -60,15 +61,8 @@ export class ClockWidgetComponent {
   readonly hourDigits = computed(() => this.hours().split('').map(Number));
   readonly minuteDigits = computed(() => this.minutes().split('').map(Number));
   readonly secondDigits = computed(() => this.seconds().split('').map(Number));
-  /**
-   * Analog hand angles from local seconds since the epoch. They only ever grow,
-   * so the CSS transition never spins a hand backwards at :00.
-   */
-  private readonly localSeconds = signal(0);
-  readonly secondAngle = computed(() => Math.floor(this.localSeconds()) * 6);
-  readonly minuteAngle = computed(() => this.localSeconds() / 10);
-  readonly hourAngle = computed(() => this.localSeconds() / 120);
-  readonly ticks = Array.from({ length: 12 }, (_, i) => i * 30);
+  /** Minutes after midnight in my zone; drives the sky window. Updated once a minute. */
+  readonly minuteOfDay = signal(0);
 
   readonly spokenTime = computed(() => `${this.hours()}:${this.minutes()} ${this.ampm()}`);
 
@@ -94,8 +88,7 @@ export class ClockWidgetComponent {
     const visitorOffset = -now.getTimezoneOffset();
     this.offsetDiff.set(visitorOffset - myOffset);
 
-    // Monotonic seconds in my zone → analog hands never spin backwards
-    this.localSeconds.set(Math.floor(now.getTime() / 1000) + myOffset * 60);
+    this.minuteOfDay.set(h24 * 60 + m);
     this.hour24.set(h24);
 
     this.ampm.set(h24 >= 12 ? 'PM' : 'AM');

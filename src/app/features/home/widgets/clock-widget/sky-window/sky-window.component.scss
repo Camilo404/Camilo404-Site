@@ -1,0 +1,274 @@
+// Registered so the sky gradient can *transition* between phases
+@property --sky-top {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #bfe3ff;
+}
+
+@property --sky-bottom {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #eef7ff;
+}
+
+:host {
+  display: block;
+  flex-shrink: 0;
+}
+
+.sky {
+  --sky-top: #bfe3ff;
+  --sky-bottom: #eef7ff;
+  --hill-far: #cdb8f7;
+  --hill-near: #f4bfd8;
+
+  position: relative;
+  width: clamp(92px, 8vw, 118px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  overflow: hidden;
+  isolation: isolate;
+  background: linear-gradient(to bottom, var(--sky-top), var(--sky-bottom));
+  box-shadow:
+    0 0 0 3.5px #fff,
+    0 0 0 5px color-mix(in oklch, var(--sky-top) 60%, #c9b3fb),
+    0 12px 22px -8px rgba(111, 82, 201, 0.35);
+  transition: --sky-top 2s ease, --sky-bottom 2s ease;
+  outline-offset: 6px;
+
+  // ---------- Phases (pastel at every hour) ----------
+  &.phase-dawn {
+    --sky-top: #f9c6dc;
+    --sky-bottom: #ffe6c7;
+  }
+
+  &.phase-dusk {
+    --sky-top: #b9a3f2;
+    --sky-bottom: #fbc3c9;
+  }
+
+  &.phase-night {
+    --sky-top: #6e5fc0;
+    --sky-bottom: #b6a4ee;
+    --hill-far: #8c78d6;
+    --hill-near: #a58bdc;
+  }
+
+  // Overcast skies get a softer, greyer wash
+  &.wx-cloudy,
+  &.wx-fog,
+  &.wx-drizzle,
+  &.wx-rain,
+  &.wx-storm {
+    &.phase-day {
+      --sky-top: #c9d3ea;
+      --sky-bottom: #eef0f8;
+    }
+  }
+}
+
+// ---------- Stars ----------
+.stars i {
+  position: absolute;
+  width: calc(var(--s) * 10px);
+  aspect-ratio: 1;
+  background: #fff;
+  clip-path: polygon(50% 0, 62% 38%, 100% 50%, 62% 62%, 50% 100%, 38% 62%, 0 50%, 38% 38%);
+  opacity: 0;
+  transition: opacity 1.5s ease;
+}
+
+.phase-night .stars i {
+  opacity: 0.9;
+  animation: twinkle 2.6s ease-in-out infinite;
+  animation-delay: calc(var(--n) * -0.45s);
+}
+
+.phase-dusk .stars i:nth-child(-n + 2) { opacity: 0.6; }
+
+@keyframes twinkle {
+  50% { opacity: 0.3; transform: scale(0.7); }
+}
+
+// ---------- Sun / moon ----------
+.orb {
+  position: absolute;
+  z-index: 1;
+  width: 24%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  translate: -50% -50%;
+  background: radial-gradient(circle at 35% 35%, #fff8d6, #ffd36e 70%);
+  box-shadow: 0 0 0 5px rgba(255, 222, 130, 0.35), 0 0 18px 6px rgba(255, 214, 120, 0.55);
+  transition: left 1s ease, top 1s ease, background 1.5s ease, box-shadow 1.5s ease;
+
+  // Crescent: an inner shadow bites the disc
+  &.moon {
+    width: 20%;
+    background: #fdf8ff;
+    box-shadow:
+      inset -5px -2px 0 0 #e3d6ff,
+      0 0 14px 4px rgba(255, 255, 255, 0.45);
+  }
+}
+
+// Behind an overcast sky the sun/moon is only a soft glow
+.wx-cloudy,
+.wx-fog,
+.wx-drizzle,
+.wx-rain,
+.wx-storm {
+  .orb { opacity: 0.55; }
+}
+
+// ---------- Clouds ----------
+.clouds i {
+  position: absolute;
+  z-index: 2;
+  height: 14%;
+  border-radius: 999px;
+  background: #fff;
+  opacity: 0;
+  filter: drop-shadow(0 2px 3px rgba(111, 82, 201, 0.18));
+  transition: opacity 1.2s ease;
+  animation: drift 14s ease-in-out infinite alternate;
+
+  // Puffs on top
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 30%;
+    border-radius: 50%;
+    background: inherit;
+  }
+
+  &::before { left: 16%; width: 42%; aspect-ratio: 1; }
+  &::after { left: 44%; width: 32%; aspect-ratio: 1; }
+
+  &.c1 { top: 30%; left: 14%; width: 40%; }
+  &.c2 { top: 44%; left: 52%; width: 32%; animation-duration: 18s; animation-delay: -6s; }
+  &.c3 { top: 22%; left: 58%; width: 28%; animation-duration: 11s; animation-delay: -3s; }
+}
+
+.phase-night .clouds i { background: #d9ccfa; }
+
+.wx-partly .clouds .c1,
+.wx-partly .clouds .c2 { opacity: 0.95; }
+
+.wx-cloudy,
+.wx-fog,
+.wx-drizzle,
+.wx-rain,
+.wx-storm {
+  .clouds i { opacity: 0.95; }
+}
+
+@keyframes drift {
+  to { translate: 12% 0; }
+}
+
+// ---------- Fog ----------
+.fog {
+  position: absolute;
+  inset: 40% -10% 0;
+  z-index: 3;
+  background: linear-gradient(to bottom, transparent, rgba(255, 255, 255, 0.85) 40%);
+  opacity: 0;
+  transition: opacity 1.2s ease;
+}
+
+.wx-fog .fog { opacity: 1; }
+
+// ---------- Rain ----------
+.rain i {
+  position: absolute;
+  z-index: 2;
+  top: -12%;
+  left: calc(8% + var(--n) * 7.5%);
+  width: 1.5px;
+  height: 9%;
+  border-radius: 2px;
+  background: linear-gradient(to bottom, transparent, #8fb2f0);
+  opacity: 0;
+  rotate: 12deg;
+}
+
+.wx-drizzle .rain i:nth-child(odd),
+.wx-rain .rain i,
+.wx-storm .rain i {
+  opacity: 0.9;
+  animation: fall 0.9s linear infinite;
+  animation-delay: calc(var(--n) * -0.23s);
+}
+
+.wx-drizzle .rain i { animation-duration: 1.4s; }
+
+@keyframes fall {
+  to { translate: -12px 130px; }
+}
+
+// ---------- Lightning ----------
+.flash {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  background: #fff;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.wx-storm .flash { animation: flash 7s ease-out infinite; }
+
+@keyframes flash {
+  0%, 90%, 100% { opacity: 0; }
+  91% { opacity: 0.8; }
+  92% { opacity: 0.1; }
+  93.5% { opacity: 0.6; }
+}
+
+// ---------- Hills ----------
+.hills {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  z-index: 3;
+  width: 100%;
+  height: 38%;
+
+  .far { fill: var(--hill-far); transition: fill 2s ease; }
+  .near { fill: var(--hill-near); transition: fill 2s ease; }
+}
+
+// ---------- Temperature ----------
+.temp {
+  position: absolute;
+  bottom: 9%;
+  left: 50%;
+  z-index: 5;
+  translate: -50% 0;
+  padding: 0.08rem 0.45rem;
+  border-radius: 99px;
+  background: rgba(255, 255, 255, 0.85);
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  font-weight: 650;
+  color: #2d2640;
+  box-shadow: 0 3px 8px -4px rgba(111, 82, 201, 0.5);
+}
+
+@media (max-width: 480px) {
+  .sky { width: 80px; }
+  .temp { font-size: 0.62rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stars i,
+  .clouds i,
+  .rain i,
+  .flash { animation: none !important; }
+
+  // Static hint of rain instead of falling drops
+  .wx-rain .rain i,
+  .wx-storm .rain i { top: 30%; }
+}

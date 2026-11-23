@@ -1,0 +1,42 @@
+<div
+  [class]="'sky phase-' + phase() + ' wx-' + kind()"
+  role="img"
+  tabindex="0"
+  [attr.aria-label]="ariaLabel()"
+  [appTooltip]="ariaLabel()"
+>
+  <!-- Stars (fade in at night) -->
+  <div class="stars" aria-hidden="true">
+    @for (s of stars; track $index) {
+      <i [style.left.%]="s.x" [style.top.%]="s.y" [style.--s]="s.s" [style.--n]="$index"></i>
+    }
+  </div>
+
+  <!-- Sun by day, moon by night -->
+  <div class="orb" [class.moon]="!isDay()" [style.left.%]="orbX()" [style.top.%]="orbY()" aria-hidden="true"></div>
+
+  <!-- Clouds: how many show depends on the weather class -->
+  <div class="clouds" aria-hidden="true">
+    <i class="c1"></i><i class="c2"></i><i class="c3"></i>
+  </div>
+
+  <div class="fog" aria-hidden="true"></div>
+
+  <div class="rain" aria-hidden="true">
+    @for (d of drops; track d) {
+      <i [style.--n]="d"></i>
+    }
+  </div>
+
+  <div class="flash" aria-hidden="true"></div>
+
+  <!-- Valle de Aburrá-ish hills -->
+  <svg class="hills" viewBox="0 0 100 40" preserveAspectRatio="none" aria-hidden="true">
+    <path class="far" d="M0 22 C 12 10, 24 14, 34 18 S 58 6, 72 14 S 92 12, 100 16 V40 H0 Z" />
+    <path class="near" d="M0 30 C 16 20, 30 26, 44 28 S 70 18, 84 24 S 96 26, 100 24 V40 H0 Z" />
+  </svg>
+
+  @if (weather(); as w) {
+    <span class="temp" aria-hidden="true">{{ w.tempC }}°</span>
+  }
+</div>

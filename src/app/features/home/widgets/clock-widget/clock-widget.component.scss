@@ -181,64 +181,12 @@
   }
 }
 
-// ========================================
-// Analog face
-// ========================================
-.analog {
-  width: clamp(92px, 8vw, 118px);
-  height: auto;
-  flex-shrink: 0;
-  filter: drop-shadow(0 10px 18px rgba(111, 82, 201, 0.25));
-
-  .tick,
-  .hand,
-  .hand-second {
-    transform-origin: 50px 50px;
-  }
-
-  .tick {
-    fill: #c9b3fb;
-
-    &.major { fill: #f39ac2; }
-  }
-
-  .hand {
-    stroke-linecap: round;
-    transition: rotate 0.6s var(--spring);
-
-    &.hour { stroke: #2d2640; stroke-width: 4; }
-    &.minute { stroke: #6f52c9; stroke-width: 3; }
-  }
-
-  .hand-second {
-    transition: rotate 0.55s var(--spring);
-
-    line {
-      stroke: #f39ac2;
-      stroke-width: 1.4;
-      stroke-linecap: round;
-    }
-
-    text {
-      fill: #f39ac2;
-      font-size: 7px;
-    }
-  }
-
-  .pin {
-    fill: #fff;
-    stroke: #f39ac2;
-    stroke-width: 1.6;
-  }
-}
-
 @media (max-width: 480px) {
   .clock-card .clock-content { padding: 1.1rem 1.2rem; }
-  .analog { width: 80px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .odo-strip, .analog .hand, .analog .hand-second { transition: none; }
+  .odo-strip { transition: none; }
   .clock-deco { animation: none; }
 }
 
