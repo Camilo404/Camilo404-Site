@@ -1,4 +1,4 @@
-<div class="card-3d-container" appCard3d [card3dConfig]="card3dConfig">
+<div class="card-3d-container" appCard3d [card3dConfig]="card3dConfig" [card3dSpotlight]="true">
   @if (userDataStatus()) {
   <div
     class="aesthetic-card animate-scale-in"
@@ -20,13 +20,28 @@
     </div>
     }
 
-    <!-- Cover Image -->
+    <!-- Holographic foil + glare that follow the cursor (driven by appCard3d's --mouse-x/y) -->
+    <div class="holo-foil" aria-hidden="true"></div>
+    <div class="holo-glare" aria-hidden="true"></div>
+
+    <!-- Cover: the Discord banner when there is one, otherwise an animated pastel sky -->
+    @if (hasBanner()) {
     <div
       class="card-cover"
       [style.background-image]="'url(' + apiUrl + 'banner/' + ProfileId() + ')'"
     >
       <div class="cover-overlay"></div>
     </div>
+    } @else {
+    <div class="card-cover pastel-cover" aria-hidden="true">
+      <span class="cover-star s1">✦</span>
+      <span class="cover-star s2">✦</span>
+      <span class="cover-star s3">✧</span>
+      <span class="cover-star s4">✦</span>
+      <span class="cover-star s5">✧</span>
+      <div class="cover-overlay"></div>
+    </div>
+    }
 
     <div class="card-content">
       <!-- Profile Header -->
@@ -47,6 +62,20 @@
             />
           </div>
 
+          <!-- Custom status as a Discord-style thought bubble -->
+          @if (custom_status()?.state || custom_status()?.emoji) {
+          <div class="status-bubble" role="note" aria-label="Custom status">
+            @if (statusEmojiUrl(); as emojiUrl) {
+            <img [src]="emojiUrl" class="status-emoji" (error)="handleImageError($event)" alt="" />
+            } @else if (custom_status()?.emoji?.name) {
+            <span class="status-emoji-text">{{ custom_status()?.emoji?.name }}</span>
+            }
+            @if (custom_status()?.state) {
+            <span class="bubble-text">{{ custom_status()?.state }}</span>
+            }
+          </div>
+          }
+
           <!-- Status Badge -->
           <div
             class="status-badge"
@@ -63,12 +92,15 @@
         </div>
 
         <div class="user-info">
+          @if (nameplateUrl(); as np) {
+          <video class="nameplate-bg" [src]="np" autoplay loop muted playsinline aria-hidden="true"></video>
+          }
           <div class="name-row">
             <h1 class="display-name">
               {{ userData()?.user?.global_name || userData()?.user?.username }}
             </h1>
             @if (clanTag() && clanBadgeUrl()) {
-            <div class="clan-tag">
+            <div class="clan-tag" [appTooltip]="'Server tag: ' + clanTag()">
               <img
                 [src]="clanBadgeUrl()"
                 class="clan-badge"
@@ -89,7 +121,7 @@
             <!-- Desktop/Mobile/Web indicators here -->
             <div class="platform-indicators">
               @if (lanyardData()?.d?.active_on_discord_desktop) {
-              <i class="platform-icon desktop" title="Desktop">
+              <i class="platform-icon desktop" appTooltip="Online on desktop" tabindex="0">
                 <svg viewBox="0 0 24 24" fill="currentColor">
                   <path
                     d="M4 2.5c-1.103 0-2 .897-2 2v11c0 1.104.897 2 2 2h7v2H7v2h10v-2h-4v-2h7c1.103 0 2-.896 2-2v-11c0-1.103-.897-2-2-2H4Zm16 2v9H4v-9h16Z"
@@ -97,7 +129,7 @@
                 </svg>
               </i>
               } @if (lanyardData()?.d?.active_on_discord_web) {
-              <i class="platform-icon web" title="Web">
+              <i class="platform-icon web" appTooltip="Online on the web" tabindex="0">
                 <svg viewBox="0 0 24 24" fill="currentColor">
                   <path
                     d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2Zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93Zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39Z"
@@ -105,7 +137,7 @@
                 </svg>
               </i>
               } @if (lanyardData()?.d?.active_on_discord_mobile) {
-              <i class="platform-icon mobile" title="Mobile">
+              <i class="platform-icon mobile" appTooltip="Online on mobile" tabindex="0">
                 <svg viewBox="0 0 24 24" fill="currentColor">
                   <path
                     d="M15.5 1h-8A2.5 2.5 0 0 0 5 3.5v17A2.5 2.5 0 0 0 7.5 23h8a2.5 2.5 0 0 0 2.5-2.5v-17A2.5 2.5 0 0 0 15.5 1zm-4 21c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm4.5-4H7V4h9v14z"
@@ -124,7 +156,8 @@
               target="_blank"
               rel="noopener noreferrer"
               class="badge-item"
-              [title]="badge.description"
+              [appTooltip]="badge.description"
+              [attr.aria-label]="badge.description"
             >
               <img
                 [src]="apiUrl + 'badge/' + badge.icon + '.png'"
@@ -138,37 +171,12 @@
       </div>
 
       <div class="scrollable-content">
-        <!-- Custom Status -->
-        @if (custom_status() && custom_status()!.state) {
-        <div class="custom-status-card">
-          @if (custom_status()!.emoji) { @if (statusEmojiUrl(); as emojiUrl) {
-          <img
-            [src]="emojiUrl"
-            class="status-emoji"
-            (error)="handleImageError($event)"
-            alt="Status Emoji"
-            loading="lazy"
-          />
-          } @else if (custom_status()!.emoji!.name) {
-          <span class="status-emoji-text">{{ custom_status()!.emoji!.name }}</span>
-          } }
-          <span class="status-text">{{ custom_status()!.state }}</span>
-        </div>
-        }
-
         <!-- Bio -->
         @if (userData()?.user_profile?.bio!.length > 0) {
         <section class="section bio-section">
           <h3 class="section-title">About Me</h3>
           <div class="markdown-content" [innerHTML]="userData()?.user_profile?.bio | bioFormatter"></div>
         </section>
-        }
-
-        <!-- Mobile Activities -->
-        @if (isMobile()) {
-        <div class="mobile-only-section">
-          <app-floating-activity [isMobileEmbedded]="true"></app-floating-activity>
-        </div>
         }
 
         <!-- Connections -->
@@ -179,36 +187,36 @@
             @for (account of userData()?.connected_accounts; track $index) {
             <a
               class="connection-item"
+              [style.--brand]="brandColor(account.type)"
               [attr.href]="connectionUrl(account)"
               target="_blank"
               rel="noopener noreferrer"
-              [title]="account.name + ' (' + account.type + ')'"
+              [appTooltip]="(account.type | titlecase) + ' · ' + account.name"
               [attr.aria-label]="account.type + ': ' + account.name"
             >
-              <img
-                src="assets/images/connections/{{ account.type }}.svg"
-                [alt]="account.type"
-                loading="lazy"
-              />
+              <!-- The SVG is used as a mask so it can be painted in the brand colour -->
+              <span
+                class="conn-icon"
+                aria-hidden="true"
+                [style.--icon]="'url(assets/images/connections/' + account.type + '.svg)'"
+              ></span>
             </a>
             }
           </div>
         </section>
         }
 
-        <!-- Message Input -->
-        <div class="message-section">
-          <input
-            type="text"
-            placeholder="Send a message..."
-            [value]="message()"
-            (input)="onMessageInput($event)"
-            name="message"
-            aria-label="Send a message on Discord"
-            (keyup.enter)="sendMessage()"
-            class="aesthetic-input"
-          />
-        </div>
+        <!-- Opens my Discord profile (the old fake input did the same thing) -->
+        <a
+          class="discord-btn"
+          [href]="'https://discord.com/users/' + userId"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <fa-icon [icon]="faDiscord"></fa-icon>
+          <span>Message me on Discord</span>
+          <span class="btn-arrow" aria-hidden="true">↗</span>
+        </a>
       </div>
     </div>
   </div>

@@ -2,110 +2,95 @@
 // Clock Widget Card
 // ========================================
 .clock-card {
-  min-height: 150px;
+  height: 100%;
+  min-height: 170px;
   display: flex;
   flex-direction: column;
-
-  .clock-background-video {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    opacity: 0.5;
-    z-index: 0;
-    transition: opacity 0.3s ease;
-
-    &.hidden {
-      opacity: 0;
-    }
-  }
 
   .clock-content {
     position: relative;
     z-index: 1;
     flex-grow: 1;
-    width: 100%;
     display: flex;
-    justify-content: center;
     align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1.25rem 1.5rem;
   }
 }
 
+// Little twinkling sparkles
+.clock-deco {
+  position: absolute;
+  z-index: 0;
+  color: #c9b3fb;
+  animation: deco-twinkle 3.2s ease-in-out infinite;
+
+  &.d1 { top: 14px; right: 36%; font-size: 0.8rem; }
+  &.d2 { bottom: 14px; right: 33%; font-size: 1rem; color: #f9b9d4; animation-delay: -1.2s; }
+  &.d3 { top: 12px; right: 12px; font-size: 0.7rem; color: #a9d2f7; animation-delay: -2.1s; }
+}
+
+@keyframes deco-twinkle {
+  0%, 100% { opacity: 0.3; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1.2) rotate(15deg); }
+}
+
 // ========================================
-// Clock Display
+// Digital time
 // ========================================
-.clock-container {
+.clock-inner {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 100%;
-  font-family: 'Roboto', sans-serif;
-  color: var(--text-primary);
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.35rem;
+  font-family: var(--font-mono);
   user-select: none;
   cursor: default;
 }
 
-.clock-inner {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 0.5rem;
-  transition: transform 0.3s ease;
-
-  &:hover {
-    transform: scale(1.02);
-  }
-}
-
 .time-section {
   display: flex;
-  align-items: baseline;
-  line-height: 0.9;
-  text-shadow: 0 4px 12px var(--shadow-sm);
+  align-items: flex-end;
 }
 
 .main-time {
   display: flex;
-  font-size: 3.5rem;
-  font-weight: 1rem;
-  letter-spacing: -2px;
-
-  .digit {
-    position: relative;
-    display: inline-block;
-  }
+  align-items: center;
+  font-size: clamp(2.6rem, 3.4vw, 3.4rem);
+  font-weight: 700;
+  letter-spacing: -0.06em;
+  font-variant-numeric: tabular-nums;
+  color: #2d2640;
 
   .blink {
+    line-height: 1;
     animation: blinker 2s linear infinite;
-    opacity: 0.8;
-    margin: 0 0.05rem;
+    color: var(--ink-pink);
+    margin: 0 0.04em;
   }
 }
 
 .secondary-time {
   display: flex;
   flex-direction: column;
-  justify-content: center;
   margin-left: 0.5rem;
+  padding-bottom: 0.25rem;
+  gap: 0.15rem;
 
   .seconds {
+    display: flex;
     font-size: 1.1rem;
-    font-weight: 300;
-    opacity: 0.8;
-    line-height: 1;
+    font-weight: 600;
+    color: var(--ink-lilac);
+    font-variant-numeric: tabular-nums;
   }
 
   .ampm {
-    font-size: 0.75rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    opacity: 0.6;
-    margin-top: 0.1rem;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
     line-height: 1;
   }
 }
@@ -113,57 +98,151 @@
 .date-section {
   display: flex;
   align-items: center;
-  margin-top: 0.25rem;
-  font-size: 0.8rem;
-  font-weight: 400;
-  letter-spacing: 1.5px;
+  flex-wrap: wrap;
+  font-family: var(--font-ui);
+  font-size: 0.76rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  opacity: 0.9;
-  text-shadow: 0 2px 4px var(--shadow-sm);
+  color: var(--text-secondary);
 
   .day {
-    font-weight: 600;
+    font-weight: 700;
+    color: var(--text-primary);
   }
 
   .divider {
-    margin: 0 0.5rem;
-    font-size: 0.8em;
-    opacity: 0.6;
+    margin: 0 0.45rem;
+    color: var(--ink-pink);
   }
 }
 
-@media (max-width: 768px) {
-  .main-time {
-    font-size: 2.5rem;
-  }
+.place-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-top: 0.3rem;
+  font-family: var(--font-display);
+  font-size: 0.78rem;
 
-  .secondary-time {
-    margin-left: 0.3rem;
-
-    .seconds {
-      font-size: 0.9rem;
-    }
-
-    .ampm {
-      font-size: 0.6rem;
-    }
-  }
-
-  .date-section {
+  .sky {
+    display: grid;
+    place-items: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
     font-size: 0.7rem;
-    margin-top: 0.2rem;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 0.3rem;
+    color: #e0a100;
+    background: #fff4cc;
+    box-shadow: 0 0 0 3px rgba(255, 220, 120, 0.25);
 
-    .divider {
-      display: inline-block;
+    &.night {
+      color: #6f52c9;
+      background: #ece4ff;
+      box-shadow: 0 0 0 3px rgba(183, 156, 247, 0.25);
     }
   }
+
+  .place {
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .diff {
+    padding: 0.12rem 0.5rem;
+    border-radius: 99px;
+    background: rgba(201, 179, 251, 0.22);
+    color: var(--ink-lilac);
+    font-weight: 500;
+  }
+}
+
+// ========================================
+// Odometer digits
+// ========================================
+.odo {
+  display: inline-block;
+  height: 1em;
+  line-height: 1;
+  overflow: hidden;
+  mask-image: linear-gradient(to bottom, transparent 0, #000 12%, #000 88%, transparent 100%);
+}
+
+.odo-strip {
+  display: flex;
+  flex-direction: column;
+  transform: translateY(calc(var(--d, 0) * -1em));
+  transition: transform 0.7s var(--spring);
+
+  span {
+    display: block;
+    height: 1em;
+  }
+}
+
+// ========================================
+// Analog face
+// ========================================
+.analog {
+  width: clamp(92px, 8vw, 118px);
+  height: auto;
+  flex-shrink: 0;
+  filter: drop-shadow(0 10px 18px rgba(111, 82, 201, 0.25));
+
+  .tick,
+  .hand,
+  .hand-second {
+    transform-origin: 50px 50px;
+  }
+
+  .tick {
+    fill: #c9b3fb;
+
+    &.major { fill: #f39ac2; }
+  }
+
+  .hand {
+    stroke-linecap: round;
+    transition: rotate 0.6s var(--spring);
+
+    &.hour { stroke: #2d2640; stroke-width: 4; }
+    &.minute { stroke: #6f52c9; stroke-width: 3; }
+  }
+
+  .hand-second {
+    transition: rotate 0.55s var(--spring);
+
+    line {
+      stroke: #f39ac2;
+      stroke-width: 1.4;
+      stroke-linecap: round;
+    }
+
+    text {
+      fill: #f39ac2;
+      font-size: 7px;
+    }
+  }
+
+  .pin {
+    fill: #fff;
+    stroke: #f39ac2;
+    stroke-width: 1.6;
+  }
+}
+
+@media (max-width: 480px) {
+  .clock-card .clock-content { padding: 1.1rem 1.2rem; }
+  .analog { width: 80px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .odo-strip, .analog .hand, .analog .hand-second { transition: none; }
+  .clock-deco { animation: none; }
 }
 
 @keyframes blinker {
-  0% { opacity: 1; }
-  50% { opacity: 0.3; }
-  100% { opacity: 1; }
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.25; }
 }

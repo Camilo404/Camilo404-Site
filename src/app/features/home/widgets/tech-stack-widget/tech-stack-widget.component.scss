@@ -2,54 +2,80 @@
 // Tech Stack Marquee Widget
 // ========================================
 .tech-stack-card {
-  min-height: 70px;
-  padding: 0;
   display: flex;
   align-items: center;
+  gap: 1rem;
+  padding: 0.9rem 0 0.9rem 1.5rem;
+
+  --glow-a-pos: 100% 50%;
+  --glow-b-pos: 0% 50%;
+
+  .stack-label {
+    flex-shrink: 0;
+    position: relative;
+    z-index: 1;
+    padding-right: 1rem;
+    border-right: 1px solid rgba(120, 90, 170, 0.18);
+  }
 
   .marquee-mask {
-    width: 100%;
+    position: relative;
+    z-index: 1;
+    flex: 1;
+    min-width: 0;
     overflow: hidden;
-    mask-image: linear-gradient(to right,
-        transparent,
-        black 10%,
-        black 90%,
-        transparent);
-    -webkit-mask-image: linear-gradient(to right,
-        transparent,
-        black 10%,
-        black 90%,
-        transparent);
+    mask-image: linear-gradient(to right, transparent, #000 12%, #000 90%, transparent);
+    -webkit-mask-image: linear-gradient(to right, transparent, #000 12%, #000 90%, transparent);
   }
 
   .marquee-track {
     display: flex;
-    gap: 3rem;
+    gap: 0.6rem;
     width: max-content;
-    animation: scroll 20s linear infinite;
-    padding: 0.5rem 0;
+    // Trailing gap so each third is exactly one round → seamless loop
+    padding: 0.25rem 0.6rem 0.25rem 0;
+    animation: scroll 40s linear infinite;
 
     &:hover {
       animation-play-state: paused;
     }
   }
 
+  // Pastel chip tinted with the brand colour
   .tech-item {
-    display: flex;
-    justify-content: center;
+    --brand: #6f52c9;
+
+    display: inline-flex;
     align-items: center;
+    gap: 0.5rem;
+    padding: 0.45rem 0.8rem 0.45rem 0.55rem;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--brand) 9%, white);
+    border: 1px solid color-mix(in srgb, var(--brand) 18%, transparent);
+    white-space: nowrap;
+    transition: transform 0.4s var(--spring), box-shadow 0.3s ease;
 
     fa-icon {
-      font-size: 1.8rem;
-      transition: all 0.3s ease;
-      filter: grayscale(100%);
-      opacity: 0.55;
+      display: grid;
+      place-items: center;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: #fff;
+      color: var(--brand);
+      font-size: 0.95rem;
     }
 
-    &:hover fa-icon {
-      filter: grayscale(0%) brightness(1.2) drop-shadow(0 0 5px currentColor);
-      opacity: 1;
-      transform: scale(1.2);
+    span {
+      font-family: var(--font-ui);
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: #2d2640;
+    }
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 18px -8px color-mix(in srgb, var(--brand) 55%, transparent);
     }
   }
 }
@@ -57,4 +83,23 @@
 @keyframes scroll {
   0% { transform: translateX(0); }
   100% { transform: translateX(calc(-100% / 3)); }
+}
+
+@media (max-width: 768px) {
+  .tech-stack-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.6rem;
+    padding: 1rem 0 1rem 0;
+
+    .stack-label {
+      margin-left: 1.25rem;
+      padding-right: 0;
+      border-right: 0;
+    }
+
+    .marquee-mask {
+      width: 100%;
+    }
+  }
 }

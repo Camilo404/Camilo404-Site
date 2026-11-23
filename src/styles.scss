@@ -5,176 +5,102 @@
 // ========================================
 // Global Typography & Variables
 // ========================================
-$font-primary: 'Roboto', sans-serif;
+$font-primary: 'Geist', system-ui, -apple-system, sans-serif;
+$font-mono: 'Geist Mono', ui-monospace, monospace;
+$font-display: 'Fredoka', 'Geist', system-ui, sans-serif;
 $font-secondary: 'Playfair Display', serif;
 $font-decorative: 'Cinzel', serif;
 
 // ========================================
 // Theme CSS Custom Properties
 // ========================================
+// Animatable profile colours: set from the Discord theme colours so card
+// borders and glows shift together when they load.
+@property --profile-1 {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #b9a2f2;
+}
+@property --profile-2 {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #f5b3d0;
+}
+
+// Single pastel light theme
 :root {
-  --bg-primary: #f5f5f5;
-  --bg-secondary: #e8e8e8;
-  --bg-card: rgba(255, 255, 255, 0.75);
-  --bg-card-hover: rgba(255, 255, 255, 0.9);
-  --bg-card-solid: #ffffff;
-  --bg-glass: rgba(255, 255, 255, 0.6);
-  --bg-glass-strong: rgba(255, 255, 255, 0.9);
-  --bg-overlay: rgba(0, 0, 0, 0.5);
-  --bg-input: rgba(0, 0, 0, 0.04);
-  --bg-input-focus: rgba(0, 0, 0, 0.06);
-  --text-primary: #1a1a1a;
-  --text-secondary: #555555;
-  --text-muted: #888888;
+  color-scheme: light;
+
+  --font-ui: #{$font-primary};
+  --font-mono: #{$font-mono};
+  --font-display: #{$font-display};
+
+  --profile-1: #b9a2f2;
+  --profile-2: #f5b3d0;
+  // Discord theme colours are often dark/saturated; pull them into the pastel
+  // range so they always sit softly on the light background.
+  --p1: oklch(from var(--profile-1) clamp(0.74, l, 0.84) clamp(0.07, c, 0.13) h);
+  --p2: oklch(from var(--profile-2) clamp(0.76, l, 0.86) clamp(0.06, c, 0.12) h);
+  transition: --profile-1 1.6s ease, --profile-2 1.6s ease;
+
+  // Pastel palette
+  --pastel-lilac: #dccdfc;
+  --pastel-pink: #fbd3e4;
+  --pastel-mint: #c9efdf;
+  --pastel-sky: #cfe3fb;
+  --pastel-peach: #fde1cb;
+
+  // Readable accents for text/icons on light surfaces
+  --ink-lilac: #6f52c9;
+  --ink-pink: #c2457f;
+  --label-color: #7a5fd0;
+
+  --spring: linear(0, 0.009, 0.035 2.1%, 0.141, 0.281 6.7%, 0.723 12.9%, 0.938 16.7%, 1.017, 1.077, 1.121, 1.149 24.3%, 1.159, 1.163, 1.161, 1.154 29.9%, 1.129 32.8%, 1.051 39.6%, 1.017 43.1%, 0.991, 0.977 51%, 0.974 53.8%, 0.975 57.1%, 0.997 69.8%, 1.003 76.9%, 1);
+
+  --bg-primary: #f7f2fb;
+  --bg-secondary: #eee6f7;
+  --bg-card: rgba(255, 255, 255, 0.72);
+  --bg-card-hover: rgba(255, 255, 255, 0.8);
+  --bg-card-solid: #fffdff;
+  --bg-glass: rgba(255, 255, 255, 0.55);
+  --bg-glass-strong: rgba(255, 255, 255, 0.88);
+  --bg-overlay: rgba(60, 40, 90, 0.35);
+  --bg-input: rgba(120, 90, 170, 0.06);
+  --bg-input-focus: rgba(120, 90, 170, 0.1);
+  --text-primary: #2d2640;
+  --text-secondary: #544a68;
+  --text-muted: #766c8b;
   --text-inverse: #ffffff;
   --text-on-image: #ffffff;
-  --border-primary: rgba(0, 0, 0, 0.12);
-  --border-hover: rgba(0, 0, 0, 0.22);
-  --border-glass: rgba(0, 0, 0, 0.1);
-  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
-  --shadow-md: 0 4px 24px rgba(0, 0, 0, 0.1);
-  --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.12);
-  --shadow-card: 0 4px 16px -1px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(0, 0, 0, 0.06) inset;
-  --shadow-card-hover: 0 20px 40px -5px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(0, 0, 0, 0.1) inset;
-  --accent: #7c3aed;
-  --accent-soft: rgba(124, 58, 237, 0.1);
-  --accent-border: rgba(124, 58, 237, 0.35);
-  --accent-glow: rgba(139, 92, 246, 0.15);
-  --mouse-glow: rgba(124, 58, 237, 0.07);
-  --skeleton-base: #e0e0e0;
-  --skeleton-shine: #f0f0f0;
-  --code-bg: rgba(0, 0, 0, 0.06);
-  --blockquote-border: #cccccc;
-  --link-color: #7c3aed;
-  --markdown-text: #333333;
-  --clan-tag-text: #4450c7;
+  --border-primary: rgba(120, 90, 170, 0.16);
+  --border-hover: rgba(120, 90, 170, 0.28);
+  --border-glass: rgba(120, 90, 170, 0.12);
+  --shadow-sm: 0 2px 8px rgba(110, 80, 160, 0.08);
+  --shadow-md: 0 4px 24px rgba(110, 80, 160, 0.1);
+  --shadow-lg: 0 24px 48px -12px rgba(110, 80, 160, 0.18);
+  --shadow-card: 0 6px 20px -4px rgba(110, 80, 160, 0.12), 0 0 0 1px rgba(255, 255, 255, 0.6) inset;
+  --shadow-card-hover: 0 22px 44px -10px rgba(110, 80, 160, 0.22), 0 0 0 1px rgba(255, 255, 255, 0.8) inset;
+  --accent: #8f72e0;
+  --accent-soft: rgba(155, 127, 230, 0.16);
+  --accent-border: rgba(155, 127, 230, 0.4);
+  --accent-glow: rgba(155, 127, 230, 0.2);
+  --mouse-glow: rgba(155, 127, 230, 0.12);
+  --skeleton-base: #ece4f6;
+  --skeleton-shine: #f8f4fc;
+  --code-bg: rgba(120, 90, 170, 0.08);
+  --blockquote-border: #d9ccef;
+  --link-color: #7b5cd6;
+  --markdown-text: #3b3350;
+  --clan-tag-text: #5a4bc0;
   --status-badge-bg: rgba(255, 255, 255, 0.85);
-  --connection-item-bg: rgba(0, 0, 0, 0.05);
-  --connection-item-bg-hover: rgba(0, 0, 0, 0.1);
-  --shadow-brightness: 0.9;
-  --shadow-brightness-hover: 1;
+  --connection-item-bg: rgba(120, 90, 170, 0.07);
+  --connection-item-bg-hover: rgba(120, 90, 170, 0.14);
+  --shadow-brightness: 1;
+  --shadow-brightness-hover: 1.05;
   --shadow-overlay: linear-gradient(to right,
-      rgba(255, 255, 255, 0.88) 0%,
-      rgba(255, 255, 255, 0.68) 50%,
-      rgba(255, 255, 255, 0.45) 100%);
-
-  --toggle-bg: rgba(220, 220, 220, 0.75);
-  --toggle-border: rgba(0, 0, 0, 0.1);
-  --toggle-shadow: 0 2px 12px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255,255,255,0.6);
-  --toggle-thumb-bg: #ffffff;
-  --toggle-thumb-shadow: 0 1px 4px rgba(0, 0, 0, 0.18), 0 0 0 1px rgba(0,0,0,0.06);
-  --toggle-thumb-shadow-hover: 0 2px 8px rgba(0, 0, 0, 0.22), 0 0 0 1px rgba(0,0,0,0.08);
-  --toggle-icon-color: #f59e0b;
-  --toggle-ring: rgba(0, 0, 0, 0.15);
-
-  --expo-in: linear(
-    0 0%, 0.0085 31.26%, 0.0167 40.94%,
-    0.0289 48.86%, 0.0471 55.92%,
-    0.0717 61.99%, 0.1038 67.32%,
-    0.1443 72.07%, 0.1989 76.7%,
-    0.2659 80.89%, 0.3465 84.71%,
-    0.4419 88.22%, 0.554 91.48%,
-    0.6835 94.51%, 0.8316 97.34%, 1 100%
-  );
-  --expo-out: linear(
-    0 0%, 0.1684 2.66%, 0.3165 5.49%,
-    0.446 8.52%, 0.5581 11.78%,
-    0.6535 15.29%, 0.7341 19.11%,
-    0.8011 23.3%, 0.8557 27.93%,
-    0.8962 32.68%, 0.9283 38.01%,
-    0.9529 44.08%, 0.9711 51.14%,
-    0.9833 59.06%, 0.9915 68.74%, 1 100%
-  );
-}
-
-.dark {
-  --bg-primary: #1e1e1e;
-  --bg-secondary: #2a2a2a;
-  --bg-card: rgba(0, 0, 0, 0.4);
-  --bg-card-hover: rgba(255, 255, 255, 0.08);
-  --bg-card-solid: #1a1a1a;
-  --bg-glass: rgba(255, 255, 255, 0.05);
-  --bg-glass-strong: rgba(20, 20, 24, 0.85);
-  --bg-overlay: rgba(0, 0, 0, 0.7);
-  --bg-input: rgba(0, 0, 0, 0.3);
-  --bg-input-focus: rgba(0, 0, 0, 0.5);
-  --text-primary: #ffffff;
-  --text-secondary: rgba(255, 255, 255, 0.7);
-  --text-muted: rgba(255, 255, 255, 0.4);
-  --text-inverse: #1a1a1a;
-  --text-on-image: #ffffff;
-  --border-primary: rgba(255, 255, 255, 0.08);
-  --border-hover: rgba(255, 255, 255, 0.2);
-  --border-glass: rgba(255, 255, 255, 0.1);
-  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
-  --shadow-md: 0 4px 24px rgba(0, 0, 0, 0.4);
-  --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.4);
-  --shadow-card: 0 4px 24px -1px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(255, 255, 255, 0.05) inset;
-  --shadow-card-hover: 0 20px 40px -5px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.15) inset;
-  --accent: #a78bfa;
-  --accent-soft: rgba(167, 139, 250, 0.12);
-  --accent-border: rgba(167, 139, 250, 0.4);
-  --accent-glow: rgba(139, 92, 246, 0.2);
-  --mouse-glow: rgba(167, 139, 250, 0.1);
-  --skeleton-base: #2f2f2f;
-  --skeleton-shine: #3a3a3a;
-  --code-bg: #48484869;
-  --blockquote-border: #3c3c3c;
-  --link-color: #a78bfa;
-  --markdown-text: #dddddd;
-  --clan-tag-text: #DEE0FC;
-  --status-badge-bg: rgba(0, 0, 0, 0.3);
-  --connection-item-bg: rgba(255, 255, 255, 0.05);
-  --connection-item-bg-hover: rgba(255, 255, 255, 0.1);
-  --shadow-brightness: 0.6;
-  --shadow-brightness-hover: 0.8;
-  --shadow-overlay: linear-gradient(to right,
-      var(--bg-overlay) 0%,
-      rgba(0, 0, 0, 0.6) 50%,
-      rgba(0, 0, 0, 0.4) 100%);
-
-  --toggle-bg: rgba(30, 30, 40, 0.75);
-  --toggle-border: rgba(255, 255, 255, 0.12);
-  --toggle-shadow: 0 2px 12px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255,255,255,0.06);
-  --toggle-thumb-bg: #2a2a3a;
-  --toggle-thumb-shadow: 0 1px 4px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255,255,255,0.08);
-  --toggle-thumb-shadow-hover: 0 2px 8px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255,255,255,0.12);
-  --toggle-icon-color: #c4b5fd;
-  --toggle-ring: rgba(255, 255, 255, 0.2);
-}
-
-// ========================================
-// View Transitions API - Circle with Blur
-// ========================================
-::view-transition-group(root) {
-  animation-timing-function: var(--expo-in);
-}
-
-::view-transition-new(root) {
-  mask: url('https://media.tenor.com/cyORI7kwShQAAAAi/shigure-ui-dance.gif') center / 0 no-repeat;
-  animation: scale 3s;
-  animation-fill-mode: both;
-}
-
-::view-transition-old(root),
-.dark::view-transition-old(root) {
-  animation: scale 3s;
-  animation-fill-mode: both;
-}
-
-@keyframes scale {
-  0% {
-    mask-size: 0;
-  }
-  10% {
-    mask-size: 50vmax;
-  }
-  90% {
-    mask-size: 50vmax;
-  }
-  100% {
-    mask-size: 2000vmax;
-  }
+      rgba(255, 251, 255, 0.9) 0%,
+      rgba(255, 251, 255, 0.7) 50%,
+      rgba(255, 251, 255, 0.4) 100%);
 }
 
 // ========================================
@@ -188,10 +114,17 @@ $font-decorative: 'Cinzel', serif;
 
 body {
   font-family: $font-primary;
+  min-height: 100dvh;
   background-color: var(--bg-primary);
+  // Calm pastel wash; soft corners of lilac, pink and sky
+  background-image:
+    radial-gradient(60vmax 50vmax at 0% 0%, var(--pastel-lilac), transparent 60%),
+    radial-gradient(55vmax 45vmax at 100% 0%, var(--pastel-sky), transparent 60%),
+    radial-gradient(60vmax 50vmax at 100% 100%, var(--pastel-pink), transparent 60%),
+    radial-gradient(50vmax 40vmax at 0% 100%, var(--pastel-mint), transparent 60%);
+  background-attachment: fixed;
   color: var(--text-primary);
   cursor: url('./assets/images/cursor/pointer.png'), auto;
-  transition: background-color 0.3s ease, color 0.3s ease;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
@@ -217,10 +150,78 @@ body {
     scroll-behavior: auto !important;
   }
 
-  ::view-transition-group(root),
-  ::view-transition-old(root),
-  ::view-transition-new(root) {
-    animation: none !important;
+}
+
+// Shared tile label: small caps with a sparkle, used by every widget header
+.tile-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-family: var(--font-display);
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--label-color);
+
+  &::before {
+    content: '✦';
+    font-size: 0.8em;
+    color: var(--ink-pink);
+  }
+}
+
+// Shared tooltip (see TooltipDirective): one popover in the top layer,
+// positioned from JS so it tracks the 3D-tilted cards.
+.pastel-tooltip {
+  position: fixed;
+  inset: auto;
+  margin: 0;
+  padding: 0.4rem 0.7rem;
+  border: 0;
+  border-radius: 10px;
+  background: #2d2640;
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  font-weight: 500;
+  line-height: 1.3;
+  max-width: 240px;
+  text-align: center;
+  white-space: nowrap;
+  overflow: visible;
+  pointer-events: none;
+  box-shadow: 0 10px 24px -8px rgba(45, 38, 64, 0.45);
+  opacity: 0;
+  scale: 0.92;
+  transition: opacity 0.15s ease, scale 0.2s ease, display 0.15s allow-discrete, overlay 0.15s allow-discrete;
+
+  &:popover-open {
+    opacity: 1;
+    scale: 1;
+
+    @starting-style {
+      opacity: 0;
+      scale: 0.92;
+    }
+  }
+
+  // Pointer towards the host (moves to the top edge when flipped below)
+  &::after {
+    content: '';
+    position: absolute;
+    left: var(--arrow-x, 50%);
+    bottom: -4px;
+    width: 8px;
+    height: 8px;
+    background: inherit;
+    transform: translateX(-50%) rotate(45deg);
+    border-radius: 2px;
+  }
+
+  &.below::after {
+    bottom: auto;
+    top: -4px;
   }
 }
 

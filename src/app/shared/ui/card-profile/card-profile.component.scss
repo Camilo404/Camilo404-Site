@@ -3,6 +3,8 @@
   justify-content: center;
   perspective: 1500px;
   width: 100%;
+  // Fill the bento row so the card matches the widget column's height
+  height: 100%;
 }
 
 // ------------------------------
@@ -101,7 +103,7 @@
 
 .aesthetic-card {
   position: relative;
-  width: 400px;
+  width: 100%;
   max-width: 100%;
   background: var(--bg-card-solid);
   backdrop-filter: blur(20px);
@@ -111,9 +113,10 @@
   overflow: hidden;
   box-shadow:
     var(--shadow-lg),
+    0 40px 100px -40px color-mix(in oklch, var(--p1) 55%, transparent),
     0 0 0 1px var(--border-primary) inset;
   color: var(--text-primary);
-  font-family: 'Geist', 'Inter', system-ui, -apple-system, sans-serif;
+  font-family: var(--font-ui);
   transform-style: preserve-3d;
   transition: transform 0.1s ease-out;
 
@@ -121,11 +124,99 @@
     content: '';
     position: absolute;
     inset: 0;
-    background: radial-gradient(circle at top right, var(--accent-color), transparent 70%);
-    opacity: 0.15;
+    background:
+      radial-gradient(90% 60% at 100% 35%, rgba(249, 185, 212, 0.55), transparent 70%),
+      radial-gradient(80% 50% at 0% 100%, rgba(201, 179, 251, 0.5), transparent 70%);
+    opacity: 0.6;
     pointer-events: none;
     z-index: 0;
   }
+}
+
+// ------------------------------
+// Holographic foil (pastel rainbow) + glare, tracking the cursor
+// ------------------------------
+.holo-foil,
+.holo-glare {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 6;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.holo-foil {
+  // Diagonal rainbow bands that slide as the pointer moves
+  background: repeating-linear-gradient(
+    115deg,
+    #ffc8e6 0%,
+    #d9c8ff 7%,
+    #b5e3fb 14%,
+    #c4f2dc 21%,
+    #fff2b8 28%,
+    #ffc8e6 35%
+  );
+  background-size: 260% 260%;
+  background-position: calc(var(--mouse-x, 200px) * 0.35) calc(var(--mouse-y, 300px) * 0.35);
+  mix-blend-mode: multiply;
+}
+
+.holo-glare {
+  background: radial-gradient(
+    farthest-corner circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+    rgba(255, 255, 255, 0.75) 0%,
+    rgba(255, 255, 255, 0.2) 25%,
+    transparent 55%
+  );
+  mix-blend-mode: soft-light;
+}
+
+.card-3d-container:hover {
+  .holo-foil { opacity: 0.32; }
+  .holo-glare { opacity: 1; }
+}
+
+// ------------------------------
+// Pastel cover (no Discord banner)
+// ------------------------------
+.pastel-cover {
+  background: linear-gradient(120deg, #d9c8ff, #fbd3e4, #cfe3fb, #c9efdf, #d9c8ff);
+  background-size: 300% 300%;
+  animation: cover-drift 14s ease-in-out infinite alternate;
+  overflow: hidden;
+
+  // no screen tint needed on top of an already-pastel cover
+  &::before { display: none; }
+
+  .cover-star {
+    position: absolute;
+    color: #fff;
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.9), 0 0 14px rgba(183, 156, 247, 0.8);
+    animation: cover-twinkle 3s ease-in-out infinite;
+    z-index: 1;
+
+    &.s1 { top: 18%; left: 12%; font-size: 1.1rem; animation-delay: -0.4s; }
+    &.s2 { top: 40%; left: 48%; font-size: 0.8rem; animation-delay: -1.6s; }
+    &.s3 { top: 14%; left: 72%; font-size: 1.4rem; animation-delay: -2.2s; }
+    &.s4 { top: 55%; left: 85%; font-size: 0.9rem; animation-delay: -0.9s; }
+    &.s5 { top: 62%; left: 28%; font-size: 1rem; animation-delay: -2.8s; }
+  }
+}
+
+@keyframes cover-drift {
+  from { background-position: 0% 50%; }
+  to { background-position: 100% 50%; }
+}
+
+@keyframes cover-twinkle {
+  0%, 100% { opacity: 0.35; transform: scale(0.8) rotate(0deg); }
+  50% { opacity: 1; transform: scale(1.15) rotate(20deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pastel-cover, .pastel-cover .cover-star { animation: none; }
 }
 
 // Profile Effects
@@ -151,10 +242,20 @@
   background-position: center;
   position: relative;
 
+  // Pastel tint (screen lifts dark banners toward lilac/pink) + fade into the card
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, #c9b3fb, #f9b9d4 60%, #a9d2f7);
+    mix-blend-mode: screen;
+    opacity: 0.55;
+  }
+
   .cover-overlay {
     position: absolute;
     inset: 0;
-    background: linear-gradient(to bottom, transparent, var(--bg-card-solid));
+    background: linear-gradient(to bottom, transparent 45%, var(--bg-card-solid));
   }
 }
 
@@ -191,7 +292,8 @@
     width: 100%;
     height: 100%;
     border-radius: 50%;
-    border: 4px solid var(--bg-primary);
+    border: 4px solid #fff;
+    box-shadow: 0 0 0 3px #e4d8fd, 0 10px 24px -8px rgba(111, 82, 201, 0.45);
     position: relative;
     z-index: 2;
   }
@@ -232,6 +334,10 @@
     border-radius: 50%;
     background: currentColor;
     box-shadow: 0 0 8px currentColor;
+  }
+
+  &.online .status-dot {
+    animation: status-pulse 2.4s ease-out infinite;
   }
 
   // Status Colors & Border
@@ -290,7 +396,7 @@
 
 // Discord's status hues are tuned for dark UIs; darken the label text so it
 // stays readable on the light badge background.
-html:not(.dark) .status-badge {
+.status-badge {
   &.online { color: #23855a; }
   &.idle { color: #b8740b; }
   &.dnd { color: #c9302c; }
@@ -340,6 +446,33 @@ html:not(.dark) .status-badge {
 }
 
 .user-info {
+  position: relative;
+  isolation: isolate;
+
+  // Nameplate band behind the name + handle; fades out towards the text
+  // Feathered on every side (two masks intersected) so it reads as a glow
+  // coming from behind the name instead of a hard-edged clip
+  .nameplate-bg {
+    position: absolute;
+    z-index: -1;
+    top: -14px;
+    right: -1.5rem;
+    width: 78%;
+    height: 96px;
+    object-fit: cover;
+    object-position: right center;
+    opacity: 0.85;
+    pointer-events: none;
+    -webkit-mask-image:
+      linear-gradient(to right, transparent 0%, #000 45%, #000 85%, transparent 100%),
+      linear-gradient(to bottom, transparent 0%, #000 28%, #000 72%, transparent 100%);
+    -webkit-mask-composite: source-in;
+    mask-image:
+      linear-gradient(to right, transparent 0%, #000 45%, #000 85%, transparent 100%),
+      linear-gradient(to bottom, transparent 0%, #000 28%, #000 72%, transparent 100%);
+    mask-composite: intersect;
+  }
+
   .name-row {
     display: flex;
     align-items: center;
@@ -347,9 +480,11 @@ html:not(.dark) .status-badge {
     flex-wrap: wrap;
 
     .display-name {
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: var(--text-primary);
+      font-family: var(--font-display);
+      font-size: 1.9rem;
+      font-weight: 600;
+      line-height: 1.1;
+      color: #2d2640;
       margin: 0;
       letter-spacing: -0.02em;
     }
@@ -377,7 +512,7 @@ html:not(.dark) .status-badge {
     display: flex;
     align-items: center;
     gap: 6px;
-    color: var(--text-muted);
+    color: var(--text-secondary);
     font-size: 0.95rem;
 
     .divider {
@@ -425,7 +560,7 @@ html:not(.dark) .status-badge {
 
 // Custom Status
 .custom-status-card {
-  background: var(--bg-card);
+  background: linear-gradient(120deg, #f4eefe, #fdeef5);
   border: 1px solid var(--border-primary);
   padding: 10px 14px;
   border-radius: 12px;
@@ -448,12 +583,21 @@ html:not(.dark) .status-badge {
 // Sections Generic
 .section {
   .section-title {
-    font-size: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: 0.7rem;
     text-transform: uppercase;
-    letter-spacing: 0.1em;
-    font-weight: 700;
-    color: var(--text-muted);
-    margin-bottom: 0.75rem;
+    letter-spacing: 0.16em;
+    font-weight: 650;
+    color: var(--label-color);
+    margin-bottom: 0.7rem;
+
+    &::before {
+      content: '✦';
+      font-size: 0.8em;
+      color: var(--ink-pink);
+    }
   }
 }
 
@@ -489,7 +633,7 @@ html:not(.dark) .status-badge {
     }
 
     blockquote {
-      border-left: 4px solid var(--blockquote-border);
+      border-left: 3px solid #c3aef5;
       margin: 0.5rem 0;
       padding-left: 10px;
       color: var(--text-muted);
@@ -497,65 +641,156 @@ html:not(.dark) .status-badge {
   }
 }
 
-// Connections
+// Connections: white tiles with the icon painted in the brand colour
 .connections-grid {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
 
   .connection-item {
-    background: var(--connection-item-bg);
-    width: 36px;
-    height: 36px;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s ease;
+    --brand: #6f52c9;
 
-    img {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    background:
+      linear-gradient(145deg, color-mix(in srgb, var(--brand) 10%, transparent), transparent 70%),
+      #fff;
+    border: 1px solid rgba(255, 255, 255, 0.9);
+    box-shadow:
+      0 0 0 1px color-mix(in srgb, var(--brand) 14%, transparent),
+      0 4px 12px -6px color-mix(in srgb, var(--brand) 45%, transparent);
+    transition: transform 0.45s var(--spring), box-shadow 0.3s ease;
+
+    .conn-icon {
       width: 20px;
       height: 20px;
-      opacity: 0.8;
-      transition: opacity 0.2s;
+      background: var(--brand);
+      -webkit-mask: var(--icon) center / contain no-repeat;
+      mask: var(--icon) center / contain no-repeat;
     }
 
-    &:hover {
-      background: var(--connection-item-bg-hover);
-      transform: translateY(-2px);
-
-      img {
-        opacity: 1;
-      }
+    &:hover,
+    &:focus-visible {
+      transform: translateY(-3px) rotate(-4deg);
+      box-shadow:
+        0 0 0 1px color-mix(in srgb, var(--brand) 28%, transparent),
+        0 10px 18px -8px color-mix(in srgb, var(--brand) 55%, transparent);
     }
   }
 }
 
-// Message Input
-.message-section {
-  margin-top: 0.5rem;
+// Discord button (replaces the old fake message input)
+.discord-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  margin-top: 0.25rem;
+  padding: 0.75rem 1rem;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #8f7cf0, #b58cf0 55%, #e59ac6);
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-decoration: none;
+  box-shadow: 0 10px 22px -10px rgba(111, 82, 201, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  transition: transform 0.45s var(--spring), box-shadow 0.3s ease;
+  cursor: url('../../../../assets/images/cursor/link.png'), pointer;
 
-  .aesthetic-input {
-    width: 100%;
-    background: var(--bg-input);
-    border: 1px solid var(--border-primary);
-    color: var(--text-primary);
-    padding: 10px 14px;
-    border-radius: 12px;
-    font-size: 0.9rem;
-    transition: all 0.2s ease;
+  fa-icon {
+    display: grid;
+    place-items: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 9px;
+    background: rgba(255, 255, 255, 0.22);
+    font-size: 1rem;
+  }
 
-    &:focus {
-      outline: none;
-      background: var(--bg-input-focus);
-      border-color: var(--accent-color);
-      box-shadow: 0 0 0 2px rgba(var(--accent-color), 0.2);
-    }
+  span:not(.btn-arrow) {
+    flex: 1;
+  }
 
-    &::placeholder {
-      color: var(--text-muted);
+  .btn-arrow {
+    transition: transform 0.4s var(--spring);
+  }
+
+  &:hover,
+  &:focus-visible {
+    transform: translateY(-2px);
+    box-shadow: 0 16px 28px -12px rgba(111, 82, 201, 0.75), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+
+    .btn-arrow {
+      transform: translate(3px, -3px);
     }
   }
+}
+
+// Custom status: thought bubble floating to the right of the avatar
+.status-bubble {
+  position: absolute;
+  left: 112px;
+  top: 4px;
+  z-index: 4;
+  max-width: calc(100% - 200px);
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 0.75rem;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 8px 20px -10px rgba(111, 82, 201, 0.5), 0 0 0 1px rgba(201, 179, 251, 0.35);
+  font-family: var(--font-display);
+  font-size: 0.82rem;
+  color: #2d2640;
+  animation: bubble-float 4s ease-in-out infinite;
+
+  // Two little trailing dots towards the avatar
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    border-radius: 50%;
+    background: inherit;
+    box-shadow: 0 0 0 1px rgba(201, 179, 251, 0.35);
+  }
+
+  &::before {
+    left: -6px;
+    bottom: -2px;
+    width: 10px;
+    height: 10px;
+  }
+
+  &::after {
+    left: -13px;
+    bottom: -8px;
+    width: 6px;
+    height: 6px;
+  }
+
+  .status-emoji {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+  }
+
+  .bubble-text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+@keyframes bubble-float {
+  50% { transform: translateY(-3px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .status-bubble { animation: none; }
 }
 
 // Animations
@@ -573,4 +808,10 @@ html:not(.dark) .status-badge {
 
 .animate-scale-in {
   animation: scaleIn 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+@keyframes status-pulse {
+  0% { box-shadow: 0 0 0 0 rgba(67, 181, 129, 0.55); }
+  70% { box-shadow: 0 0 0 7px rgba(67, 181, 129, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(67, 181, 129, 0); }
 }

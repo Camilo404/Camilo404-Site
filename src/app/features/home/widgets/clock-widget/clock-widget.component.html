@@ -1,28 +1,78 @@
 <article class="widget-card clock-card" appCard3d [card3dConfig]="{ maxRotation: 5, scale: 1.02 }" [card3dSpotlight]="true">
-  <video #nameplateVideo class="clock-background-video" autoplay loop muted playsinline preload="auto"
-    [class.hidden]="!nameplateVideoUrl" [src]="nameplateVideoUrl || ''" (loadeddata)="onVideoLoaded($event)"
-    (canplay)="onVideoCanPlay($event)" (error)="onVideoError($event)">
-  </video>
+  <span class="clock-deco d1" aria-hidden="true">✦</span>
+  <span class="clock-deco d2" aria-hidden="true">✧</span>
+  <span class="clock-deco d3" aria-hidden="true">✦</span>
+
   <div class="clock-content">
-    <div class="clock-container">
-      <div class="clock-inner">
-        <div class="time-section">
-          <div class="main-time">
-            <span class="digit">{{ hours() }}</span>
-            <span class="blink">:</span>
-            <span class="digit">{{ minutes() }}</span>
-          </div>
-          <div class="secondary-time">
-            <span class="seconds">{{ seconds() }}</span>
-            <span class="ampm">{{ ampm() }}</span>
-          </div>
+    <div class="clock-inner">
+      <span class="tile-label">My time</span>
+
+      <!-- Odometer: each digit is a 0–9 strip that rolls to its value -->
+      <div class="time-section" role="img" [attr.aria-label]="spokenTime()">
+        <div class="main-time" aria-hidden="true">
+          @for (d of hourDigits(); track $index) {
+            <span class="odo"><span class="odo-strip" [style.--d]="d">
+              @for (n of strip; track n) { <span>{{ n }}</span> }
+            </span></span>
+          }
+          <span class="blink">:</span>
+          @for (d of minuteDigits(); track $index) {
+            <span class="odo"><span class="odo-strip" [style.--d]="d">
+              @for (n of strip; track n) { <span>{{ n }}</span> }
+            </span></span>
+          }
         </div>
-        <div class="date-section">
-          <span class="day">{{ day() }}</span>
-          <span class="divider">•</span>
-          <span class="date">{{ fullDate() }}</span>
+        <div class="secondary-time" aria-hidden="true">
+          <span class="seconds">
+            @for (d of secondDigits(); track $index) {
+              <span class="odo"><span class="odo-strip" [style.--d]="d">
+                @for (n of strip; track n) { <span>{{ n }}</span> }
+              </span></span>
+            }
+          </span>
+          <span class="ampm">{{ ampm() }}</span>
         </div>
       </div>
+
+      <div class="date-section">
+        <span class="day">{{ day() }}</span>
+        <span class="divider">•</span>
+        <span class="date">{{ fullDate() }}</span>
+      </div>
+
+      <div class="place-row">
+        <span class="sky" [class.night]="!isDay()">
+          <fa-icon [icon]="isDay() ? faSun : faMoon"></fa-icon>
+        </span>
+        <span class="place">{{ place }}</span>
+        <span class="diff">{{ diffLabel() }}</span>
+      </div>
     </div>
+
+    <!-- Pastel analog face -->
+    <svg class="analog" viewBox="0 0 100 100" aria-hidden="true">
+      <defs>
+        <linearGradient id="clockFace" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#f3ecff" />
+          <stop offset="100%" stop-color="#fde8f2" />
+        </linearGradient>
+        <linearGradient id="clockRing" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#c9b3fb" />
+          <stop offset="50%" stop-color="#f9b9d4" />
+          <stop offset="100%" stop-color="#a9d2f7" />
+        </linearGradient>
+      </defs>
+      <circle cx="50" cy="50" r="46" fill="url(#clockFace)" stroke="url(#clockRing)" stroke-width="3.5" />
+      @for (t of ticks; track t) {
+        <circle cx="50" cy="11" [attr.r]="t % 90 === 0 ? 2.4 : 1.3" class="tick" [class.major]="t % 90 === 0" [style.rotate.deg]="t" />
+      }
+      <line class="hand hour" x1="50" y1="50" x2="50" y2="29" [style.rotate.deg]="hourAngle()" />
+      <line class="hand minute" x1="50" y1="50" x2="50" y2="18" [style.rotate.deg]="minuteAngle()" />
+      <g class="hand-second" [style.rotate.deg]="secondAngle()">
+        <line x1="50" y1="58" x2="50" y2="17" />
+        <text x="50" y="19" text-anchor="middle">✦</text>
+      </g>
+      <circle cx="50" cy="50" r="3.2" class="pin" />
+    </svg>
   </div>
 </article>

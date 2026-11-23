@@ -1,20 +1,15 @@
 <section class="widget-card tech-stack-card" appCard3d [card3dConfig]="{ maxRotation: 5, scale: 1.02 }" [card3dSpotlight]="true">
+  <app-tile-sparkles [variant]="3"></app-tile-sparkles>
+  <span class="tile-label stack-label">Stack</span>
   <div class="marquee-mask">
     <div class="marquee-track">
-      @for (tech of techStack; track tech) {
-        <div class="tech-item" [title]="tech.name">
-          <fa-icon [icon]="tech.icon" [style.color]="tech.color"></fa-icon>
-        </div>
-      }
-      @for (tech of techStack; track tech) {
-        <div class="tech-item" [title]="tech.name">
-          <fa-icon [icon]="tech.icon" [style.color]="tech.color"></fa-icon>
-        </div>
-      }
-      @for (tech of techStack; track tech) {
-        <div class="tech-item" [title]="tech.name">
-          <fa-icon [icon]="tech.icon" [style.color]="tech.color"></fa-icon>
-        </div>
+      @for (round of [0, 1, 2]; track round) {
+        @for (tech of techStack; track tech.name) {
+          <div class="tech-item" [style.--brand]="tech.color" [attr.aria-hidden]="round > 0 ? 'true' : null">
+            <fa-icon [icon]="tech.icon"></fa-icon>
+            <span>{{ tech.name }}</span>
+          </div>
+        }
       }
     </div>
   </div>
