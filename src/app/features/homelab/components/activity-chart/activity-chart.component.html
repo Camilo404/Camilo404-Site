@@ -1,0 +1,86 @@
+<section class="widget-card chart-card" aria-label="Activity over time">
+  <header class="chart-head">
+    <span class="tile-label">Activity</span>
+    <div class="chart-tabs" role="tablist" aria-label="Metric">
+      @for (t of tabs; track t.id) {
+        <button
+          type="button"
+          role="tab"
+          class="chart-tab"
+          [class.active]="tab() === t.id"
+          [attr.aria-selected]="tab() === t.id"
+          (click)="tab.set(t.id)"
+        >{{ t.label }}</button>
+      }
+    </div>
+  </header>
+
+  <div class="chart-stats">
+    @for (s of stats(); track s.label) {
+      <div class="stat">
+        <span class="stat-label">{{ s.label }}</span>
+        <span class="stat-value">{{ s.value }}</span>
+      </div>
+    }
+    @if (view().series.length > 1) {
+      <div class="legend">
+        @for (s of view().series; track s.id) {
+          <span class="legend-item" [class.dashed]="s.dashed" [style.--c]="s.color">{{ s.name }}</span>
+        }
+      </div>
+    }
+  </div>
+
+  <div
+    #plot
+    class="plot"
+    role="img"
+    [attr.aria-label]="tab() + ' over the last ' + (span() || 'few seconds')"
+    (pointermove)="onMove($event, plot)"
+    (pointerleave)="hoverIdx.set(null)"
+  >
+    @for (t of ticks(); track t.top) {
+      <div class="grid-line" [style.top.%]="t.top"><span>{{ t.label }}</span></div>
+    }
+
+    <svg [attr.viewBox]="'0 0 ' + W + ' ' + H" preserveAspectRatio="none" aria-hidden="true">
+      <defs>
+        @for (p of paths(); track p.id) {
+          <linearGradient [attr.id]="'act-' + p.id" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" [attr.stop-color]="p.color" stop-opacity="0.45" />
+            <stop offset="100%" [attr.stop-color]="p.color" stop-opacity="0" />
+          </linearGradient>
+        }
+      </defs>
+      @for (p of paths(); track p.id) {
+        @if (!p.dashed) {
+          <path class="area" [attr.d]="p.area" [attr.fill]="'url(#act-' + p.id + ')'" />
+        }
+        <path class="line" [class.dashed]="p.dashed" [attr.d]="p.line" [attr.stroke]="p.color" />
+      }
+    </svg>
+
+    @if (hover(); as h) {
+      <div class="cross" [style.left.%]="h.x" aria-hidden="true">
+        @for (pt of h.points; track pt.name) {
+          <i class="cross-dot" [style.top.%]="pt.y" [style.--c]="pt.color"></i>
+        }
+        <div class="bubble" [attr.data-align]="h.align">
+          <span class="bubble-time">{{ h.time }}</span>
+          @for (pt of h.points; track pt.name) {
+            <span class="bubble-row" [style.--c]="pt.color"><i></i>{{ pt.name }} <b>{{ pt.value }}</b></span>
+          }
+        </div>
+      </div>
+    }
+
+    @if (history().length < 2) {
+      <p class="plot-empty">Collecting data…</p>
+    }
+  </div>
+
+  <footer class="chart-foot">
+    <span>{{ span() ? span() + ' ago' : '' }}</span>
+    <span>now</span>
+  </footer>
+</section>

@@ -1,0 +1,34 @@
+<a
+  class="widget-card lab-card"
+  routerLink="/homelab"
+  appCard3d
+  [card3dConfig]="{ maxRotation: 4, scale: 1.015 }"
+  [card3dSpotlight]="true"
+  aria-label="Homelab: open the server dashboard"
+>
+  <app-tile-sparkles [variant]="1"></app-tile-sparkles>
+
+  <header class="lab-header">
+    <span class="tile-label">Homelab</span>
+    <span class="lab-pill" [class.off]="!online()">
+      <i class="lab-dot" aria-hidden="true"></i>
+      @if (online()) { up {{ uptime() }} } @else { Offline }
+    </span>
+  </header>
+
+  <ul class="lab-meters">
+    @for (m of meters(); track m.id) {
+      <li class="meter" [class.hot]="m.hot" [style.--c]="m.color">
+        <span class="m-label">{{ m.label }}</span>
+        <span class="m-track" aria-hidden="true"><span class="m-fill" [style.width.%]="m.fill"></span></span>
+        <span class="m-value">{{ m.value }}</span>
+      </li>
+    } @empty {
+      @for (i of [0, 1, 2, 3]; track i) {
+        <li class="meter is-skeleton" aria-hidden="true"><span class="m-track"></span></li>
+      }
+    }
+  </ul>
+
+  <span class="lab-more">Open dashboard <i aria-hidden="true">→</i></span>
+</a>

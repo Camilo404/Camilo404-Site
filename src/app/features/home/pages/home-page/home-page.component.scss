@@ -60,7 +60,8 @@
 // Bento
 // ========================================
 // Desktop: profile card at its natural 400px width on the left, then a
-// 2-column grid — clock + quote, music + social, stack as a strip.
+// 2-column grid — clock + quote, music + (connect over homelab summary).
+// Below, the full-width stack marquee.
 // Rows are auto, so the card's own height sets the pace and the tiles
 // on the right stretch to line up with it.
 .bento {
@@ -72,7 +73,7 @@
   grid-template-areas:
     'p c s'
     'p m x'
-    'p t t';
+    't t t';
   gap: var(--gap);
 }
 
@@ -80,8 +81,18 @@
 .tile-clock   { grid-area: c; }
 .tile-music   { grid-area: m; }
 .tile-shadow  { grid-area: s; }
-.tile-social  { grid-area: x; }
+.tile-duo     { grid-area: x; }
 .tile-stack   { grid-area: t; }
+
+// Connect keeps its natural height; the homelab summary takes the rest
+.tile-duo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+  min-width: 0;
+
+  .tile-lab { flex: 1; }
+}
 
 // Every tile stretches its widget to fill the cell so edges line up
 .tile {
@@ -138,80 +149,6 @@
 }
 
 // ========================================
-// Universal Widget Card Style
-// ========================================
-:host ::ng-deep .widget-card {
-  position: relative;
-  width: 100%;
-  transform-style: preserve-3d;
-  // Same surface as the clock tile: white glass with two soft pastel glows.
-  // Tiles can move/recolour the glows via --glow-a-* / --glow-b-*.
-  background:
-    radial-gradient(120% 120% at var(--glow-a-pos, 100% 0%), var(--glow-a, rgba(249, 185, 212, 0.35)), transparent 55%),
-    radial-gradient(100% 100% at var(--glow-b-pos, 0% 100%), var(--glow-b, rgba(201, 179, 251, 0.3)), transparent 60%),
-    rgba(255, 255, 255, 0.78);
-  backdrop-filter: blur(20px) saturate(1.3);
-  -webkit-backdrop-filter: blur(20px) saturate(1.3);
-  border: 1px solid var(--border-primary);
-  border-radius: 18px;
-  overflow: hidden;
-  box-shadow:
-    var(--shadow-card),
-    inset 0 1px 0 rgba(255, 255, 255, 0.9);
-  transition: transform 0.5s var(--spring), box-shadow 0.4s ease, border-color 0.4s ease;
-
-  // Cursor spotlight, tinted with the profile colour
-  &::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    background: radial-gradient(600px circle at var(--mouse-x, -50%) var(--mouse-y, -50%),
-        color-mix(in oklch, var(--p1) 16%, transparent),
-        transparent 40%);
-    opacity: 0;
-    transition: opacity 0.5s ease;
-    z-index: 2;
-    pointer-events: none;
-  }
-
-  // Gradient hairline border in the profile colours
-  &::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    padding: 1px;
-    background: linear-gradient(135deg,
-        color-mix(in oklch, var(--p1) 70%, transparent),
-        transparent 35%,
-        transparent 65%,
-        color-mix(in oklch, var(--p2) 60%, transparent));
-    mask:
-      linear-gradient(#000 0 0) content-box exclude,
-      linear-gradient(#000 0 0);
-    opacity: 0.45;
-    transition: opacity 0.4s ease;
-    z-index: 3;
-    pointer-events: none;
-  }
-
-  &:hover {
-    transform: translateY(-4px) scale(1.005);
-    box-shadow:
-      var(--shadow-card-hover),
-      0 18px 50px -18px color-mix(in oklch, var(--p1) 45%, transparent);
-    border-color: transparent;
-    z-index: 10;
-
-    &::before,
-    &::after {
-      opacity: 1;
-    }
-  }
-}
-
-// ========================================
 // Entrance Animations
 // ========================================
 @keyframes rise-in {
@@ -226,16 +163,6 @@
     transform: none;
     filter: none;
   }
-}
-
-app-neko {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 9999;
-  pointer-events: none;
 }
 
 .tile {
@@ -261,6 +188,13 @@ app-neko {
     opacity: 0;
     transform: translateY(40px) scale(0.95);
   }
+}
+
+// Back from /homelab: tiles are already in place (and the homelab tile is a
+// view-transition target, so it must be visible on the first frame)
+.bento.no-intro .tile {
+  opacity: 1;
+  animation: none;
 }
 
 @media (prefers-reduced-motion: reduce) {

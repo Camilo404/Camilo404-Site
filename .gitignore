@@ -43,3 +43,6 @@ Thumbs.db
 
 # Coverage
 /coverage
+
+# Netlify CLI local state
+.netlify

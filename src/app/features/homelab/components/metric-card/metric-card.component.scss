@@ -1,0 +1,115 @@
+:host {
+  display: block;
+  min-width: 0;
+}
+
+.metric {
+  --c: #a58bf0;
+
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  padding: 0.9rem 0.95rem 0.75rem;
+  border-radius: 16px;
+  background:
+    linear-gradient(160deg, color-mix(in oklch, var(--c) 12%, transparent), transparent 60%),
+    rgba(255, 255, 255, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.95);
+  box-shadow: 0 4px 16px -10px color-mix(in oklch, var(--c) 60%, transparent);
+  transition: transform 0.45s var(--spring), box-shadow 0.3s ease;
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 14px 26px -14px color-mix(in oklch, var(--c) 70%, transparent);
+  }
+
+  &.hot { --c: #f0828f; }
+}
+
+.m-top {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+// Not `.ring`: Tailwind owns that class
+.gauge-ring {
+  flex: none;
+  width: 52px;
+  aspect-ratio: 1;
+  rotate: -90deg;
+
+  circle {
+    fill: none;
+    stroke-width: 4.5;
+    stroke-linecap: round;
+  }
+
+  .track { stroke: color-mix(in oklch, var(--c) 18%, white); }
+
+  .bar {
+    stroke: var(--c);
+    stroke-dasharray: 100;
+    transition: stroke-dashoffset 0.9s var(--spring), stroke 0.4s ease;
+    filter: drop-shadow(0 0 3px color-mix(in oklch, var(--c) 60%, transparent));
+  }
+}
+
+.m-read {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.m-label {
+  font-size: 0.64rem;
+  font-weight: 650;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--label-color);
+}
+
+.m-value {
+  font-family: var(--font-display);
+  font-size: 1.55rem;
+  font-weight: 650;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+  color: #2d2640;
+}
+
+.m-sub {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--font-mono);
+  font-size: 0.64rem;
+  color: var(--text-muted);
+}
+
+.m-spark {
+  width: 100%;
+  height: 34px;
+  overflow: visible;
+
+  .area { fill: color-mix(in oklch, var(--c) 22%, transparent); }
+
+  .line {
+    fill: none;
+    stroke: var(--c);
+    stroke-width: 1.5;
+    stroke-linejoin: round;
+    vector-effect: non-scaling-stroke;
+  }
+}
+
+.m-peak {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  color: var(--text-muted);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gauge-ring .bar { transition: none; }
+}

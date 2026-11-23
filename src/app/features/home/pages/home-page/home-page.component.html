@@ -1,9 +1,3 @@
-<!-- Cursor Neko Animation -->
-<app-neko></app-neko>
-
-<!-- Pastel sparkles floating over the gradient -->
-<app-sparkle-background></app-sparkle-background>
-
 <!-- Sparkle burst on click -->
 <app-click-sparkles></app-click-sparkles>
 
@@ -12,7 +6,7 @@
 
 <main class="main-container">
   <!-- Bento: tile size follows importance (see grid-template-areas in the SCSS) -->
-  <div class="bento">
+  <div class="bento" [class.no-intro]="skipIntro">
 
     <div class="tile tile-profile" style="--i: 0">
       <app-card-profile (themeColorsChange)="onThemeColorsChange($event)"></app-card-profile>
@@ -30,11 +24,17 @@
       <app-shadow-widget></app-shadow-widget>
     </div>
 
-    <div class="tile tile-social" style="--i: 4">
-      <app-social-widget></app-social-widget>
+    <!-- Connect + Homelab summary share one cell; the full stats live at /homelab -->
+    <div class="tile-duo">
+      <div class="tile tile-social" style="--i: 4">
+        <app-social-widget></app-social-widget>
+      </div>
+      <div class="tile tile-lab" style="--i: 5">
+        <app-homelab-mini-widget></app-homelab-mini-widget>
+      </div>
     </div>
 
-    <div class="tile tile-stack" style="--i: 5">
+    <div class="tile tile-stack" style="--i: 6">
       <app-tech-stack-widget></app-tech-stack-widget>
     </div>
 

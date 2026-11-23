@@ -1,0 +1,160 @@
+// ========================================
+// Homelab summary tile (links to /homelab)
+// ========================================
+:host {
+  display: block;
+}
+
+.lab-card {
+  --glow-a-pos: 0% 0%;
+  --glow-a: rgba(169, 210, 247, 0.32);
+  --glow-b-pos: 100% 100%;
+
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1.1rem 1.3rem 1rem;
+  color: inherit;
+  text-decoration: none;
+  cursor: url('../../../../../assets/images/cursor/link.png'), pointer;
+
+  > :not(app-tile-sparkles) {
+    position: relative;
+    z-index: 1;
+  }
+}
+
+.lab-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+}
+
+.lab-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-family: var(--font-display);
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: #1a8f4c;
+
+  .lab-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #3ba55d;
+    animation: lab-pulse 2s ease-out infinite;
+  }
+
+  &.off {
+    color: var(--text-muted);
+
+    .lab-dot {
+      background: #b9b3c9;
+      animation: none;
+    }
+  }
+}
+
+@keyframes lab-pulse {
+  0% { box-shadow: 0 0 0 0 rgba(59, 165, 93, 0.5); }
+  70%,
+  100% { box-shadow: 0 0 0 6px rgba(59, 165, 93, 0); }
+}
+
+// ---------- Meters ----------
+.lab-meters {
+  flex: 1;
+  display: grid;
+  align-content: center;
+  gap: 0.55rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.meter {
+  --c: #a58bf0;
+
+  display: grid;
+  grid-template-columns: 2.6rem 1fr 2.6rem;
+  align-items: center;
+  gap: 0.6rem;
+
+  &.hot { --c: #f0828f; }
+}
+
+.m-label {
+  font-size: 0.64rem;
+  font-weight: 650;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--label-color);
+}
+
+.m-track {
+  height: 7px;
+  border-radius: 999px;
+  background: color-mix(in oklch, var(--c) 16%, white);
+  overflow: hidden;
+}
+
+.m-fill {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, color-mix(in oklch, var(--c) 55%, white), var(--c));
+  box-shadow: 0 0 6px color-mix(in oklch, var(--c) 55%, transparent);
+  transition: width 0.9s var(--spring), background 0.4s ease;
+}
+
+.m-value {
+  text-align: right;
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+  color: #2d2640;
+}
+
+.meter.is-skeleton {
+  grid-template-columns: 1fr;
+
+  .m-track {
+    background: #efe7fb;
+    animation: sk-pulse 1.2s ease-in-out infinite;
+  }
+}
+
+@keyframes sk-pulse {
+  50% { opacity: 0.45; }
+}
+
+// ---------- Footer link ----------
+.lab-more {
+  align-self: flex-end;
+  font-family: var(--font-display);
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: var(--ink-lilac);
+
+  i {
+    display: inline-block;
+    font-style: normal;
+    transition: transform 0.4s var(--spring);
+  }
+}
+
+.lab-card:hover .lab-more i,
+.lab-card:focus-visible .lab-more i {
+  transform: translateX(4px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lab-pill .lab-dot,
+  .meter.is-skeleton .m-track { animation: none; }
+  .m-fill { transition: none; }
+}

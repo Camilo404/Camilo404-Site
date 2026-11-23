@@ -1,0 +1,167 @@
+<app-command-palette [commands]="commands"></app-command-palette>
+
+<main class="lab-page">
+  <!-- Top bar -->
+  <nav class="lab-nav" style="--i: 0">
+    <a routerLink="/" class="back-link"><i aria-hidden="true">←</i> camilo404</a>
+    <button type="button" class="palette-hint" (click)="palette()?.open()" aria-label="Open command palette">
+      <kbd>{{ isMac ? '⌘' : 'Ctrl' }}</kbd><kbd>K</kbd>
+    </button>
+  </nav>
+
+  <!-- Title + mood -->
+  <header class="lab-title" style="--i: 1">
+    <h1>Homelab</h1>
+    <p class="mood"><span class="mood-face" aria-hidden="true">{{ mood().face }}</span> {{ mood().text }}</p>
+  </header>
+
+  <!-- Hero: status + the four vitals (morphs from the home tile) -->
+  <section class="widget-card lab-hero" [class.off]="!online()" aria-label="Current server status" style="--i: 2">
+    <header class="hero-head">
+      <span class="status-pill" [class.off]="!online()">
+        <i class="status-dot" aria-hidden="true"></i>
+        {{ !status() ? 'Connecting…' : online() ? 'Online' : 'Offline' }}
+      </span>
+      @if (uptime(); as u) {
+        <span class="hero-meta">up {{ u.short }}</span>
+      }
+      @if (updatedAgo()) {
+        <span class="hero-meta muted" aria-live="off">· updated {{ updatedAgo() }}</span>
+      }
+      @if (isDemo) {
+        <span class="demo-chip" tabindex="0" appTooltip="Simulated numbers: no server endpoint configured">demo</span>
+      }
+      <ul class="specs" aria-label="Hardware">
+        @for (s of specs(); track s) {
+          <li>{{ s }}</li>
+        }
+      </ul>
+    </header>
+
+    <div class="metrics">
+      @for (m of metrics(); track m.id) {
+        <app-metric-card
+          [label]="m.label"
+          [value]="m.value"
+          [sub]="m.sub"
+          [fill]="m.fill"
+          [color]="m.color"
+          [hot]="m.hot"
+          [series]="m.series"
+          [peak]="m.peak"
+        ></app-metric-card>
+      } @empty {
+        @for (i of [0, 1, 2, 3]; track i) {
+          <div class="metric-skeleton" aria-hidden="true"></div>
+        }
+      }
+    </div>
+  </section>
+
+  <div class="lab-grid">
+    <!-- Time series -->
+    <app-activity-chart class="g-chart" [history]="history()" style="--i: 3"></app-activity-chart>
+
+    <!-- Per-thread load -->
+    <section class="widget-card side-card g-cores" aria-label="Load per CPU thread" style="--i: 4">
+      <header class="card-head">
+        <span class="tile-label">Threads</span>
+        <span class="card-meta">{{ cores().length }}</span>
+      </header>
+      <div class="cores" [style.--cols]="cores().length > 8 ? 4 : 2">
+        @for (c of cores(); track c.i) {
+          <div
+            class="core"
+            [class.busiest]="c.busiest"
+            [style.--load]="c.load"
+            tabindex="0"
+            [appTooltip]="'Thread ' + (c.i + 1) + ' · ' + c.load.toFixed(1) + '%'"
+          >
+            <span class="core-n">{{ c.i + 1 }}</span>
+            <span class="core-v">{{ c.load < 10 ? c.load.toFixed(1) : c.load.toFixed(0) }}%</span>
+          </div>
+        }
+      </div>
+      <p class="card-foot">
+        @if (busiestCore(); as b) {
+          Busiest: thread {{ b.i + 1 }} at {{ b.load.toFixed(1) }}%
+        } @else {
+          All threads are idle
+        }
+      </p>
+    </section>
+
+    <!-- Network -->
+    <section class="widget-card side-card g-net" aria-label="Network" style="--i: 5">
+      <header class="card-head">
+        <span class="tile-label">Network</span>
+        @if (network(); as n) { <span class="card-meta">last {{ n.window }}</span> }
+      </header>
+      @if (network(); as n) {
+        <div class="net-rows">
+          <div class="net-row down">
+            <span class="net-arrow" aria-hidden="true">↓</span>
+            <div class="net-main">
+              <span class="net-label">Download</span>
+              <span class="net-rate">{{ n.down }}</span>
+            </div>
+            <dl class="net-facts">
+              <div><dt>moved</dt><dd>{{ n.downTotal }}</dd></div>
+              <div><dt>peak</dt><dd>{{ n.downPeak }}</dd></div>
+            </dl>
+          </div>
+          <div class="net-row up">
+            <span class="net-arrow" aria-hidden="true">↑</span>
+            <div class="net-main">
+              <span class="net-label">Upload</span>
+              <span class="net-rate">{{ n.up }}</span>
+            </div>
+            <dl class="net-facts">
+              <div><dt>moved</dt><dd>{{ n.upTotal }}</dd></div>
+              <div><dt>peak</dt><dd>{{ n.upPeak }}</dd></div>
+            </dl>
+          </div>
+        </div>
+      }
+    </section>
+
+    <!-- Memory & storage -->
+    <section class="widget-card side-card g-store" aria-label="Memory and storage" style="--i: 6">
+      <header class="card-head">
+        <span class="tile-label">Memory &amp; storage</span>
+      </header>
+      <div class="store-rows">
+        @for (s of storage(); track s.id) {
+          <div class="store" [style.--c]="s.color">
+            <div class="store-top">
+              <span class="store-label">{{ s.label }}</span>
+              <span class="store-used"><b>{{ s.used }}</b> / {{ s.total }}</span>
+            </div>
+            <div class="store-bar" role="meter" aria-valuemin="0" aria-valuemax="100" [attr.aria-valuenow]="s.pct.toFixed(0)" [attr.aria-label]="s.label + ' used'">
+              <span [style.width.%]="s.pct"></span>
+            </div>
+            <span class="store-free">{{ s.free }} free · {{ s.pct.toFixed(0) }}% used</span>
+          </div>
+        }
+      </div>
+    </section>
+
+    <!-- Uptime -->
+    <section class="widget-card side-card g-up" aria-label="Uptime" style="--i: 7">
+      <header class="card-head">
+        <span class="tile-label">Uptime</span>
+      </header>
+      @if (uptime(); as u) {
+        <div class="up-big">
+          <span class="up-days">{{ u.days }}</span>
+          <span class="up-unit">{{ u.days === 1 ? 'day' : 'days' }} without a reboot</span>
+        </div>
+        <div class="up-dots" aria-hidden="true">
+          @for (d of u.dots; track d) { <i [style.--d]="d"></i> }
+          @if (u.extra) { <span>+{{ u.extra }}</span> }
+        </div>
+        <p class="card-foot">Up since {{ u.since }}</p>
+      }
+    </section>
+  </div>
+</main>
