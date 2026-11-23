@@ -1,49 +1,45 @@
 <!-- Cursor Neko Animation -->
 <app-neko></app-neko>
 
-<!-- Theme Toggle -->
-<app-theme-toggle></app-theme-toggle>
+<!-- Pastel sparkles floating over the gradient -->
+<app-sparkle-background></app-sparkle-background>
 
-<!-- Background Ethereal Shadow -->
-<div class="ethereal-background-container">
-  <app-ethereal-shadow [sizing]="'fill'" [color]="shadowColor()" [animation]="{ scale: 100, speed: 90 }"
-  [noise]="shadowNoise()" class="w-full h-full"></app-ethereal-shadow>
-</div>
+<!-- Sparkle burst on click -->
+<app-click-sparkles></app-click-sparkles>
 
-<main class="main-container" [class.has-floating-activity]="isActivityVisible()">
-  <div class="bento-grid">
+<main class="main-container">
+  <!-- Bento: tile size follows importance (see grid-template-areas in the SCSS) -->
+  <div class="bento">
 
-    <!-- Column Left: Profile -->
-    <div class="bento-col-profile">
-      <app-card-profile (nameplateAssetChange)="onNameplateAssetChange($event)"></app-card-profile>
+    <div class="tile tile-profile" style="--i: 0">
+      <app-card-profile (themeColorsChange)="onThemeColorsChange($event)"></app-card-profile>
     </div>
 
-    <!-- Column Right: Widgets -->
-    <div class="bento-col-widgets">
-
-      <!-- Clock Widget -->
-      <div class="anim-wrapper delay-1">
-        <app-clock-widget [nameplateVideoUrl]="nameplateVideoUrl"></app-clock-widget>
-      </div>
-
-      <!-- Shadow Widget -->
-      <div class="anim-wrapper delay-2">
-        <app-shadow-widget></app-shadow-widget>
-      </div>
-
-      <!-- Social Connect Widget -->
-      <div class="anim-wrapper delay-3">
-        <app-social-widget></app-social-widget>
-      </div>
-
-      <!-- Tech Stack Infinite Marquee Widget -->
-      <div class="anim-wrapper delay-4">
-        <app-tech-stack-widget></app-tech-stack-widget>
-      </div>
-
+    <div class="tile tile-clock" style="--i: 1">
+      <app-clock-widget></app-clock-widget>
     </div>
+
+    <div class="tile tile-music" style="--i: 2">
+      <app-now-playing-widget></app-now-playing-widget>
+    </div>
+
+    <div class="tile tile-shadow" style="--i: 3">
+      <app-shadow-widget></app-shadow-widget>
+    </div>
+
+    <div class="tile tile-social" style="--i: 4">
+      <app-social-widget></app-social-widget>
+    </div>
+
+    <div class="tile tile-stack" style="--i: 5">
+      <app-tech-stack-widget></app-tech-stack-widget>
+    </div>
+
   </div>
-</main>
 
-<!-- Floating Spotify Activity -->
-<app-floating-activity (visibilityChange)="onActivityVisibilityChange($event)"></app-floating-activity>
+  <footer class="site-footer">
+    <span>© {{ year }} Camilo404</span>
+    <span class="dot" aria-hidden="true">✦</span>
+    <span>Made with love in Medellín</span>
+  </footer>
+</main>

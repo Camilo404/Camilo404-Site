@@ -1,12 +1,10 @@
-import { Component, signal, computed, inject } from '@angular/core';
+import { Component } from '@angular/core';
 
-import { ThemeService } from '../../../../shared/services/theme.service';
-import { DiscordCdn } from '../../../../core/utils/discord-cdn';
 import { NekoComponent } from '../../components/neko/neko.component';
-import { EtherealShadowComponent } from '../../components/ethereal-shadow/ethereal-shadow.component';
+import { SparkleBackgroundComponent } from '../../components/sparkle-background/sparkle-background.component';
+import { ClickSparklesComponent } from '../../components/click-sparkles/click-sparkles.component';
+import { NowPlayingWidgetComponent } from '../../widgets/now-playing-widget/now-playing-widget.component';
 import { CardProfileComponent } from '../../../../shared/ui/card-profile/card-profile.component';
-import { FloatingActivityComponent } from '../../../../shared/ui/floating-activity/floating-activity.component';
-import { ThemeToggleComponent } from '../../../../shared/ui/theme-toggle/theme-toggle.component';
 import { ClockWidgetComponent } from '../../widgets/clock-widget/clock-widget.component';
 import { ShadowWidgetComponent } from '../../widgets/shadow-widget/shadow-widget.component';
 import { SocialWidgetComponent } from '../../widgets/social-widget/social-widget.component';
@@ -19,10 +17,10 @@ import { TechStackWidgetComponent } from '../../widgets/tech-stack-widget/tech-s
     styleUrls: ['./home-page.component.scss'],
     imports: [
     NekoComponent,
-    EtherealShadowComponent,
+    SparkleBackgroundComponent,
+    ClickSparklesComponent,
+    NowPlayingWidgetComponent,
     CardProfileComponent,
-    FloatingActivityComponent,
-    ThemeToggleComponent,
     ClockWidgetComponent,
     ShadowWidgetComponent,
     SocialWidgetComponent,
@@ -30,34 +28,23 @@ import { TechStackWidgetComponent } from '../../widgets/tech-stack-widget/tech-s
 ]
 })
 export class HomePageComponent {
-  private readonly themeService = inject(ThemeService);
+  readonly year = new Date().getFullYear();
 
-  isActivityVisible = signal(false);
-  nameplateAsset = signal<string | null>(null);
-
-  // The full-strength noise texture overwhelms the light background
-  shadowNoise = computed(() => ({
-    opacity: this.themeService.isDark() ? 1 : 0.35,
-    scale: 1.2
-  }));
-
-  shadowColor = computed(() =>
-    this.themeService.isDark() ? 'rgba(128, 128, 128, 1)' : 'rgba(170, 170, 170, 1)'
-  );
-
-  onActivityVisibilityChange(isVisible: boolean): void {
-    this.isActivityVisible.set(isVisible);
-  }
-
-  onNameplateAssetChange(asset: string | null): void {
-    this.nameplateAsset.set(asset);
-  }
-
-  get nameplateVideoUrl(): string | null {
-    const asset = this.nameplateAsset();
-    if (!asset) {
-      return null;
+  /**
+   * Discord profile theme colours drive the whole page palette. They're set on
+   * :root as registered properties, so the change animates everywhere at once.
+   * The card falls back to two greys when the profile has no theme — keep the
+   * default palette in that case.
+   */
+  onThemeColorsChange(colors: string[]): void {
+    const root = document.documentElement.style;
+    const [first, second] = colors;
+    if (!first || (first === '#5C5C5C' && (second ?? first) === '#5C5C5C')) {
+      root.removeProperty('--profile-1');
+      root.removeProperty('--profile-2');
+      return;
     }
-    return DiscordCdn.nameplate(asset);
+    root.setProperty('--profile-1', first);
+    root.setProperty('--profile-2', second ?? first);
   }
 }

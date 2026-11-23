@@ -1,80 +1,115 @@
 // ========================================
-// Main Container & Bento Grid - Background Container
+// Page
 // ========================================
-.ethereal-background-container {
-  position: fixed;
-  inset: 0;
-  z-index: -100;
-}
-
 .main-container {
   min-height: 100vh;
   min-height: 100dvh;
   width: 100%;
-  padding: 2.5rem 2rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  overflow-x: hidden;
-  transition: padding-bottom 0.6s cubic-bezier(0.22, 1, 0.36, 1);
-
-  // Reserve room for the fixed activity player instead of translating the
-  // whole layout up, which clipped the top of the cards on short viewports.
-  &.has-floating-activity {
-    padding-bottom: 13rem;
-  }
-
-  @media (max-width: 1024px) {
-    // Top padding keeps the fixed theme toggle clear of the profile card
-    padding: 4.5rem 1rem 3rem;
-    align-items: flex-start;
-
-    &.has-floating-activity {
-      padding-bottom: 3rem;
-    }
-  }
-}
-
-.bento-grid {
-  display: grid;
-  grid-template-columns: auto minmax(400px, 500px);
-  gap: 1.5rem;
-  width: auto;
-
-  @media (max-width: 1024px) {
-    // minmax(0, …) stops the tech-stack marquee's max-content track from
-    // widening the column past the viewport on phones
-    grid-template-columns: minmax(0, 1fr);
-    justify-items: center;
-    width: 100%;
-  }
-}
-
-.bento-col-profile {
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  width: 100%;
-  min-width: 0;
-}
-
-// Let the 400px profile card shrink on narrow phones instead of overflowing
-.bento-col-profile app-card-profile {
-  display: block;
-  width: 100%;
-  max-width: 400px;
-  min-width: 0;
-}
-
-.bento-col-widgets {
+  padding: clamp(1.5rem, 3vw, 3.5rem) clamp(1rem, 3vw, 3rem);
   display: flex;
   flex-direction: column;
-  gap: 0.9rem;
-  width: auto;
+  justify-content: center;
+  align-items: center;
+  gap: clamp(1.25rem, 2vw, 2rem);
+  overflow-x: hidden;
+}
 
-  @media (max-width: 1024px) {
-    width: 100%;
-    max-width: 400px;
+.site-footer {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+  font-family: var(--font-display);
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  opacity: 0;
+  animation: rise-in 0.9s var(--spring) 0.7s forwards;
+
+  .dot {
+    color: var(--ink-pink);
+    font-size: 0.7rem;
+  }
+}
+
+// ========================================
+// Bento
+// ========================================
+// Desktop: profile card at its natural 400px width on the left, then a
+// 2-column grid — clock + quote, music + social, stack as a strip.
+// Rows are auto, so the card's own height sets the pace and the tiles
+// on the right stretch to line up with it.
+.bento {
+  --gap: clamp(0.8rem, 1vw, 1.15rem);
+
+  width: min(100%, 1320px);
+  display: grid;
+  grid-template-columns: 400px minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-areas:
+    'p c s'
+    'p m x'
+    'p t t';
+  gap: var(--gap);
+}
+
+.tile-profile { grid-area: p; }
+.tile-clock   { grid-area: c; }
+.tile-music   { grid-area: m; }
+.tile-shadow  { grid-area: s; }
+.tile-social  { grid-area: x; }
+.tile-stack   { grid-area: t; }
+
+// Every tile stretches its widget to fill the cell so edges line up
+.tile {
+  display: flex;
+  min-width: 0;
+  min-height: 0;
+
+  > * {
+    flex: 1;
+    display: flex;
+    min-width: 0;
+  }
+
+  > * > :first-child {
+    flex: 1;
+  }
+}
+
+.tile-profile app-card-profile {
+  display: block;
+}
+
+// Laptop: profile + one column of widgets
+@media (max-width: 1279px) {
+  .bento {
+    width: min(100%, 980px);
+    grid-template-columns: minmax(320px, 400px) minmax(0, 1fr);
+    grid-template-areas:
+      'p c'
+      'p m'
+      'p s'
+      'p x'
+      't t';
+  }
+}
+
+// Tablet / phone: single column, music right after the profile
+@media (max-width: 860px) {
+  .main-container {
+    justify-content: flex-start;
+  }
+
+  .bento {
+    width: min(100%, 460px);
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      'p'
+      'm'
+      'c'
+      's'
+      'x'
+      't';
   }
 }
 
@@ -85,22 +120,30 @@
   position: relative;
   width: 100%;
   transform-style: preserve-3d;
-  background: var(--bg-card);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  // Same surface as the clock tile: white glass with two soft pastel glows.
+  // Tiles can move/recolour the glows via --glow-a-* / --glow-b-*.
+  background:
+    radial-gradient(120% 120% at var(--glow-a-pos, 100% 0%), var(--glow-a, rgba(249, 185, 212, 0.35)), transparent 55%),
+    radial-gradient(100% 100% at var(--glow-b-pos, 0% 100%), var(--glow-b, rgba(201, 179, 251, 0.3)), transparent 60%),
+    rgba(255, 255, 255, 0.78);
+  backdrop-filter: blur(20px) saturate(1.3);
+  -webkit-backdrop-filter: blur(20px) saturate(1.3);
   border: 1px solid var(--border-primary);
-  border-radius: 16px;
+  border-radius: 18px;
   overflow: hidden;
-  box-shadow: var(--shadow-card);
-  transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.4s ease, border-color 0.4s ease;
+  box-shadow:
+    var(--shadow-card),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  transition: transform 0.5s var(--spring), box-shadow 0.4s ease, border-color 0.4s ease;
 
+  // Cursor spotlight, tinted with the profile colour
   &::before {
     content: "";
     position: absolute;
     inset: 0;
     border-radius: inherit;
-    background: radial-gradient(800px circle at var(--mouse-x, -50%) var(--mouse-y, -50%),
-        var(--mouse-glow),
+    background: radial-gradient(600px circle at var(--mouse-x, -50%) var(--mouse-y, -50%),
+        color-mix(in oklch, var(--p1) 16%, transparent),
         transparent 40%);
     opacity: 0;
     transition: opacity 0.5s ease;
@@ -108,30 +151,56 @@
     pointer-events: none;
   }
 
+  // Gradient hairline border in the profile colours
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(135deg,
+        color-mix(in oklch, var(--p1) 70%, transparent),
+        transparent 35%,
+        transparent 65%,
+        color-mix(in oklch, var(--p2) 60%, transparent));
+    mask:
+      linear-gradient(#000 0 0) content-box exclude,
+      linear-gradient(#000 0 0);
+    opacity: 0.45;
+    transition: opacity 0.4s ease;
+    z-index: 3;
+    pointer-events: none;
+  }
+
   &:hover {
     transform: translateY(-4px) scale(1.005);
-    box-shadow: var(--shadow-card-hover);
-    border-color: var(--accent-border);
+    box-shadow:
+      var(--shadow-card-hover),
+      0 18px 50px -18px color-mix(in oklch, var(--p1) 45%, transparent);
+    border-color: transparent;
     z-index: 10;
 
-    &::before {
+    &::before,
+    &::after {
       opacity: 1;
     }
   }
 }
 
 // ========================================
-// Animations & Wrappers
+// Entrance Animations
 // ========================================
-@keyframes fadeInUp {
-  0% {
+@keyframes rise-in {
+  from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(24px) scale(0.97);
+    filter: blur(6px);
   }
 
-  100% {
+  to {
     opacity: 1;
-    transform: translateY(0);
+    transform: none;
+    filter: none;
   }
 }
 
@@ -145,37 +214,33 @@ app-neko {
   pointer-events: none;
 }
 
-.anim-wrapper {
-  width: 100%;
+.tile {
   opacity: 0;
-  animation: fadeInUp 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+  animation: rise-in 0.9s var(--spring) forwards;
+  animation-delay: calc(0.05s + var(--i, 0) * 0.08s);
 }
 
-.bento-col-profile {
-  opacity: 0;
-  animation: fadeInUp 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
-  animation-delay: 0.1s;
+// Phones: tiles below the fold reveal as they scroll into view
+@supports (animation-timeline: view()) {
+  @media (max-width: 860px) and (prefers-reduced-motion: no-preference) {
+    .tile:not(.tile-profile) {
+      opacity: 1;
+      animation: scroll-reveal linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 25%;
+    }
+  }
 }
 
-.delay-1 {
-  animation-delay: 0.2s;
-}
-
-.delay-2 {
-  animation-delay: 0.3s;
-}
-
-.delay-3 {
-  animation-delay: 0.4s;
-}
-
-.delay-4 {
-  animation-delay: 0.5s;
+@keyframes scroll-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(40px) scale(0.95);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .anim-wrapper,
-  .bento-col-profile {
+  .tile {
     opacity: 1;
     animation: none;
   }
