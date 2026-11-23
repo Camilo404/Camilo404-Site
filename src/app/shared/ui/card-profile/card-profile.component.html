@@ -179,32 +179,21 @@
         </section>
         }
 
-        <!-- Connections -->
-        @if (userData()?.connected_accounts!.length > 0) {
-        <section class="section connections-section">
-          <h3 class="section-title">Connections</h3>
-          <div class="connections-grid">
-            @for (account of userData()?.connected_accounts; track $index) {
-            <a
-              class="connection-item"
-              [style.--brand]="brandColor(account.type)"
-              [attr.href]="connectionUrl(account)"
-              target="_blank"
-              rel="noopener noreferrer"
-              [appTooltip]="(account.type | titlecase) + ' · ' + account.name"
-              [attr.aria-label]="account.type + ': ' + account.name"
-            >
-              <!-- The SVG is used as a mask so it can be painted in the brand colour -->
-              <span
-                class="conn-icon"
-                aria-hidden="true"
-                [style.--icon]="'url(assets/images/connections/' + account.type + '.svg)'"
-              ></span>
-            </a>
-            }
-          </div>
-        </section>
-        }
+        <!-- GitHub contributions + Discord "member since" (fills the card now that
+             connections live in the Connect tile) -->
+        <app-github-heatmap [user]="githubUser" [weeks]="26">
+          @if (memberSince(); as since) {
+          <span class="member-chip" [appTooltip]="'On Discord since ' + since">
+            <fa-icon [icon]="faDiscord"></fa-icon>
+            {{ since }}
+          </span>
+          }
+          @if (nitroSince(); as nitro) {
+          <span class="member-chip nitro" [appTooltip]="'Nitro subscriber since ' + nitro">
+            <fa-icon [icon]="faGem"></fa-icon>
+          </span>
+          }
+        </app-github-heatmap>
 
         <!-- Opens my Discord profile (the old fake input did the same thing) -->
         <a

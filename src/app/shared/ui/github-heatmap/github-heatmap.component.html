@@ -1,0 +1,32 @@
+@if (!failed()) {
+  <div class="gh-heatmap" [class.is-loading]="loading()">
+    <div class="gh-head">
+      <a
+        class="gh-link"
+        [href]="profileUrl()"
+        target="_blank"
+        rel="noopener noreferrer"
+        [attr.aria-label]="'GitHub: ' + total() + ' contributions in the last year'"
+      >
+        <fa-icon [icon]="faGithub"></fa-icon>
+        @if (loading()) {
+          <span class="gh-total">Loading…</span>
+        } @else {
+          <span class="gh-total"><strong>{{ total() }}</strong> contributions this year</span>
+        }
+      </a>
+      <!-- Extra chips from the parent (e.g. Discord member since) -->
+      <span class="gh-extra"><ng-content /></span>
+    </div>
+
+    <span class="gh-grid" [style.--weeks]="weeks()" aria-hidden="true">
+      @for (day of cells(); track day.date; let i = $index) {
+        @if (day.empty) {
+          <i class="lv0" [style.--w]="(i - i % 7) / 7"></i>
+        } @else {
+          <i [class]="'lv' + day.level" [style.--w]="(i - i % 7) / 7" [appTooltip]="label(day)"></i>
+        }
+      }
+    </span>
+  </div>
+}
