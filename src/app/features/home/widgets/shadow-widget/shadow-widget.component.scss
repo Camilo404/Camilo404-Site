@@ -2,90 +2,162 @@
 // Shadow Widget Card
 // ========================================
 .shadow-card {
-  min-height: 160px;
+  --glow-a-pos: 0% 0%;
+  --glow-b-pos: 100% 100%;
 
-  &:hover .shadow-bg {
-    transform: scale(1.05);
-    filter: brightness(var(--shadow-brightness-hover)) blur(1px);
+  height: 100%;
+  min-height: 170px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) clamp(120px, 38%, 220px);
+  gap: 0.9rem;
+  padding: 0.8rem;
+
+  .shadow-content {
+    position: relative;
+    z-index: 1;
+    padding: 0.6rem 0.4rem 0.6rem 0.8rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.8rem;
+    min-width: 0;
   }
 
-  .shadow-bg {
+  .notes-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+
+  .notes-counter {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .shadow-quote {
+    display: grid;
+    align-items: center;
+    padding: 0 0 0 0.9rem;
+    border: 0;
+    border-left: 3px solid #c3aef5;
+    background: none;
+    text-align: left;
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 1.05rem;
+    line-height: 1.5;
+    color: #3b3350;
+    cursor: url('../../../../../assets/images/cursor/link.png'), pointer;
+    transition: border-color 0.3s ease;
+
+    &:hover { border-left-color: #f39ac2; }
+  }
+
+  // All quotes stacked in one grid cell; only the current one is visible
+  .quote-text {
+    grid-area: 1 / 1;
+  }
+
+  .quote-sizer {
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  .quote-mark {
+    font-size: 1.5em;
+    line-height: 0;
+    vertical-align: -0.3em;
+    margin-right: 0.1em;
+    color: #f39ac2;
+  }
+
+  // Words drift in one after another
+  .word {
+    display: inline-block;
+    opacity: 0;
+    animation: word-in 0.55s var(--spring) forwards;
+    animation-delay: calc(var(--w) * 45ms);
+  }
+
+  @keyframes word-in {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+      filter: blur(4px);
+    }
+
+    to {
+      opacity: 1;
+      transform: none;
+      filter: none;
+    }
+  }
+
+  .notes-dots {
+    display: flex;
+    gap: 0.35rem;
+
+    .dot {
+      width: 7px;
+      height: 7px;
+      padding: 0;
+      border: 0;
+      border-radius: 99px;
+      background: #ddd0f7;
+      cursor: url('../../../../../assets/images/cursor/link.png'), pointer;
+      transition: width 0.4s var(--spring), background 0.3s ease;
+
+      &:hover { background: #c3aef5; }
+
+      &.active {
+        width: 20px;
+        background: linear-gradient(90deg, #b79cf7, #f39ac2);
+      }
+    }
+  }
+
+  // Framed artwork on the right, at full colour
+  .shadow-art {
+    position: relative;
+    z-index: 1;
+    margin: 0;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow:
+      0 0 0 3px #fff,
+      0 12px 26px -12px rgba(45, 38, 64, 0.55);
+  }
+
+  .shadow-img {
     position: absolute;
     inset: 0;
     background-image: url('../../../../../assets/images/shadow.webp');
     background-size: cover;
     background-position: center 55%;
-    filter: brightness(var(--shadow-brightness));
-    transition: all 0.5s ease;
-    z-index: 0;
+    transition: transform 0.9s var(--spring);
+  }
 
-    &::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: var(--shadow-overlay);
+  &:hover .shadow-img {
+    transform: scale(1.08);
+  }
+
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shadow-card .word { animation: none; opacity: 1; }
+}
+
+@media (max-width: 480px) {
+  .shadow-card {
+    grid-template-columns: 1fr;
+
+    .shadow-art {
+      height: 140px;
+      order: -1;
     }
-  }
-
-  .shadow-content {
-    position: relative;
-    z-index: 1;
-    padding: 1.5rem 2rem;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    height: 100%;
-  }
-
-  .shadow-role {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    margin-bottom: 0.75rem;
-
-    fa-icon {
-      color: var(--text-primary);
-      font-size: 1.1rem;
-      filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.15));
-    }
-
-    span {
-      font-family: 'Cinzel', serif;
-      font-weight: 700;
-      font-size: 0.9rem;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: var(--text-primary);
-      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
-    }
-  }
-
-  .shadow-quote {
-    font-family: 'Playfair Display', serif;
-    font-style: italic;
-    font-size: 1rem;
-    line-height: 1.5;
-    color: var(--text-primary);
-    border-left: 3px solid var(--accent-border);
-    padding-left: 1rem;
-    opacity: 0.95;
-    min-height: 4.5em;
-    display: flex;
-    align-items: center;
-  }
-
-  .typewriter-cursor {
-    display: inline;
-    color: var(--accent);
-    font-weight: 400;
-    margin-left: 2px;
-    animation: blink 1s step-end infinite;
-    text-shadow: 0 0 8px var(--mouse-glow);
-    vertical-align: baseline;
-  }
-
-  @keyframes blink {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0; }
   }
 }

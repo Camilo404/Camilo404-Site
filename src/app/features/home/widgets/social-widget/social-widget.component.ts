@@ -2,13 +2,14 @@ import { Component, AfterViewInit, OnDestroy, ElementRef, Renderer2, inject } fr
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faGithub, faYoutube, faInstagram, faSteam } from '@fortawesome/free-brands-svg-icons';
 import { Card3dDirective } from '../../../../shared/directives/card-3d.directive';
+import { TileSparklesComponent } from '../../../../shared/ui/tile-sparkles/tile-sparkles.component';
 
 @Component({
   selector: 'app-social-widget',
   standalone: true,
   templateUrl: './social-widget.component.html',
   styleUrls: ['./social-widget.component.scss'],
-  imports: [FontAwesomeModule, Card3dDirective]
+  imports: [FontAwesomeModule, Card3dDirective, TileSparklesComponent]
 })
 export class SocialWidgetComponent implements AfterViewInit, OnDestroy {
   private el = inject(ElementRef);

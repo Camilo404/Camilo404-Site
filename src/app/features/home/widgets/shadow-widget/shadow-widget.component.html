@@ -1,12 +1,55 @@
-<article class="widget-card shadow-card" appCard3d [card3dConfig]="{ maxRotation: 5, scale: 1.02 }" [card3dSpotlight]="true">
-  <div class="shadow-bg"></div>
+<article
+  class="widget-card shadow-card"
+  appCard3d
+  [card3dConfig]="{ maxRotation: 5, scale: 1.02 }"
+  [card3dSpotlight]="true"
+  (mouseenter)="setPaused(true)"
+  (mouseleave)="setPaused(false)"
+  (focusin)="setPaused(true)"
+  (focusout)="setPaused(false)"
+>
+  <app-tile-sparkles [variant]="2"></app-tile-sparkles>
+
   <div class="shadow-content">
-    <div class="shadow-role">
-      <fa-icon [icon]="faTerminal"></fa-icon>
-      <span>Web Designer &amp; Developer</span>
+    <div class="notes-head">
+      <span class="tile-label">Notes</span>
+      <span class="notes-counter">{{ counter() }}</span>
     </div>
-    <div class="shadow-quote">
-      <span>"{{ currentQuote() }}<span class="typewriter-cursor">|</span>"</span>
+
+    <!-- Click the quote to read the next one -->
+    <button type="button" class="shadow-quote" (click)="next()" aria-label="Next note" aria-live="polite">
+      <!-- Invisible copies of every quote share the cell, so the box is always
+           as tall as the longest one and nothing jumps when quotes change -->
+      @for (text of quotes; track $index) {
+        <span class="quote-text quote-sizer" aria-hidden="true"><span class="quote-mark">“</span>{{ text }}</span>
+      }
+      @for (q of current(); track q.key) {
+        <span class="quote-text">
+          <span class="quote-mark" aria-hidden="true">“</span>
+          @for (w of q.words; track $index) {
+            <span class="word" [style.--w]="$index">{{ w }}</span>{{ ' ' }}
+          }
+        </span>
+      }
+    </button>
+
+    <div class="notes-dots" role="tablist" aria-label="Notes">
+      @for (q of quotes; track $index) {
+        <button
+          type="button"
+          role="tab"
+          class="dot"
+          [class.active]="$index === index()"
+          [attr.aria-selected]="$index === index()"
+          [attr.aria-label]="'Note ' + ($index + 1)"
+          (click)="goTo($index)"
+        ></button>
+      }
     </div>
   </div>
+
+  <!-- Artwork shown crisp in its own rounded frame -->
+  <figure class="shadow-art" aria-hidden="true">
+    <div class="shadow-img"></div>
+  </figure>
 </article>
