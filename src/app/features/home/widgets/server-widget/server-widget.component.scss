@@ -1,0 +1,255 @@
+// ========================================
+// Homelab server tile
+// ========================================
+:host {
+  display: block;
+}
+
+.server-card {
+  --glow-a-pos: 0% 0%;
+  --glow-a: rgba(169, 210, 247, 0.32);
+  --glow-b-pos: 100% 100%;
+
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  padding: 1.2rem 1.4rem 1.3rem;
+}
+
+.srv-header,
+.srv-body {
+  position: relative;
+  z-index: 1;
+}
+
+// ---------- Header ----------
+.srv-header {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.srv-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-left: auto;
+  padding: 0.22rem 0.65rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.75);
+  font-family: var(--font-display);
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: #1a8f4c;
+
+  .srv-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #3ba55d;
+    box-shadow: 0 0 0 0 rgba(59, 165, 93, 0.5);
+    animation: srv-pulse 2s ease-out infinite;
+  }
+
+  &.off {
+    color: var(--text-muted);
+
+    .srv-dot {
+      background: #b9b3c9;
+      animation: none;
+    }
+  }
+}
+
+@keyframes srv-pulse {
+  70% { box-shadow: 0 0 0 6px rgba(59, 165, 93, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(59, 165, 93, 0); }
+}
+
+.srv-demo {
+  padding: 0.18rem 0.5rem;
+  border-radius: 999px;
+  border: 1px dashed rgba(165, 139, 240, 0.6);
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  color: var(--ink-lilac, #6f52c9);
+  cursor: help;
+}
+
+// ---------- Body ----------
+.srv-body {
+  flex: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+  gap: 1rem;
+  align-items: stretch;
+}
+
+.srv-gauges {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.6rem;
+}
+
+.gauge {
+  --c: #a58bf0;
+
+  position: relative;
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  gap: 0.1rem;
+  padding: 0.7rem 0.4rem 0.6rem;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  text-align: center;
+  transition: transform 0.45s var(--spring);
+
+  &:hover { transform: translateY(-3px); }
+
+  &.hot { --c: #f0828f; }
+}
+
+// Ring (not `.ring`: Tailwind owns that class): value text sits in its centre via the shared grid cell
+.gauge-ring {
+  grid-area: 1 / 1;
+  width: min(100%, 84px);
+  aspect-ratio: 1;
+  rotate: -90deg;
+
+  circle {
+    fill: none;
+    stroke-width: 4;
+    stroke-linecap: round;
+  }
+
+  .track { stroke: color-mix(in oklch, var(--c) 18%, white); }
+
+  .bar {
+    stroke: var(--c);
+    stroke-dasharray: 100;
+    transition: stroke-dashoffset 0.9s var(--spring), stroke 0.4s ease;
+    filter: drop-shadow(0 0 3px color-mix(in oklch, var(--c) 60%, transparent));
+  }
+}
+
+.g-value {
+  grid-area: 1 / 1;
+  align-self: center;
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+  color: #2d2640;
+}
+
+.g-label {
+  margin-top: 0.35rem;
+  font-size: 0.66rem;
+  font-weight: 650;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--label-color);
+}
+
+.g-sub {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  color: var(--text-muted);
+}
+
+// Skeleton while the first snapshot arrives
+.gauge.is-skeleton {
+  min-height: 120px;
+
+  .sk-ring {
+    width: 64px;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    border: 6px solid #efe7fb;
+    animation: sk-pulse 1.2s ease-in-out infinite;
+  }
+}
+
+@keyframes sk-pulse {
+  50% { opacity: 0.45; }
+}
+
+// ---------- Network ----------
+.srv-net {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  min-width: 0;
+  padding: 0.75rem 0.9rem;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+}
+
+.net-rates {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+
+  i {
+    margin-right: 0.2rem;
+    font-style: normal;
+  }
+
+  .down { color: #6f52c9; }
+  .up { color: #d46a9f; }
+}
+
+.spark {
+  flex: 1;
+  width: 100%;
+  min-height: 54px;
+  overflow: visible;
+
+  path { transition: d 0.9s ease; }
+
+  .down-line,
+  .up-line {
+    fill: none;
+    stroke-width: 1.4;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .down-line { stroke: #a58bf0; }
+  .up-line { stroke: #ee9cc6; stroke-dasharray: 3 2; }
+}
+
+.net-caption {
+  font-size: 0.66rem;
+  color: var(--text-muted);
+}
+
+// ---------- Responsive ----------
+@media (max-width: 1100px) {
+  .srv-body { grid-template-columns: minmax(0, 1fr); }
+}
+
+@media (max-width: 480px) {
+  .srv-gauges { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .srv-pill .srv-dot,
+  .gauge.is-skeleton .sk-ring { animation: none; }
+  .gauge-ring .bar,
+  .spark path { transition: none; }
+}

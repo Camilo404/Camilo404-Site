@@ -14,6 +14,7 @@ import { ClockWidgetComponent } from '../../widgets/clock-widget/clock-widget.co
 import { ShadowWidgetComponent } from '../../widgets/shadow-widget/shadow-widget.component';
 import { SocialWidgetComponent } from '../../widgets/social-widget/social-widget.component';
 import { TechStackWidgetComponent } from '../../widgets/tech-stack-widget/tech-stack-widget.component';
+import { ServerWidgetComponent } from '../../widgets/server-widget/server-widget.component';
 
 @Component({
     selector: 'app-home-page',
@@ -30,6 +31,7 @@ import { TechStackWidgetComponent } from '../../widgets/tech-stack-widget/tech-s
     ShadowWidgetComponent,
     SocialWidgetComponent,
     TechStackWidgetComponent,
+    ServerWidgetComponent,
     CommandPaletteComponent,
     FontAwesomeModule
 ]
