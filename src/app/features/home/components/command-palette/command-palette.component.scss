@@ -1,0 +1,223 @@
+// ========================================
+// Command palette (⌘K)
+// ========================================
+.palette {
+  width: min(560px, calc(100vw - 32px));
+  max-width: none;
+  max-height: min(520px, calc(100dvh - 64px));
+  margin: 12vh auto auto;
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, 0.95);
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.86);
+  backdrop-filter: blur(18px) saturate(1.3);
+  box-shadow:
+    0 40px 80px -30px rgba(111, 82, 201, 0.55),
+    0 0 0 1px rgba(183, 156, 247, 0.18);
+  color: #2d2640;
+  overflow: hidden;
+  flex-direction: column;
+
+  // Entry/exit: @starting-style for the "from" state; allow-discrete keeps the
+  // dialog in the top layer until the exit transition finishes
+  opacity: 0;
+  translate: 0 -10px;
+  scale: 0.97;
+  transition:
+    opacity 0.22s ease,
+    translate 0.4s var(--spring),
+    scale 0.4s var(--spring),
+    overlay 0.22s ease allow-discrete,
+    display 0.22s ease allow-discrete;
+
+  &[open] {
+    display: flex;
+    opacity: 1;
+    translate: 0 0;
+    scale: 1;
+
+    @starting-style {
+      opacity: 0;
+      translate: 0 -10px;
+      scale: 0.97;
+    }
+  }
+
+  &::backdrop {
+    background: rgba(245, 238, 255, 0);
+    backdrop-filter: blur(0);
+    transition:
+      background 0.25s ease,
+      backdrop-filter 0.25s ease,
+      overlay 0.25s ease allow-discrete,
+      display 0.25s ease allow-discrete;
+  }
+
+  &[open]::backdrop {
+    background: rgba(245, 238, 255, 0.55);
+    backdrop-filter: blur(6px);
+
+    @starting-style {
+      background: rgba(245, 238, 255, 0);
+      backdrop-filter: blur(0);
+    }
+  }
+}
+
+kbd {
+  display: inline-grid;
+  place-items: center;
+  min-width: 1.5em;
+  padding: 0.1rem 0.35rem;
+  border-radius: 6px;
+  background: #fff;
+  box-shadow: 0 0 0 1px rgba(183, 156, 247, 0.35), 0 2px 0 rgba(183, 156, 247, 0.35);
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: var(--text-secondary);
+}
+
+// ---------- Search ----------
+.palette-search {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 1.2rem;
+  border-bottom: 1px solid rgba(183, 156, 247, 0.22);
+
+  fa-icon { color: var(--ink-lilac, #6f52c9); }
+
+  input {
+    flex: 1;
+    min-width: 0;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+    color: #2d2640;
+
+    &::placeholder { color: var(--text-muted); }
+  }
+}
+
+// ---------- List ----------
+.palette-list {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 0.5rem;
+  overscroll-behavior: contain;
+}
+
+.group-label {
+  padding: 0.6rem 0.7rem 0.3rem;
+  font-size: 0.66rem;
+  font-weight: 650;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--label-color, #8a78b8);
+}
+
+.palette-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.55rem 0.7rem;
+  border-radius: 12px;
+  font-size: 0.92rem;
+  cursor: url('../../../../../assets/images/cursor/link.png'), pointer;
+  transition: background 0.15s ease;
+
+  .item-icon {
+    display: grid;
+    place-items: center;
+    width: 30px;
+    height: 30px;
+    flex-shrink: 0;
+    border-radius: 9px;
+    background: #fff;
+    box-shadow: 0 0 0 1px rgba(183, 156, 247, 0.25);
+    color: #6f52c9;
+    font-size: 0.85rem;
+    transition: transform 0.4s var(--spring);
+  }
+
+  .item-label {
+    flex: 1;
+    min-width: 0;
+    font-weight: 500;
+  }
+
+  .item-hint {
+    font-size: 0.76rem;
+    color: var(--text-muted);
+    white-space: nowrap;
+  }
+
+  .item-enter {
+    opacity: 0;
+    color: var(--ink-lilac, #6f52c9);
+    transition: opacity 0.15s ease;
+  }
+
+  &.active {
+    background: linear-gradient(90deg, rgba(201, 179, 251, 0.35), rgba(249, 185, 212, 0.25));
+
+    .item-icon { transform: rotate(-8deg) scale(1.06); }
+    .item-enter { opacity: 1; }
+  }
+}
+
+.palette-empty {
+  padding: 2rem 1rem;
+  text-align: center;
+  font-family: var(--font-display);
+  color: var(--text-muted);
+}
+
+// ---------- Footer ----------
+.palette-foot {
+  display: flex;
+  gap: 1rem;
+  padding: 0.65rem 1.2rem;
+  border-top: 1px solid rgba(183, 156, 247, 0.22);
+  font-size: 0.72rem;
+  color: var(--text-muted);
+
+  span {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+}
+
+// ---------- Toast ----------
+.palette-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 28px;
+  z-index: 1000;
+  padding: 0.6rem 1.1rem;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #8f7cf0, #e59ac6);
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: 0.88rem;
+  font-weight: 600;
+  box-shadow: 0 14px 30px -12px rgba(111, 82, 201, 0.7);
+  pointer-events: none;
+  opacity: 0;
+  translate: -50% 16px;
+  transition: opacity 0.25s ease, translate 0.45s var(--spring);
+
+  &.show {
+    opacity: 1;
+    translate: -50% 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .palette { margin-top: 8vh; }
+  .palette-foot { display: none; }
+}

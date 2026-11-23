@@ -1,0 +1,62 @@
+<dialog #dialog class="palette" aria-label="Command palette">
+  <div class="palette-search">
+    <fa-icon [icon]="faSearch" aria-hidden="true"></fa-icon>
+    <input
+      #search
+      type="text"
+      placeholder="Search links and actions…"
+      autocomplete="off"
+      spellcheck="false"
+      role="combobox"
+      aria-expanded="true"
+      aria-controls="palette-list"
+      aria-autocomplete="list"
+      [attr.aria-activedescendant]="filtered().length ? 'cmd-' + active() : null"
+      [value]="query()"
+      (input)="onInput(search.value)"
+      (keydown)="onListKey($event)"
+    />
+    <kbd>Esc</kbd>
+  </div>
+
+  <div id="palette-list" class="palette-list" role="listbox" aria-label="Commands">
+    @for (group of groups(); track group.name) {
+      <div class="palette-group" role="group" [attr.aria-label]="group.name">
+        <p class="group-label" aria-hidden="true">{{ group.name }}</p>
+        @for (item of group.items; track item.cmd.id) {
+          <div
+            class="palette-item"
+            role="option"
+            [id]="'cmd-' + item.index"
+            [class.active]="item.index === active()"
+            [attr.aria-selected]="item.index === active()"
+            (pointermove)="active.set(item.index)"
+            (click)="execute(item.cmd)"
+            (keydown.enter)="execute(item.cmd)"
+            tabindex="-1"
+          >
+            <span class="item-icon"><fa-icon [icon]="item.cmd.icon"></fa-icon></span>
+            <span class="item-label">{{ item.cmd.label }}</span>
+            @if (item.cmd.hint) {
+              <span class="item-hint">{{ item.cmd.hint }}</span>
+            }
+            <span class="item-enter" aria-hidden="true">↵</span>
+          </div>
+        }
+      </div>
+    } @empty {
+      <p class="palette-empty">Nothing matches “{{ query() }}” ✦</p>
+    }
+  </div>
+
+  <footer class="palette-foot" aria-hidden="true">
+    <span><kbd>↑</kbd><kbd>↓</kbd> navigate</span>
+    <span><kbd>↵</kbd> open</span>
+    <span><kbd>{{ isMac ? '⌘' : 'Ctrl' }}</kbd><kbd>K</kbd> toggle</span>
+  </footer>
+</dialog>
+
+<!-- Live region stays mounted so screen readers announce the message -->
+<div class="palette-toast" role="status" [class.show]="!!toast()">
+  @if (toast(); as message) { ✦ {{ message }} }
+</div>
